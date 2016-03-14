@@ -32,8 +32,7 @@ public class MainObfuscater {
 		// retrieve the target directory for output files
 		TARGET = new File(configProperties.getProperty("target")).getCanonicalPath();
 
-		// ------------------------------------FILE HASHMAP
-		// ADDITION---------------------------------//
+		// ------------------------------------FILE HASHMAP ADDITION---------------------------------//
 		// get the black list of files to ignore for obfuscation
 		String singleStringBlackList = configProperties.getProperty("blacklist");
 		String[] blackListAsArray = singleStringBlackList.split(",");
@@ -42,8 +41,7 @@ public class MainObfuscater {
 		File targetFolder = new File(TARGET);
 		addFilesToHashMap(targetFolder);
 
-		// ------------------------------------OBFUSCATER
-		// ADDITION------------------------------------//
+		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add to 'obfuscaters', comment removing obfuscater class
@@ -56,10 +54,15 @@ public class MainObfuscater {
 		} else if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
 			// add to 'obfuscaters', minification obfuscater class
 		}
+		
+		// execute every obfuscation process in order
+		for (Obfuscater obfuscaterProcess : obfuscaters) {
+			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
+		}
 
 		// --------------RANDOM TEST----------------//
 		for (Entry<String, File> entry : filesForObfuscation.entrySet()) {
-			System.out.println("KEY: " + entry.getKey() + " *** " + "FILE: " + entry.getValue().getName());
+			System.out.println("KEY: " + entry.getKey() + " +++ " + "FILE: " + entry.getValue().getName());
 		}
 	}
 

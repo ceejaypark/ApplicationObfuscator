@@ -5,6 +5,6 @@ import java.util.HashMap;
 
 public interface Obfuscater {
 
-	public HashMap<String,File> Execute(HashMap<String,File> Files);
+	public HashMap<String,File> execute(HashMap<String,File> Files);
 	
 }
