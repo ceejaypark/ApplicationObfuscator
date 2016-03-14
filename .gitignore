@@ -1,0 +1,6 @@
+.metadata/
+Obfuscator/.settings/
+Obfuscator/.project
+Obfuscator/.classpath
+*.class
+.recommenders/
