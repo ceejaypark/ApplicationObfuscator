@@ -2,7 +2,8 @@ package testPackage1;
 
 
 /**
- * Simple class to contain public and private fields with 
+ * Simple class to contain public and private fields
+ * contains overloads for constructors
  * @author cwu323
  *
  */
