@@ -1,7 +1,7 @@
-package testPackage1;
+package mainPackage;
 
+import testPackage1.*;
 import testPackage2.*;
-import testPackage3.*;
 
 /**
  * Test javadoc 
@@ -21,8 +21,11 @@ public class TestMain {
 //===========================================================================================================================================
 		//Test very basic classes. Tests renaming, minification and comment removal.
 		//Will also test if for loop functionality is altered.
+		printDivide();
+		System.out.println("TEST 1:");
 		
-		TestClass1 exampleString = new TestClass1("This is a test");
+		
+		TestClass1 exampleString = new TestClass1("Testing renaming");
 		TestClass2 nameRenameTester = new TestClass2();
 		
 		
@@ -31,6 +34,12 @@ public class TestMain {
 			exampleString.pubField = nameRenameTester.nextString();
 		}
 //===========================================================================================================================================
-
+		printDivide();
+		System.out.println("TEST 2:");
+		
+	}
+	
+	public static void printDivide(){
+		System.out.println("=============================================================================");
 	}
 }

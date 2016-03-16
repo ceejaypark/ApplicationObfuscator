@@ -1,4 +1,4 @@
-package testPackage2;
+package testPackage1;
 
 import java.util.*;
 
@@ -32,5 +32,5 @@ public class TestClass2 {
 		}
 		
 		return temp.get(currentPos);
-	}	
+	}
 }
