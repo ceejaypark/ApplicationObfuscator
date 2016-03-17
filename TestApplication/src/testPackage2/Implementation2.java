@@ -29,5 +29,4 @@ public class Implementation2 implements TestInterface {
 		//Populating menu
 		//Populating times
 	}
-
 }

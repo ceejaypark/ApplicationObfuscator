@@ -5,8 +5,8 @@ import java.util.Set;
 
 public class Implementation1 implements TestInterface {
 
-	HashMap<TestEnum, String> menu = new HashMap<TestEnum, String>();
-	HashMap<TestEnum, String> times = new HashMap<TestEnum, String>();
+	private HashMap<TestEnum, String> menu = new HashMap<TestEnum, String>();
+	private HashMap<TestEnum, String> times = new HashMap<TestEnum, String>();
 	
 	public Implementation1(){
 		populateMenuAndTimes();
@@ -52,6 +52,7 @@ public class Implementation1 implements TestInterface {
 		this.times.put(TestEnum.DESSERT, "ALL DAY");
 		this.times.put(TestEnum.DINNER, "7-10");
 
+		
 		
 	}
 

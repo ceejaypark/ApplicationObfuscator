@@ -17,7 +17,7 @@ public class TestClass2 {
 	public TestClass2(){
 		temp.add("Placeholder");
 		temp.add("TestClass2.temp");
-		temp.add("String with space");
+		temp.add("String with space and comment //randComment");
 		temp.add("TestClass2");
 		temp.add("TestClass.currentPos");
 		temp.add("TestClass1.pubField");

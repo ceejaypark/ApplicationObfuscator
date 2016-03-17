@@ -8,7 +8,7 @@ public interface TestInterface {
 	
 	void getTimeMenu(TestEnum meal); /*Used to print meals at time*/
 	
-	void getMenuHours(TestEnum meal); /*Used to show times for meals*/
+	void getMenuHours(/*Rand comment in between*/TestEnum meal); /*Used to show times for meals*/
 	
 	void populateMenuAndTimes();
 }
