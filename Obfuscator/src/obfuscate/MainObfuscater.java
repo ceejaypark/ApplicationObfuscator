@@ -44,7 +44,8 @@ public class MainObfuscater {
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
-			// add to 'obfuscaters', comment removing obfuscater class
+			// add comment removing obfuscater
+			obfuscaters.add(new CommentRemover());
 		} else if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
 		} else if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
