@@ -1,4 +1,8 @@
 .metadata/
+RemoteSystemsTempFiles
+TestApplication/.classpath
+TestApplication/.settings/
+TestApplication/.project
 Obfuscator/.settings/
 Obfuscator/.project
 Obfuscator/.classpath
