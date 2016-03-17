@@ -9,80 +9,83 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommentRemover implements Obfuscater{
-
-	public static void main(String[] args) throws IOException{
-		List<String> lines = new ArrayList<String>();
-		
-		File f = new File("test.java");
-		
-		FileReader fr = new FileReader(f);
-		BufferedReader br = new BufferedReader(fr);
-		
-		String line;
-		
-		boolean isComment = false;
-		
-		while ((line = br.readLine()) != null) {
-			String original = line;
-			line = line.trim();
-			
-			//skip but leave blank lines
-			if (line.length() == 0) {
-				lines.add(original);
-				continue;
-			}
-			
-			//if the line begins with '//'
-			if (line.charAt(0) == '/' && line.charAt(1) == '/' ) {
-				continue;
-			}
-			
-			//if the line begins with '/*', anything after is a comment
-			if (line.charAt(0) == '/' && line.charAt(1) == '*') {
-				isComment = true;
-				//if the line ends with '*/', comment ended
-				if (line.charAt(line.length() - 1) == '/' && line.charAt(line.length()-2) == '*') {
-					isComment = false;
-				}
-				continue;
-			}
-			
-			//if the line ends with '*/'
-			if (line.charAt(line.length() - 1) == '/' && line.charAt(line.length()-2) == '*') {
-				//if currently processing comment, comment ended
-				if (isComment) {
-					isComment = false;
-				}
-			}
-			
-			//if the line is still a comment ignore
-			if (isComment) {
-				continue;
-			}
-			
-			original = removeEndComments(original);
-			
-			//add lines that are not comments
-			lines.add(original);
-		}
-		
-		FileWriter fw = new FileWriter(f);
-		BufferedWriter bw = new BufferedWriter(fw);
-		
-		for (String s : lines) {
-			s = s + "\n";
-			bw.write(s);
-		}
-		bw.flush();
-		bw.close();
-	}
 	
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> Files) {
-		// TODO Auto-generated method stub
-		return null;
+	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+		List<String> linesOfCode = new ArrayList<String>();
+		
+		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			File file = fileEntry.getValue();
+			
+			FileReader fileReader = new FileReader(file);
+			BufferedReader fileInput = new BufferedReader(fileReader);
+			
+			String lineInFile;
+			
+			boolean isComment = false;
+			
+			while ((lineInFile = fileInput.readLine()) != null) {
+				String original = lineInFile;
+				lineInFile = lineInFile.trim();
+				
+				//skip but leave blank line
+				if (lineInFile.length() == 0) {
+					linesOfCode.add(original);
+					continue;
+				}
+				
+				//if the line begins with '//'
+				if (lineInFile.charAt(0) == '/' && lineInFile.charAt(1) == '/' ) {
+					continue;
+				}
+				
+				//if the line begins with '/*', anything after is a comment
+				if (lineInFile.charAt(0) == '/' && lineInFile.charAt(1) == '*') {
+					isComment = true;
+					//if the lineInFile ends with '*/', comment ended
+					if (lineInFile.charAt(lineInFile.length() - 1) == '/' && lineInFile.charAt(lineInFile.length()-2) == '*') {
+						isComment = false;
+					}
+					continue;
+				}
+				
+				//if the line ends with '*/'
+				if (lineInFile.charAt(lineInFile.length() - 1) == '/' && lineInFile.charAt(lineInFile.length()-2) == '*') {
+					//if currently processing comment, comment ended
+					if (isComment) {
+						isComment = false;
+					}
+				}
+				
+				//if the line is still a comment ignore
+				if (isComment) {
+					continue;
+				}
+				
+				//remove comments at the end of code
+				original = removeEndComments(original);
+				
+				//add lines that are not comments
+				linesOfCode.add(original);
+			}
+			
+			FileWriter fileWriter = new FileWriter(file);
+			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
+			
+			for (String s : linesOfCode) {
+				s = s + "\n";
+				fileOutput.write(s);
+			}
+			
+			fileOutput.flush();
+			fileOutput.close();
+			fileInput.close();
+		}
+		
+		return files;
 	}
 	
 	/**
@@ -92,7 +95,7 @@ public class CommentRemover implements Obfuscater{
 	 * @param line is the line of code given
 	 * @return Substring of the line with only code
 	 */
-	private static String removeEndComments(String line) {
+	private String removeEndComments(String line) {
 		boolean endOfCode = false;
 		boolean inDoubleQuotes = false;
 		boolean inSingleQuotes = false;
