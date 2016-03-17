@@ -3,6 +3,14 @@ package testPackage2;
 import java.util.HashMap;
 import java.util.Set;
 
+/**
+ * This is an implementation of TestInferface
+ * uses single line if and else statements and also
+ * hashmaps and sets.
+ * @author cwu323
+ *
+ */
+
 public class Implementation1 implements TestInterface {
 
 	private HashMap<TestEnum, String> menu = new HashMap<TestEnum, String>();
@@ -16,7 +24,7 @@ public class Implementation1 implements TestInterface {
 	public void getFullMenu() {
 		//No spacing in some lines
 		Set<TestEnum> keys = menu.keySet();
-		for(TestEnum x : keys){
+		for(TestEnum x:keys){
 			System.out.println(menu.get(x));
 		}
 	}
@@ -32,7 +40,7 @@ public class Implementation1 implements TestInterface {
 
 	@Override
 	public void getMenuHours(TestEnum meal) {
-		if(menu.get(times)!= null)	
+		if(menu.get(times)!=null)	
 			System.out.println(times.get(meal));
 		else
 			System.out.println("No items for this meal");

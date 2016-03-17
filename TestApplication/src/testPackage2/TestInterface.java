@@ -1,7 +1,5 @@
 package testPackage2;
 
-import java.util.HashMap;
-
 public interface TestInterface {
 
 	void getFullMenu(); /*Used to print whole hashmap*/
