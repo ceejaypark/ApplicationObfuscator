@@ -3,6 +3,7 @@ package obfuscate;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
 public class NameObfuscater implements Obfuscater {
 
 	static int count = 30;
-
+	static HashMap<String,String> methodMap = new HashMap<String,String>();
 
 	@Override
 	public  HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
@@ -47,13 +48,25 @@ public class NameObfuscater implements Obfuscater {
 				Class<?> c = ucl.loadClass("Input4"); 
 				//iterate through each declared field and rename it
 				for(Field f: c.getDeclaredFields()) {
-				    content = Pattern.compile("\\b"+ f.getName() + "\\b").matcher(content).replaceAll(getNewName());
+					content = Pattern.compile("\\b"+ f.getName() + "\\b").matcher(content).replaceAll(getNewName());
 					//content = content.replace(, getNewName());
 
 				}
+				//iterate through declared methods and rename
+				for(Method m: c.getDeclaredMethods()) {
+					//check if in hashmap already, if yes, then rename to new name
+					//otherwise assign a name, add it to hashmap, then rename in file
+
+					if(!methodMap.containsKey(m.getName())){
+						methodMap.put(m.getName(), getNewName());
+					}
+					content = Pattern.compile("\\b"+ m.getName() + "\\b").matcher(content).replaceAll(methodMap.get(m.getName()));
+
+				}
+
 				//Write the result back to the file
 				Files.write((Paths.get(file.toURI())), content.getBytes(charset));
-				
+
 				ucl.close();
 			} catch (MalformedURLException e) {
 			} catch (ClassNotFoundException e) {
