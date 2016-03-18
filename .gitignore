@@ -48,3 +48,4 @@ TryReverseEngineerThis/captures/
 
 #Keystore files
 *.jks
+/bin/
