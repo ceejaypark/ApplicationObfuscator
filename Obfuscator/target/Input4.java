@@ -13,3 +13,4 @@ public class Input4 {
 		return str;
 	}
 }
+
