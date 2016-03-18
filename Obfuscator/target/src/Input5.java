@@ -1,49 +1,169 @@
 
 public class Input4 {
 	
-	int hello = 0;
-	int hi = 5;
-	int tst = hello ^ hi;
+	int l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	int l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	int l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
 	
 }
 
 public class Input4 {
 	
-	int hello = 0;
-	int hi = 5;
-	int tst = hello ^ hi;
+	int  = 0;
+	int  = 5;
+	int  =  ^ ;
 	
 }
 
 public class Input4 {
 	
-	int hello = 0;
-	int hi = 5;
-	int tst = hello ^ hi;
+	int  = 0;
+	int  = 5;
+	int  =  ^ ;
 	
 }
 
 public class Input4 {
 	
-	int hello = 0;
-	int hi = 5;
-	int tst = hello ^ hi;
+	int  = 0;
+	int  = 5;
+	int  =  ^ ;
 	
 }
 
-public class Input4 {
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
 	
-	int hello = 0;
-	int hi = 5;
-	int tst = hello ^ hi;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
 	
 }
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
+
+publl1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lc class Input4 {
+	
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = 0;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1 = 5;
+	l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1lnt l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l = l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l ^ l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1;
+	
+}
 
