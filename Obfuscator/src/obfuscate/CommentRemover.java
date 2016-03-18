@@ -57,6 +57,7 @@ public class CommentRemover implements Obfuscater{
 					//if currently processing comment, comment ended
 					if (isComment) {
 						isComment = false;
+						continue;
 					}
 				}
 				
