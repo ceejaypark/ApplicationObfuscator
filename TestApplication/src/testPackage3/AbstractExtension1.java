@@ -1,13 +1,8 @@
 package testPackage3;
 
 public class AbstractExtension1 extends TestAbstract{
-
-	public AbstractExtension1(String x) {
-		super(x);
-		// TODO Auto-generated constructor stub
-	}
 	
-	public void TemplateMethod(){
+	public void templateMethod(){
 		super.templateMethod();
 		System.out.println("child template");
 	}

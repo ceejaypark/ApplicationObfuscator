@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import testPackage1.*;
 import testPackage2.*;
+import testPackage3.*;
 
 /**
  * Test javadoc 
@@ -54,6 +55,18 @@ public class TestMain {
 				x.getTimeMenu(y);
 			}
 		}
+		
+//===========================================================================================================================================
+		//Test abstract classes, annotations, super methods
+		printDivide();
+		System.out.println("TEST 3:");
+		
+		TestAbstract abs = new AbstractExtension1();
+		
+		abs.templateMethod();
+		abs.overrideMethod();
+//===========================================================================================================================================
+
 	}
 
 	public static void printDivide(){
