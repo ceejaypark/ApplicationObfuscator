@@ -23,6 +23,7 @@ public class Implementation1 implements TestInterface {
 	@Override
 	public void getFullMenu() {
 		//No spacing in some lines
+		System.out.println("Restaurant 1 Full Menu:");
 		Set<TestEnum> keys = menu.keySet();
 		for(TestEnum x:keys){
 			System.out.println(menu.get(x));
@@ -32,6 +33,7 @@ public class Implementation1 implements TestInterface {
 	@Override
 	public void getTimeMenu(TestEnum meal) {
 		//No block if and else statements
+		System.out.println("Restaurant 1 " + meal.name() + " Menu:");
 		if(menu.get(meal)!= null)	
 			System.out.println(menu.get(meal));
 		else
@@ -40,7 +42,9 @@ public class Implementation1 implements TestInterface {
 
 	@Override
 	public void getMenuHours(TestEnum meal) {
-		if(menu.get(times)!=null)	
+		System.out.println("Restaurant 1 " + meal.name() + " Time:");
+
+		if(menu.get(meal)!=null)	
 			System.out.println(times.get(meal));
 		else
 			System.out.println("No items for this meal");
