@@ -31,39 +31,67 @@ public class Implementation2 implements TestInterface {
 	
 	@Override
 	public void getFullMenu() {
-		// TODO Auto-generated method stub
-
+		System.out.println("Restaurant 2 Full Menu:");
+		for(String s : breakfast){
+			System.out.println(s);
+		}
+		for(String s : lunch){
+			System.out.println(s);
+		}
+		for(String s : dinner){
+			System.out.println(s);
+		}
+		for(String s : brunch){
+			System.out.println(s);
+		}
+		for(String s : dessert){
+			System.out.println(s);
+		}
 	}
 
 	@Override
 	public void getTimeMenu(TestEnum meal) {
+		System.out.println("Restaurant 2 " + meal.name() + " Menu:");
+
 		switch(meal){
 			case BREAKFAST:
 				printMenu(breakfast);
+				break;
 			case LUNCH:
 				printMenu(lunch);
+				break;
 			case DINNER:
 				printMenu(dinner);
+				break;
 			case BRUNCH:
 				printMenu(brunch);
+				break;
 			case DESSERT:
 				printMenu(dessert);
+				break;
 		}
 	}
 
 	@Override
 	public void getMenuHours(TestEnum meal) {
+		System.out.println("Restaurant 2 " + meal.name() + " Time:");
+
 		switch(meal){
 			case BREAKFAST:
 				System.out.println(breakfastTime);
+				break;
 			case LUNCH:
 				System.out.println(lunchTime);
+				break;
 			case DINNER:
 				System.out.println(dinnerTime);
+				break;
 			case BRUNCH:
 				System.out.println(brunchTime);
+				break;
 			case DESSERT:
-				System.out.println(dessertTime);		
+				System.out.println(dessertTime);	
+				break;
 		}
 	}
 
