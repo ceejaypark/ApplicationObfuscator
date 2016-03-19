@@ -75,7 +75,7 @@ public class ClassNameObfuscator implements Obfuscater{
 		String class_Name = null;
 
 		for (int i = 0; i < length ; i++ ) {
-			if (line_array[i].equals("class")) {
+			if (line_array[i].equals("class") || line_array[i].equals("interface")) {
 				class_Name = line_array[i+1];
 			}
 		}
