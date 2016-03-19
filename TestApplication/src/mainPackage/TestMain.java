@@ -1,7 +1,10 @@
 package mainPackage;
 
+import java.util.ArrayList;
+
 import testPackage1.*;
 import testPackage2.*;
+import testPackage3.*;
 
 /**
  * Test javadoc 
@@ -34,11 +37,38 @@ public class TestMain {
 			exampleString.pubField = nameRenameTester.nextString();
 		}
 //===========================================================================================================================================
+		//Test enum, switch cases, interface and if/else statements with no wrapper.
 		printDivide();
 		System.out.println("TEST 2:");
 		
+		Implementation1 imp1 = new Implementation1();
+		Implementation2 imp2 = new Implementation2();
+		
+		ArrayList<TestInterface> testImp = new ArrayList<TestInterface>();
+		testImp.add(imp1);
+		testImp.add(imp2);
+		
+		for(TestInterface x : testImp){
+			x.getFullMenu();
+			for (TestEnum y: TestEnum.values()){
+				x.getMenuHours(y);
+				x.getTimeMenu(y);
+			}
+		}
+		
+//===========================================================================================================================================
+		//Test abstract classes, annotations, super methods
+		printDivide();
+		System.out.println("TEST 3:");
+		
+		TestAbstract abs = new AbstractExtension1();
+		
+		abs.templateMethod();
+		abs.overrideMethod();
+//===========================================================================================================================================
+
 	}
-	
+
 	public static void printDivide(){
 		System.out.println("=============================================================================");
 	}
