@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="Obfuscator/src"/>
+	<classpathentry excluding="src/|notforobfuscation/" kind="src" path="Obfuscator/target"/>
+	<classpathentry kind="src" path="Obfuscator/target/notforobfuscation"/>
+	<classpathentry kind="src" path="Obfuscator/target/src"/>
+	<classpathentry kind="src" path="TestApplication/src"/>
+	<classpathentry kind="src" path="TryReverseEngineerThis/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="TryReverseEngineerThis/app/src/main/java"/>
+	<classpathentry kind="src" path="TryReverseEngineerThis/app/src/test/java"/>
+	<classpathentry kind="lib" path="TryReverseEngineerThis/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
