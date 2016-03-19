@@ -2,7 +2,11 @@ package com.woop.tryreverseengineerthis;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +23,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.woop.tryreverseengineerthis.listener.ClassLocationListener;
 
 import com.woop.tryreverseengineerthis.items.ItemContent;
+import com.woop.tryreverseengineerthis.service.CurrentLocationListener;
 
 public class LandingActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, UniversityClassFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        UniversityClassFragment.OnListFragmentInteractionListener {
 
     private static final String TAG = "LandingActvity";
 
@@ -56,22 +61,14 @@ public class LandingActivity extends AppCompatActivity
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED
-                &&
-           ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        CurrentLocationListener locationListener = new CurrentLocationListener();
 
-            Log.d(TAG, "Location permission granted");
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    5000,
-                    10,
-                    new ClassLocationListener());
-        }
-        else
+        try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    0, 0, locationListener);
+        }catch(SecurityException e)
         {
-            Log.d(TAG, "Not granted");
+            Log.d(TAG, "Permission not granted");
         }
     }
 
