@@ -1,6 +1,7 @@
 package com.woop.tryreverseengineerthis.storage;
 
 import android.location.Location;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +11,19 @@ import java.util.List;
  */
 public class LocationStorage {
 
+    private static final String TAG = "LocationStorage";
+
     private static List<Location> history = new ArrayList<>();
     private static Location last = new Location("");
-    private static boolean locationEnabled = false;
+    private static boolean locationEnabled = true;
 
     public static Location getLocation(){
-        return !locationEnabled ? null : last;
+        return last;
     }
 
     public static void setLocation(Location newLocation){
+        Log.d(TAG, "Updated");
+        Log.d(TAG, history.size() + "");
         history.add(newLocation);
         last = newLocation;
     }
