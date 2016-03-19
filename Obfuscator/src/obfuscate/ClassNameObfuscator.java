@@ -20,6 +20,8 @@ public class ClassNameObfuscator implements Obfuscater{
 
 		// Hashmap containing the old name as key and new name as value
 		HashMap<String, String> classNames = new HashMap<String,String>();
+		// List of all names of classes encountered so far
+		List<String> classNameList = new ArrayList<String>();
 
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			File file = fileEntry.getValue();
@@ -46,20 +48,22 @@ public class ClassNameObfuscator implements Obfuscater{
 							existsInHash = true;
 						}
 					}
-					
 					// If it doesn't exist in the hash, create a new name for it
-					// and put it in the hashmap and also rename it in code
+					// and add the class name to the list of encountered classes
+					// and put it in the hashmap and also rename it in the line of code
 					if (existsInHash == false) {
+						classNameList.add(className);
 						String obfName = asciiToString(name_counter);
 						classNames.put(className, obfName);
 						lineInFile = renameClass(obfName, className, lineInFile);
 					}
-					lineInFile.renameClass(className, classNames.get(className));
-					
 				}
-				else if (className == null) {
-					
+				// Iterate through all class names encountered and replace in line of code if
+				// necessary
+				for (String s: classNameList) {
+					lineInFile.replaceAll(s, classNames.get(s));
 				}
+				// Add the line of code to the list of lines
 				linesOfCode.add(lineInFile);
 			}
 			
@@ -67,6 +71,7 @@ public class ClassNameObfuscator implements Obfuscater{
 			FileWriter fileWriter = new FileWriter(file);
 			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
 			
+			// Write out the list
 			for (String s: linesOfCode) {
 				s = s + "\n";
 				fileOutput.write(s);
@@ -87,6 +92,10 @@ public class ClassNameObfuscator implements Obfuscater{
 	}
 
 	
+	/*
+	 * Method that should check if there is a class declaration or interface declaration
+	 * and returns the name of it. Returns null if the line of code does not have either of these
+	 */
 	private String classNameReturner (String codeLine) {
 		String[] line_array = codeLine.split("\\s+");
 		int length = line_array.length;
@@ -102,6 +111,9 @@ public class ClassNameObfuscator implements Obfuscater{
 	}
 
 
+	/*
+	 * converts int into a string letter. Used for the meaningless names of classes.
+	 */
 	private String asciiToString (int ascii)  {
 		String letter = Character.toString((char)ascii);
 		name_counter++;
