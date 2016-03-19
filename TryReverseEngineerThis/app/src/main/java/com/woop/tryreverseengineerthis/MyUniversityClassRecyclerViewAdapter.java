@@ -33,7 +33,7 @@ public class MyUniversityClassRecyclerViewAdapter extends RecyclerView.Adapter<M
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mImageView.setImageResource(R.drawable.android_security);
+        holder.mImageView.setImageResource(mValues.get(position).imageId);
         holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
