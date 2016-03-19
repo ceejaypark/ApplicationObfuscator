@@ -1,6 +1,7 @@
 package obfuscate;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class ClassNameObfuscator implements Obfuscater{
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
 		List<String> linesOfCode = new ArrayList<String>();
 
+		// Hashmap containing the old name as key and new name as value
 		HashMap<String, String> classNames = new HashMap<String,String>();
 
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
@@ -41,21 +43,37 @@ public class ClassNameObfuscator implements Obfuscater{
 							// obf is the new name
 							String obfName = classNames.get(className);
 							lineInFile = renameClass(obfName, className, lineInFile);
-							linesOfCode.add(lineInFile);
 							existsInHash = true;
 						}
 					}
+					
+					// If it doesn't exist in the hash, create a new name for it
+					// and put it in the hashmap and also rename it in code
 					if (existsInHash == false) {
 						String obfName = asciiToString(name_counter);
 						classNames.put(className, obfName);
 						lineInFile = renameClass(obfName, className, lineInFile);
-						linesOfCode.add(lineInFile);
 					}
+					lineInFile.renameClass(className, classNames.get(className));
+					
 				}
 				else if (className == null) {
-					linesOfCode.add(lineInFile);
+					
 				}
+				linesOfCode.add(lineInFile);
 			}
+			
+			
+			FileWriter fileWriter = new FileWriter(file);
+			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
+			
+			for (String s: linesOfCode) {
+				s = s + "\n";
+				fileOutput.write(s);
+			}
+			fileOutput.flush();
+			fileOutput.close();
+			fileInput.close();
 		}
 		return files;
 	}
