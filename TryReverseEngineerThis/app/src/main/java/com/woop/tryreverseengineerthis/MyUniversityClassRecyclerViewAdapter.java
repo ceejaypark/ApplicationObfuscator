@@ -1,27 +1,24 @@
 package com.woop.tryreverseengineerthis;
 
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.woop.tryreverseengineerthis.UniversityClassFragment.OnListFragmentInteractionListener;
-import com.woop.tryreverseengineerthis.dummy.DummyContent.DummyItem;
+import com.woop.tryreverseengineerthis.items.ItemContent.ClassItem;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyUniversityClassRecyclerViewAdapter extends RecyclerView.Adapter<MyUniversityClassRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<ClassItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyUniversityClassRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyUniversityClassRecyclerViewAdapter(List<ClassItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -36,7 +33,7 @@ public class MyUniversityClassRecyclerViewAdapter extends RecyclerView.Adapter<M
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
+        holder.mImageView.setImageResource(R.mipmap.ic_locked);
         holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -58,14 +55,14 @@ public class MyUniversityClassRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        public final ImageView mImageView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public ClassItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            mImageView = (ImageView) view.findViewById(R.id.imageId);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 

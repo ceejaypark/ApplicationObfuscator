@@ -10,10 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.woop.tryreverseengineerthis.dummy.DummyContent;
-import com.woop.tryreverseengineerthis.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import com.woop.tryreverseengineerthis.items.ItemContent;
+import com.woop.tryreverseengineerthis.items.ItemContent.ClassItem;
 
 /**
  * A fragment representing a list of Items.
@@ -69,7 +67,7 @@ public class UniversityClassFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyUniversityClassRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyUniversityClassRecyclerViewAdapter(ItemContent.ITEMS, mListener));
         }
         return view;
     }
@@ -104,6 +102,6 @@ public class UniversityClassFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(ClassItem item);
     }
 }
