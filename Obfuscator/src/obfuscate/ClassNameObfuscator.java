@@ -24,6 +24,7 @@ public class ClassNameObfuscator implements Obfuscater{
 		// Hashmap containing the old name as key and new name as value
 		HashMap<String, String> classNames = new HashMap<String,String>();
 
+		
 
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			File file = fileEntry.getValue();
@@ -31,6 +32,20 @@ public class ClassNameObfuscator implements Obfuscater{
 			FileReader fileReader = new FileReader(file);
 			BufferedReader fileInput = new BufferedReader(fileReader);
 
+			// classCounter and mainClassName will make sure it records the main class name 
+			// For renaming purposes
+			String classPath = file.getAbsolutePath();
+
+			// classCounter and mainClassName will make sure it records the main class name 
+			// For renaming purposes
+			int classCounter = 0;
+			String mainClassName = file.getName();
+			
+			// New path for the new file. 
+			String newPath = new String();
+			
+			
+			
 			String lineInFile;
 
 			while ((lineInFile = fileInput.readLine()) != null) {
@@ -59,6 +74,12 @@ public class ClassNameObfuscator implements Obfuscater{
 						obfuscatedNames.add(obfName);
 						classNames.put(className, obfName);
 						lineInFile = renameClass(obfName, className, lineInFile);
+						
+						if (classCounter == 0) {
+							newPath = classPath.replaceAll(mainClassName, obfName + ".java");
+							classCounter++;
+						}
+						
 					}
 				}
 				// Iterate through all class names encountered and replace in line of code if
@@ -71,17 +92,19 @@ public class ClassNameObfuscator implements Obfuscater{
 			}
 
 
+			
 			FileWriter fileWriter = new FileWriter(file);
-			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
-
-			// Write out the list
+			
+			String a = new String();
 			for (String s: linesOfCode) {
 				s = s + "\n";
-				fileOutput.write(s);
+				fileWriter.write(s);
 			}
-			fileOutput.flush();
-			fileOutput.close();
+			//fileOutput.write(a);
+
+			fileWriter.close();
 			fileInput.close();
+
 		}
 		return files;
 	}
