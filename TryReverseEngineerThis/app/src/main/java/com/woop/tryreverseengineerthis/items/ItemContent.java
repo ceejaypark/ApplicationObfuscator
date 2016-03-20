@@ -1,5 +1,7 @@
 package com.woop.tryreverseengineerthis.items;
 
+import com.woop.tryreverseengineerthis.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,28 +21,26 @@ public class ItemContent {
     private static final int COUNT = 4;
 
     static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
+        addItem();
     }
 
-    private static void addItem(ClassItem item) {
+    private static void addItem() {
+        ClassItem item;
+        item = new ClassItem("1", "COMPSCI 702", "", R.drawable.android_security);
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
-    }
 
-    private static ClassItem createDummyItem(int position) {
-        return new ClassItem(String.valueOf(position), "Item " + position, makeDetails(position));
-    }
+        item = new ClassItem("2", "SOFTENG 700", "", R.drawable.research);
+        ITEMS.add(item);
+        ITEM_MAP.put(item.id, item);
 
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
-        return builder.toString();
+        item = new ClassItem("3", "SOFTENG 750", "", R.drawable.software_development_methodology);
+        ITEMS.add(item);
+        ITEM_MAP.put(item.id, item);
+
+        item = new ClassItem("4", "SOFTENG 751", "", R.drawable.datacentre);
+        ITEMS.add(item);
+        ITEM_MAP.put(item.id, item);
     }
 
     /**
@@ -49,12 +49,14 @@ public class ItemContent {
     public static class ClassItem {
         public final String id;
         public final String content;
+        public final int imageId;
         public final String details;
 
-        public ClassItem(String id, String content, String details) {
+        public ClassItem(String id, String content, String details, int imageId) {
             this.id = id;
             this.content = content;
             this.details = details;
+            this.imageId = imageId;
         }
 
         @Override
