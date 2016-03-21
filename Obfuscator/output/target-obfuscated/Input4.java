@@ -1,6 +1,3 @@
-/**
-comment to be deleted
-*/
 public class Input4 {
 	
 	int y = 0;
