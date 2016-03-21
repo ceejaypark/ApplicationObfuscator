@@ -2,8 +2,11 @@ package obfuscate;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +15,14 @@ import java.util.Properties;
 
 public class MainObfuscater {
 	private static final String CONFIG = ".\\resources\\config.properties";
-	private static String TARGET = "";
 
 	// lists and sets of files and obfuscater
 	public static ArrayList<Obfuscater> obfuscaters = new ArrayList<Obfuscater>();
 	public static HashMap<String, File> filesForObfuscation = new HashMap<String, File>();
 	public static List<String> blackList = new ArrayList<String>();
 
+	public static String OUTPUT = "";
+	
 	public static void main(String[] args) throws IOException {
 
 		// variables used for opening and loading config.properties
@@ -29,8 +33,18 @@ public class MainObfuscater {
 		configFileInputStream = new FileInputStream(CONFIG);
 		configProperties.load(configFileInputStream);
 
-		// retrieve the target directory for output files
-		TARGET = new File(configProperties.getProperty("target")).getCanonicalPath();
+		// retrieve the input directory from the configuration file
+		File inputDir = new File(configProperties.getProperty("input"));
+		String inputDirectoryName = new File(configProperties.getProperty("input")).getName();
+		
+		// retrieve the output directory from the configuration file
+		// further add in the directory, "-obfuscated" added to the input directory name
+		String outputDirectoryName = "\\" + inputDirectoryName + "-obfuscated";
+		File outputDir = new File(configProperties.getProperty("output") + outputDirectoryName);
+		OUTPUT = outputDir.getCanonicalPath();
+		
+		//copy all files from input directory to the output directory
+		copyFolder(inputDir,outputDir);
 
 		// ------------------------------------FILE HASHMAP ADDITION---------------------------------//
 		// get the black list of files to ignore for obfuscation
@@ -38,8 +52,7 @@ public class MainObfuscater {
 		String[] blackListAsArray = singleStringBlackList.split(",");
 		blackList = addBlackListToList(blackListAsArray);
 		// add non black listed files to hash map
-		File targetFolder = new File(TARGET);
-		addFilesToHashMap(targetFolder);
+		addFilesToHashMap(outputDir);
 
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
@@ -69,7 +82,7 @@ public class MainObfuscater {
 
 	/**
 	 * Converts an string array of black list file names into a string list of
-	 * canonical file paths
+	 * canonical file paths.
 	 * 
 	 * @param stringArray
 	 *            array of black list file names written as in the config file
@@ -80,15 +93,15 @@ public class MainObfuscater {
 
 		// add each of the black list in canonical path format
 		for (int i = 0; i < stringArray.length; i++) {
-			outputList.add(TARGET + "\\" + stringArray[i]);
+			outputList.add(OUTPUT + "\\" + stringArray[i]);
 		}
 
 		return outputList;
 	}
 
 	/**
-	 * Adds files not black listed into the hash map for files for obfuscation
-	 * Recursively calls directories contained within the first folder
+	 * Adds files not black listed into the hash map for files for obfuscation.
+	 * Recursively calls directories contained within the first folder.
 	 * 
 	 * @param folder
 	 *            folder to add files from
@@ -107,10 +120,59 @@ public class MainObfuscater {
 					//recursive call to any directory
 					addFilesToHashMap(listOfFiles[i]);
 				} else if (listOfFiles[i].isFile()) {
+					
 					//add files to hash map since not black listed
 					filesForObfuscation.put(listOfFiles[i].getCanonicalPath(), listOfFiles[i]);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Copies all files and folders recursively from src to dest.
+	 * Code from "http://www.mkyong.com/java/how-to-copy-directory-in-java/" and modified
+	 * @param src is the source folder where the files and folders are copied from
+	 * @param dest is the destination folder where the files and folders are copied to
+	 * @throws IOException
+	 */
+	public static void copyFolder(File src, File dest) throws IOException {
+
+		if (src.isDirectory()) {
+
+			// if directory not exists, create it
+			if (!dest.exists()) {
+				dest.mkdir();
+				//System.out.println("Directory copied from " + src + "  to " + dest);
+			}
+
+			// list all the directory contents
+			String files[] = src.list();
+
+			for (String file : files) {
+				// construct the src and dest file structure
+				File srcFile = new File(src, file);
+				File destFile = new File(dest, file);
+				// recursive copy
+				copyFolder(srcFile, destFile);
+			}
+
+		} else {
+			// if file, then copy it
+			// Use bytes stream to support all file types
+			InputStream in = new FileInputStream(src);
+			OutputStream out = new FileOutputStream(dest);
+
+			byte[] buffer = new byte[1024];
+
+			int length;
+			// copy the file content in bytes
+			while ((length = in.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+
+			in.close();
+			out.close();
+			//System.out.println("File copied from " + src + " to " + dest);
 		}
 	}
 }
