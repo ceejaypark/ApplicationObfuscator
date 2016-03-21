@@ -120,9 +120,10 @@ public class MainObfuscater {
 					//recursive call to any directory
 					addFilesToHashMap(listOfFiles[i]);
 				} else if (listOfFiles[i].isFile()) {
-					
-					//add files to hash map since not black listed
-					filesForObfuscation.put(listOfFiles[i].getCanonicalPath(), listOfFiles[i]);
+					if (getFileExtension(listOfFiles[i]).equals("java")) {
+						// add files to hash map since not black listed and is java file
+						filesForObfuscation.put(listOfFiles[i].getCanonicalPath(), listOfFiles[i]);
+					}
 				}
 			}
 		}
@@ -135,7 +136,7 @@ public class MainObfuscater {
 	 * @param dest is the destination folder where the files and folders are copied to
 	 * @throws IOException
 	 */
-	public static void copyFolder(File src, File dest) throws IOException {
+	private static void copyFolder(File src, File dest) throws IOException {
 
 		if (src.isDirectory()) {
 
@@ -174,5 +175,22 @@ public class MainObfuscater {
 			out.close();
 			//System.out.println("File copied from " + src + " to " + dest);
 		}
+	}
+	
+	/**
+	 * Get the extension of a file
+	 * @param file
+	 * @return
+	 */
+	private static String getFileExtension(File file) {
+		String fileName = file.getName();
+		String[] nameSplit = fileName.split("\\.");
+		
+		//if file has no extension return nothing
+		if (nameSplit.length < 2) {
+			return "";
+		}
+		
+		return nameSplit[nameSplit.length-1];
 	}
 }
