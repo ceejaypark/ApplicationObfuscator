@@ -1,8 +1,19 @@
 package com.woop.tryreverseengineerthis;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +23,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.woop.tryreverseengineerthis.items.ItemContent;
+import com.woop.tryreverseengineerthis.service.CurrentLocationListener;
+import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
 public class LandingActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        UniversityClassFragment.OnListFragmentInteractionListener {
+
+    private static final String TAG = "LandingActvity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +46,7 @@ public class LandingActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Hello", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -40,6 +59,19 @@ public class LandingActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+
+        CurrentLocationListener locationListener = new CurrentLocationListener();
+
+        try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    0, 0, locationListener);
+        }catch(SecurityException e)
+        {
+            Log.d(TAG, "Permission not granted");
+        }
     }
 
     @Override
@@ -79,23 +111,54 @@ public class LandingActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = null;
+        if (id == R.id.nav_classes) {
+            fragment = new UniversityClassFragment();
+        } else if (id == R.id.nav_assignments) {
+            fragment = new Fragment();
+        } else if (id == R.id.nav_checkin) {
+            fragment = new Fragment();
+        } else if (id == R.id.nav_lectures) {
+            fragment = new Fragment();
         } else if (id == R.id.nav_share) {
-
+            fragment = new Fragment();
         } else if (id == R.id.nav_send) {
-
+            fragment = new Fragment();
         }
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, fragment)
+                .commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onListFragmentInteraction(ItemContent.ClassItem item) {
+        Log.d(TAG, item.id);
+        Location currentLocation = LocationStorage.getLocation();
+
+        if(currentLocation == null)
+            return;
+
+        double longitude = currentLocation.getLongitude();
+        double latitude = currentLocation.getLatitude();
+
+        if(latitude > -35.0 || latitude < -37.0)
+        {
+            Log.d(TAG, "Latitude: " + latitude);
+            return;
+        }
+
+        if(longitude < 174.0 || longitude > 175.0){
+            Log.d(TAG, "Longitude: " + longitude);
+            return;
+        }
+
+        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT )
+        .show();
     }
 }
