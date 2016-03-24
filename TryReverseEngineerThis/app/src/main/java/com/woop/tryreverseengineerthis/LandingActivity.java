@@ -107,6 +107,8 @@ public class LandingActivity extends AppCompatActivity
                 getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new CurrentLocationListener();
         try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    5000, 0, mLocationListener);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     5000, 0, mLocationListener);
             Log.d(TAG, "Hi");
