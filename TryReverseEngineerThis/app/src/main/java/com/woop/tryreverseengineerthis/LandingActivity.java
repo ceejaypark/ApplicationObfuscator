@@ -1,20 +1,15 @@
 package com.woop.tryreverseengineerthis;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +24,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.woop.tryreverseengineerthis.items.ItemContent;
-import com.woop.tryreverseengineerthis.service.CurrentLocationListener;
+import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
 public class LandingActivity extends AppCompatActivity
@@ -37,6 +32,7 @@ public class LandingActivity extends AppCompatActivity
         UniversityClassFragment.OnListFragmentInteractionListener {
 
     private static final String TAG = "LandingActvity";
+    private CurrentLocationListener mLocationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +61,6 @@ public class LandingActivity extends AppCompatActivity
 
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
-
-        CurrentLocationListener locationListener = new CurrentLocationListener();
 
         boolean gps_enabled = false;
         boolean network_enabled = false;
@@ -103,9 +97,19 @@ public class LandingActivity extends AppCompatActivity
             dialog.show();
 
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        mLocationListener = new CurrentLocationListener();
         try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    5000, 0, mLocationListener);
+            Log.d(TAG, "Hi");
         }catch(SecurityException e)
         {
             Log.d(TAG, "Permission not granted");
