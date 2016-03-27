@@ -3,6 +3,9 @@ RemoteSystemsTempFiles
 TestApplication/.classpath
 TestApplication/.settings/
 TestApplication/.project
+Obf_GUI/.classpath
+Obf_GUI/.settings/
+Obf_GUI/.project
 Obfuscator/.settings/
 Obfuscator/.project
 Obfuscator/.classpath
