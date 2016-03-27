@@ -44,13 +44,6 @@ public class NameObfuscater implements Obfuscater {
 				URL[] urls = new URL[]{url};
 				//load in file as a class so we can use reflection
 				URLClassLoader ucl = new URLClassLoader(urls);
-				//file.getName().replaceFirst("[.][^.]+$", "")
-			//	if (file.getParentFile().getName().contains("src")){
-//					 c = ucl.loadClass("output.target-obfuscated.src." + file.getName().replaceFirst("[.][^.]+$", "") ); 
-//
-//				}else{
-//					 c = ucl.loadClass("output.target-obfuscated." + file.getName().replaceFirst("[.][^.]+$", "") ); 
-//				} 
 				
 				Class<?> c = ucl.loadClass(file.getName().replaceFirst("[.][^.]+$", "") ); 
 				//iterate through each declared field and rename it
