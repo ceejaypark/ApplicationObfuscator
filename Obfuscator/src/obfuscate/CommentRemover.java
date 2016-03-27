@@ -15,9 +15,9 @@ public class CommentRemover implements Obfuscater{
 	
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
-		List<String> linesOfCode = new ArrayList<String>();
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			List<String> linesOfCode = new ArrayList<String>();
 			File file = fileEntry.getValue();
 			
 			FileReader fileReader = new FileReader(file);
