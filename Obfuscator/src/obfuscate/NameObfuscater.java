@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 public class NameObfuscater implements Obfuscater {
@@ -40,12 +42,10 @@ public class NameObfuscater implements Obfuscater {
 				// Convert file to a URL
 				URL url = file.toURI().toURL();;        
 				URL[] urls = new URL[]{url};
-
 				//load in file as a class so we can use reflection
 				URLClassLoader ucl = new URLClassLoader(urls);
-
-				//TODO : remove the hardcoding
-				Class<?> c = ucl.loadClass("Input4"); 
+				
+				Class<?> c = ucl.loadClass(file.getName().replaceFirst("[.][^.]+$", "") ); 
 				//iterate through each declared field and rename it
 				for(Field f: c.getDeclaredFields()) {
 					content = Pattern.compile("\\b"+ f.getName() + "\\b").matcher(content).replaceAll(getNewName());
@@ -69,7 +69,9 @@ public class NameObfuscater implements Obfuscater {
 
 				ucl.close();
 			} catch (MalformedURLException e) {
+				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}			
 
 		}	
