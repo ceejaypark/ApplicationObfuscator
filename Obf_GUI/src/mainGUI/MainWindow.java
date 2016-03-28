@@ -46,7 +46,6 @@ public class MainWindow {
 		
 		frame.add(new FileChoose("Input Folder:","Select input folder..."));
 		frame.add(new FileChoose("OutputFolder:","Select output folder..."));
-		
 	}
 	
 }
