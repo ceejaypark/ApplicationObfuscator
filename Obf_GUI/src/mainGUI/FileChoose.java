@@ -93,8 +93,11 @@ public class FileChoose extends JPanel{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					MyDirChooser mfc = new MyDirChooser();
-					jtf.setText(mfc.activate());
-					jtf.setForeground(Color.BLACK);
+					String temp = mfc.activate();
+					if (!temp.equals("")){
+						jtf.setText(temp);
+						jtf.setForeground(Color.BLACK);
+					}
 				}
 			});
 		}
