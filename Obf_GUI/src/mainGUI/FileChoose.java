@@ -92,7 +92,7 @@ public class FileChoose extends JPanel{
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					jtf.setText("fhdkhfkjdsfhdafldaf");	
+					MyFileChooser mfc = new MyFileChooser();
 					jtf.setForeground(Color.BLACK);
 				}
 			});

@@ -6,6 +6,6 @@ import javax.swing.JFileChooser;
 public class MyFileChooser extends JFileChooser{
 
 	public MyFileChooser(){
-		
+		this.showOpenDialog(this);
 	}
 }
