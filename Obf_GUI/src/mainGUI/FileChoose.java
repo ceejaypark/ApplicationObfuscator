@@ -102,4 +102,8 @@ public class FileChoose extends JPanel{
 			});
 		}
 	}
+	
+	public String getFolderLoc(){
+		return jtf.getText();
+	}
 }
