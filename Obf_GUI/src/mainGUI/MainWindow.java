@@ -44,8 +44,8 @@ public class MainWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 		
-		frame.add(new FileChoose("Select input folder..."));
-		frame.add(new FileChoose("Select output folder..."));
+		frame.add(new FileChoose("Input Folder:","Select input folder..."));
+		frame.add(new FileChoose("OutputFolder:","Select output folder..."));
 		
 	}
 	
