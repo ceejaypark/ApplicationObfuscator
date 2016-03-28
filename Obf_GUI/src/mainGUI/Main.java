@@ -1,4 +1,4 @@
-package mainGUi;
+package mainGUI;
 
 public class Main {
 
