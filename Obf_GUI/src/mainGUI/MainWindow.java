@@ -4,8 +4,10 @@ import java.awt.EventQueue;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import java.awt.FlowLayout;
+import java.awt.Component;
 
 
 public class MainWindow {
@@ -44,8 +46,12 @@ public class MainWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 		
-		frame.add(new FileChoose("Input Folder:","Select input folder..."));
-		frame.add(new FileChoose("OutputFolder:","Select output folder..."));
+		frame.getContentPane().add(new FileChoose("Input Folder:","Select input folder..."));
+		frame.getContentPane().add(new FileChoose("OutputFolder:","Select output folder..."));
+		JLabel label = new JLabel("Select the obfuscation techiniques to be used:");
+		label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		frame.getContentPane().add(label);
+		frame.getContentPane().add(new ObfCheckList());
 	}
 	
 }
