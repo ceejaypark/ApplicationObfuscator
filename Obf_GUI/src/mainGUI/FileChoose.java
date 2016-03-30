@@ -18,12 +18,11 @@ import java.awt.Insets;
 @SuppressWarnings("serial")
 public class FileChoose extends JPanel{
 	
-	JLabel jta;
-	JTextField jtf;
-	JButton jb;
-	String fileLoc;
-	String defaultText;
-	String inputPrompt;
+	private JLabel jta;
+	private JTextField jtf;
+	private JButton jb;
+	private String defaultText;
+	private String inputPrompt;
 
 	public FileChoose(String inputPrompt, String defaultText){
 		this.inputPrompt = inputPrompt;

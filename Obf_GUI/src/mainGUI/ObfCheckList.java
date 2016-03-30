@@ -8,10 +8,19 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+/**
+ * This class is responsible for the panel that displays what obfuscation techniques
+ * are available for selection. 
+ * 
+ * CHANGE THIS FILE IF ANY OBFUSCATION TECHNIQUES ARE ADDED SO USER CAN SELECT IT.
+ * @author cwu323
+ *
+ */
 @SuppressWarnings("serial")
 public class ObfCheckList extends JPanel{
-	ArrayList<String> obfNames;
-	HashMap<String, JRadioButton> map = new HashMap<String, JRadioButton>();
+	private ArrayList<String> obfNames;
+	private HashMap<String, JRadioButton> map = new HashMap<String, JRadioButton>();
 	
 	public ObfCheckList(){
 		setLayout(new GridLayout(4, 2, 0, 0));
