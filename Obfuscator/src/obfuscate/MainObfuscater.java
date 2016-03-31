@@ -59,17 +59,25 @@ public class MainObfuscater {
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
 			obfuscaters.add(new CommentRemover());
-		}  else if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
+		} 
+		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
+			// add code insertion obfuscater
+			//obfuscaters.add(new CodeInsertionObfuscater());
+		} 
+		if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
 			// add to 'obfuscaters', rename field obfuscater class
-		} else if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
+		} 
+		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
-		} else if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
+		} 
+		if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
 			// add to 'obfuscaters', minification obfuscater class
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
 			obfuscaters.add(new NameObfuscater());
 		} 
+		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
