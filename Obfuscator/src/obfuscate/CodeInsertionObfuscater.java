@@ -22,6 +22,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			
 			List<String> linesOfCode = new ArrayList<String>();
 			List<Integer> braces = new ArrayList<Integer>();
 			
@@ -94,7 +95,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 			fileInput.close();
 		}
 		
-		return null;
+		return files;
 	}
 	
 	private boolean isClassDeclaration(String[] lineOfCode) {
