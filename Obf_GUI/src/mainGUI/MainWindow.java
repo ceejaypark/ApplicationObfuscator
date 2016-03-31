@@ -1,6 +1,5 @@
 package mainGUI;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.BoxLayout;
@@ -27,7 +26,7 @@ public class MainWindow {
 	private FileChoose outputFolder;
 	private ObfCheckList checklist;
 	private JButton exeButton;
-	private FileList fl;
+	private MyTree tree;
 
 	/**
 	 * Launch the application.
@@ -94,14 +93,14 @@ public class MainWindow {
 		gbc_wrapper.gridy = 0;
 		frame.getContentPane().add(wrapper, gbc_wrapper);
 		
-		fl = new FileList();
+		tree = new MyTree();
 		GridBagConstraints gbc_fl = new GridBagConstraints();
 		gbc_fl.gridwidth = 2;
 		gbc_fl.fill = GridBagConstraints.BOTH;
 		gbc_fl.insets = new Insets(0, 0, 5, 5);
 		gbc_fl.gridx = 1;
 		gbc_fl.gridy = 0;
-		frame.getContentPane().add(fl, gbc_fl);
+		frame.getContentPane().add(tree, gbc_fl);
 		
 		exeButton = new JButton("Obfuscate");
 		GridBagConstraints gbc_exeButton = new GridBagConstraints();
