@@ -28,6 +28,8 @@ public class ExecuteObf {
 		
 		if(!inputLoc.isDirectory() || !outputLoc.isDirectory()){
 			JOptionPane.showMessageDialog(null, "Please select a valid input or output folder", "Warning", JOptionPane.WARNING_MESSAGE);
+			exeButton.setEnabled(true);
+			return;
 		};
 	}
 	

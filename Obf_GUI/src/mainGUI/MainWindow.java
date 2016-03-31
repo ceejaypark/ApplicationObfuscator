@@ -7,10 +7,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.io.IOException;
 
 
 
@@ -21,6 +26,7 @@ public class MainWindow {
 	private FileChoose outputFolder;
 	private ObfCheckList checklist;
 	private JButton exeButton;
+	private MyTree tree;
 
 	/**
 	 * Launch the application.
@@ -40,39 +46,69 @@ public class MainWindow {
 
 	/**
 	 * Create the application.
+	 * @throws IOException 
 	 */
-	public MainWindow() {
+	public MainWindow() throws IOException {
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws IOException 
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 536, 271);
+		frame.setBounds(100, 100, 720, 291);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 		
 		addComponents();
 		addListeners();
 	}
 	
-	private void addComponents(){
+	private void addComponents() throws IOException{
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{508, 176, 0, 0};
+		gridBagLayout.rowHeights = new int[]{257, 19, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+		frame.getContentPane().setLayout(gridBagLayout);
 		this.inputFolder = new FileChoose("Input Folder:","Select input folder...");
 		this.outputFolder = new FileChoose("OutputFolder:","Select output folder...");
 		this.checklist = new ObfCheckList();
 		
-		frame.getContentPane().add(inputFolder);
-		frame.getContentPane().add(outputFolder);
+		JPanel wrapper = new JPanel();
+		wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+		wrapper.add(inputFolder);
+		wrapper.add(outputFolder);
 		JLabel label = new JLabel("Select the obfuscation techiniques to be used:");
 		label.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		frame.getContentPane().add(label);
-		frame.getContentPane().add(checklist);
+		wrapper.add(label);
+		wrapper.add(checklist);
+		
+		GridBagConstraints gbc_wrapper = new GridBagConstraints();
+		gbc_wrapper.fill = GridBagConstraints.BOTH;
+		gbc_wrapper.insets = new Insets(0, 0, 5, 5);
+		gbc_wrapper.gridx = 0;
+		gbc_wrapper.gridy = 0;
+		frame.getContentPane().add(wrapper, gbc_wrapper);
+		
+		tree = new MyTree();
+		GridBagConstraints gbc_fl = new GridBagConstraints();
+		gbc_fl.gridwidth = 2;
+		gbc_fl.fill = GridBagConstraints.BOTH;
+		gbc_fl.insets = new Insets(0, 0, 5, 5);
+		gbc_fl.gridx = 1;
+		gbc_fl.gridy = 0;
+		frame.getContentPane().add(tree, gbc_fl);
 		
 		exeButton = new JButton("Obfuscate");
-		frame.getContentPane().add(exeButton);
+		GridBagConstraints gbc_exeButton = new GridBagConstraints();
+		gbc_exeButton.insets = new Insets(0, 0, 0, 5);
+		gbc_exeButton.anchor = GridBagConstraints.NORTHEAST;
+		gbc_exeButton.gridx = 1;
+		gbc_exeButton.gridy = 2;
+		frame.getContentPane().add(exeButton, gbc_exeButton);
 	}
 	
 	private void addListeners(){
