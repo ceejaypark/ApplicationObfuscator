@@ -53,7 +53,13 @@ public class Bloating implements Obfuscater {
 	}
 
 	private String replaceSpace(String lineInFile) {
-		String alteredLine = lineInFile.replaceAll(" ", randomCommentGenerator());
+		String[] lineArray = lineInFile.split("\\s+");
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i<lineArray.length;i++) {
+			sb.append(lineArray[i]);
+			sb.append(randomCommentGenerator());
+		}
+		String alteredLine = sb.toString();
 		return alteredLine; 
 	}
 
