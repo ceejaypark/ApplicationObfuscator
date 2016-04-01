@@ -59,7 +59,7 @@ public class MainWindow {
 	private void initialize() throws IOException {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 720, 291);
+		frame.setBounds(100, 100, 759, 431);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addComponents();
@@ -69,9 +69,9 @@ public class MainWindow {
 	private void addComponents() throws IOException{
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{508, 176, 0, 0};
-		gridBagLayout.rowHeights = new int[]{257, 19, 0, 0};
+		gridBagLayout.rowHeights = new int[]{55, 257, 19, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
 		this.inputFolder = new FileChoose("Input Folder:","Select input folder...");
 		this.outputFolder = new FileChoose("OutputFolder:","Select output folder...");
@@ -87,6 +87,7 @@ public class MainWindow {
 		wrapper.add(checklist);
 		
 		GridBagConstraints gbc_wrapper = new GridBagConstraints();
+		gbc_wrapper.gridheight = 2;
 		gbc_wrapper.fill = GridBagConstraints.BOTH;
 		gbc_wrapper.insets = new Insets(0, 0, 5, 5);
 		gbc_wrapper.gridx = 0;
@@ -95,9 +96,10 @@ public class MainWindow {
 		
 		tree = new MyTree();
 		GridBagConstraints gbc_fl = new GridBagConstraints();
+		gbc_fl.gridheight = 2;
 		gbc_fl.gridwidth = 2;
 		gbc_fl.fill = GridBagConstraints.BOTH;
-		gbc_fl.insets = new Insets(0, 0, 5, 5);
+		gbc_fl.insets = new Insets(0, 0, 5, 0);
 		gbc_fl.gridx = 1;
 		gbc_fl.gridy = 0;
 		frame.getContentPane().add(tree, gbc_fl);
@@ -107,7 +109,7 @@ public class MainWindow {
 		gbc_exeButton.insets = new Insets(0, 0, 0, 5);
 		gbc_exeButton.anchor = GridBagConstraints.NORTHEAST;
 		gbc_exeButton.gridx = 1;
-		gbc_exeButton.gridy = 2;
+		gbc_exeButton.gridy = 3;
 		frame.getContentPane().add(exeButton, gbc_exeButton);
 	}
 	
