@@ -119,7 +119,12 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				ExecuteObf obfuscate = ExecuteObf.getInstance();
 				if(!obfuscate.isRunning()){
-					obfuscate.exe(inputFolder.getFolderLoc(), outputFolder.getFolderLoc(), checklist, exeButton );
+					try {
+						obfuscate.exe(inputFolder.getFolderLoc(), outputFolder.getFolderLoc(), checklist, exeButton );
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				else{
 					JOptionPane.showMessageDialog(null, "A project is currently being obfuscated, please wait until process has finished.");
