@@ -57,7 +57,7 @@ public class MainObfuscater {
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
 		if (Boolean.parseBoolean(configProperties.getProperty("watermark"))){
-			//obfuscaters.add(new WatermarkObfuscator());
+			obfuscaters.add(new WatermarkObfuscator());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater

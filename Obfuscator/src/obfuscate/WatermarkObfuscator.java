@@ -76,17 +76,9 @@ public class WatermarkObfuscator implements Obfuscater{
 					//check if method or class declaration has finished
 					if(lineInFile.contains("{")){
 						linesOfCode.add("");
-						MessageDigest messageDigest;
-						try {
-							messageDigest = MessageDigest.getInstance("SHA-256");
-							messageDigest.update(currentJavadocString.getBytes());
-							String encryptedString = new String(messageDigest.digest());
-							linesOfCode.add("String a=\"" + encryptedString + "\";");
-							System.out.println("Hash added:" + encryptedString);
-							
-						} catch (NoSuchAlgorithmException e) {
-							System.out.println("NoSuchalgorithmException");							
-						}						
+						linesOfCode.add("String a=\"" + currentJavadocString.hashCode() + "\";");
+						System.out.println("Hash added:" + currentJavadocString.hashCode());		
+						System.out.println("Hashed from:" + currentJavadocString);
 						addJavadoc = false;
 					}					
 				}
