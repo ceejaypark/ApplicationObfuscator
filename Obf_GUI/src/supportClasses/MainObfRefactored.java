@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JRadioButton;
+import javax.swing.SwingWorker;
 
+import mainGUI.ExecuteObf;
 import obfuscate.*;
 
-public class MainObfRefactored {
+public class MainObfRefactored extends SwingWorker<Void,String>{
 	private ArrayList<Obfuscater> obfuscaters = new ArrayList<Obfuscater>();
 	private HashMap<String, File> filesForObf = new HashMap<String, File>();
 	private HashMap<String, JRadioButton> selectedTechniques;
@@ -23,13 +26,14 @@ public class MainObfRefactored {
 		this.selectedTechniques = selectedTechniques;
 
 		FolderCopy fc = new FolderCopy();
-		fc.beginCopy(inputFolder, outputFolder);
-
+		fc.beginCopy(inputFolder, outputFolder, blacklist);
+		
+		this.blacklist = fc.copiedBlacklist();
+		for(String x :this.blacklist){
+			System.out.println(x);
+		}
 		addFilesToHashMap(outputFolder);
 		addObfuscaters();
-		for(Obfuscater obf : obfuscaters){
-			filesForObf = obf.execute(filesForObf);
-		}
 	}
 
 	private void addObfuscaters() {
@@ -63,8 +67,19 @@ public class MainObfRefactored {
 		File[] listOfFiles = folder.listFiles();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
-
-			if (blacklist.contains(listOfFiles[i].getCanonicalPath())) {
+			boolean skip = false;
+			for(String x: blacklist){
+				
+				System.out.println(x);
+				System.out.println(listOfFiles[i].getCanonicalPath());
+				System.out.println(x.equals(listOfFiles[i].getCanonicalPath()));
+				
+				if(x.equals(listOfFiles[i].getCanonicalPath())){
+					skip = true;
+					break;
+				}
+			}
+			if (skip) {
 				continue;
 			} else {
 				if (listOfFiles[i].isDirectory()) {
@@ -88,5 +103,29 @@ public class MainObfRefactored {
 		}
 
 		return nameSplit[nameSplit.length - 1];
+	}
+
+	@Override
+	protected Void doInBackground() throws Exception {
+		for (int i = 0; i < obfuscaters.size(); i++){
+			obfuscaters.get(i).execute(filesForObf);
+			double percent = (double)i / (double)obfuscaters.size();
+			publish ("" +  percent);
+		}
+
+		return null;
+	}
+	
+	@Override
+	protected void process(List<String> string){
+		for(String x : string){
+			System.out.println("finished " + x + "%");
+		}
+		
+	}
+	
+	@Override
+	protected void done(){
+		ExecuteObf.getInstance().setRunning(false);
 	}
 }
