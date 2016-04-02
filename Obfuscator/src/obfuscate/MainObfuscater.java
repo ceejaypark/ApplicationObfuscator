@@ -56,6 +56,9 @@ public class MainObfuscater {
 
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
+		if (Boolean.parseBoolean(configProperties.getProperty("watermark"))){
+			//obfuscaters.add(new WatermarkObfuscator());
+		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
 			obfuscaters.add(new CommentRemover());
@@ -85,6 +88,8 @@ public class MainObfuscater {
 			// add to 'obfuscaters', get rid of logs
 			obfuscaters.add(new LogDeleteObfuscator());
 		}
+		
+		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
