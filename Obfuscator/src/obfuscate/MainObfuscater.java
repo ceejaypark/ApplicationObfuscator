@@ -81,7 +81,9 @@ public class MainObfuscater {
 			// add to 'obfuscaters', get rid of directories
 			obfuscaters.add(new DirectoryFlatenorObfuscator());
 		}
-		
+		if (Boolean.parseBoolean(configProperties.getProperty("logdelete"))){
+			obfuscaters.add(new LogDeleteObfuscator());
+		}
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
