@@ -91,7 +91,10 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 						}
 					}
 				}
-
+				
+				if(original.contains("package"))
+					continue;
+				
 				if(!deleteImport)
 					linesOfCode.add(original);
 			}
