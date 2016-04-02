@@ -106,9 +106,6 @@ public class MyTree extends JPanel {
     public ArrayList<String> getCheckList() throws IOException{
     	ArrayList<String> blacklist = new ArrayList<String>();
     	
-    	if(root == null || root.getUserObject() == null){
-    		System.out.println("null");
-    	}
     	
     	DefaultMutableTreeNode dmtn = root;
     	Enumeration enu = dmtn.breadthFirstEnumeration();
@@ -126,9 +123,6 @@ public class MyTree extends JPanel {
     		}
     	}
     	
-    	for(String x : blacklist){
-    		System.out.println(x);
-    	}
     	return blacklist;
     };
 }

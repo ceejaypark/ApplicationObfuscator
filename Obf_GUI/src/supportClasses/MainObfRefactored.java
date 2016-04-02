@@ -26,8 +26,12 @@ public class MainObfRefactored extends SwingWorker<Void,String>{
 		this.selectedTechniques = selectedTechniques;
 
 		FolderCopy fc = new FolderCopy();
-		fc.beginCopy(inputFolder, outputFolder);
-
+		fc.beginCopy(inputFolder, outputFolder, blacklist);
+		
+		this.blacklist = fc.copiedBlacklist();
+		for(String x :this.blacklist){
+			System.out.println(x);
+		}
 		addFilesToHashMap(outputFolder);
 		addObfuscaters();
 	}
@@ -63,8 +67,19 @@ public class MainObfRefactored extends SwingWorker<Void,String>{
 		File[] listOfFiles = folder.listFiles();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
-
-			if (blacklist.contains(listOfFiles[i].getCanonicalPath())) {
+			boolean skip = false;
+			for(String x: blacklist){
+				
+				System.out.println(x);
+				System.out.println(listOfFiles[i].getCanonicalPath());
+				System.out.println(x.equals(listOfFiles[i].getCanonicalPath()));
+				
+				if(x.equals(listOfFiles[i].getCanonicalPath())){
+					skip = true;
+					break;
+				}
+			}
+			if (skip) {
 				continue;
 			} else {
 				if (listOfFiles[i].isDirectory()) {
