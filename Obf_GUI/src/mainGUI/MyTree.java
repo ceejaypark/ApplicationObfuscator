@@ -32,7 +32,6 @@ public class MyTree extends JPanel {
 	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 	private DefaultTreeModel treeModel= new DefaultTreeModel(root);
     private JTree tree;
-    private ArrayList<CheckBoxNode> nodes;
     
     public MyTree() {
         super(new BorderLayout());
@@ -83,18 +82,15 @@ public class MyTree extends JPanel {
     }
     
     public void update(File dir) {
-        nodes = new ArrayList<CheckBoxNode>();
     	root = new DefaultMutableTreeNode();
     	
         for (File fileSystemRoot: dir.listFiles()) {
         	CheckBoxNode cbn = new CheckBoxNode(fileSystemRoot, Status.DESELECTED);
-        	nodes.add(cbn);
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(cbn);
             root.add(node);
             for (File file: fileSystemView.getFiles(fileSystemRoot, true)) {
                 if (file.isDirectory()) {
                 	CheckBoxNode innerCbn = new CheckBoxNode(file, Status.DESELECTED);
-                	nodes.add(innerCbn);
                 	DefaultMutableTreeNode innerNode = new DefaultMutableTreeNode(innerCbn);
                     node.add(innerNode);
                 }
@@ -109,12 +105,30 @@ public class MyTree extends JPanel {
     
     public ArrayList<String> getCheckList() throws IOException{
     	ArrayList<String> blacklist = new ArrayList<String>();
-    	for (CheckBoxNode x : nodes){
-    		if(x.status.equals(Status.SELECTED)){
-    			blacklist.add(x.file.getCanonicalPath());
+    	
+    	if(root == null || root.getUserObject() == null){
+    		System.out.println("null");
+    	}
+    	
+    	DefaultMutableTreeNode dmtn = root;
+    	Enumeration enu = dmtn.breadthFirstEnumeration();
+    	
+    	
+    	while(enu.hasMoreElements()){
+    		DefaultMutableTreeNode dmtn1 = (DefaultMutableTreeNode) enu.nextElement();
+    		
+    		if((CheckBoxNode)dmtn1.getUserObject() == null)
+    			continue;
+    		
+    		CheckBoxNode cbn = (CheckBoxNode)dmtn1.getUserObject();
+    		if(cbn.status == Status.SELECTED){
+    			blacklist.add(cbn.file.getCanonicalPath());
     		}
     	}
     	
+    	for(String x : blacklist){
+    		System.out.println(x);
+    	}
     	return blacklist;
     };
 }
@@ -210,7 +224,9 @@ class FolderSelectionListener implements TreeSelectionListener {
                     return;
                 }
                 for (File file: chunks) {
-                    model.insertNodeInto(new DefaultMutableTreeNode(new CheckBoxNode(file, parentStatus)), node, node.getChildCount());
+                	CheckBoxNode cbn = new CheckBoxNode(file,parentStatus);
+
+                    model.insertNodeInto(new DefaultMutableTreeNode(cbn), node, node.getChildCount());
                     //node.add(new DefaultMutableTreeNode(new CheckBoxNode(file, parentStatus)));
                 }
                 //model.reload(parent); //= model.nodeStructureChanged(parent);
