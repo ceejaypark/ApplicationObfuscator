@@ -5,6 +5,7 @@ package mainGUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -27,24 +28,18 @@ public class MyTree extends JPanel {
 	
 
     private JLabel title = new JLabel("File BlackList");
-	
+	private FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+	private DefaultTreeModel treeModel= new DefaultTreeModel(root);
+    private JTree tree;
+    private ArrayList<CheckBoxNode> nodes;
+    
     public MyTree() {
         super(new BorderLayout());
-        final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        final DefaultTreeModel treeModel = new DefaultTreeModel(root);
-        for (File fileSystemRoot: fileSystemView.getRoots()) {
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new CheckBoxNode(fileSystemRoot, Status.DESELECTED));
-            root.add(node);
-            for (File file: fileSystemView.getFiles(fileSystemRoot, true)) {
-                if (file.isDirectory()) {
-                    node.add(new DefaultMutableTreeNode(new CheckBoxNode(file, Status.DESELECTED)));
-                }
-            }
-        }
+
         treeModel.addTreeModelListener(new CheckBoxStatusUpdateListener());
 
-        final JTree tree = new JTree(treeModel) {
+        tree = new JTree(treeModel) {
             @Override public void updateUI() {
                 setCellRenderer(null);
                 setCellEditor(null);
@@ -87,10 +82,41 @@ public class MyTree extends JPanel {
         frame.setVisible(true);
     }
     
-    public void update(File dir){
+    public void update(File dir) {
+        nodes = new ArrayList<CheckBoxNode>();
+    	root = new DefaultMutableTreeNode();
     	
-    	
+        for (File fileSystemRoot: dir.listFiles()) {
+        	CheckBoxNode cbn = new CheckBoxNode(fileSystemRoot, Status.DESELECTED);
+        	nodes.add(cbn);
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(cbn);
+            root.add(node);
+            for (File file: fileSystemView.getFiles(fileSystemRoot, true)) {
+                if (file.isDirectory()) {
+                	CheckBoxNode innerCbn = new CheckBoxNode(file, Status.DESELECTED);
+                	nodes.add(innerCbn);
+                	DefaultMutableTreeNode innerNode = new DefaultMutableTreeNode(innerCbn);
+                    node.add(innerNode);
+                }
+            }
+        }
+        treeModel = new DefaultTreeModel(root);
+        treeModel.addTreeModelListener(new CheckBoxStatusUpdateListener());
+        tree.setModel(treeModel);
+        tree.repaint();
+        this.repaint();
     }
+    
+    public ArrayList<String> getCheckList() throws IOException{
+    	ArrayList<String> blacklist = new ArrayList<String>();
+    	for (CheckBoxNode x : nodes){
+    		if(x.status.equals(Status.SELECTED)){
+    			blacklist.add(x.file.getCanonicalPath());
+    		}
+    	}
+    	
+    	return blacklist;
+    };
 }
 
 @SuppressWarnings("serial")

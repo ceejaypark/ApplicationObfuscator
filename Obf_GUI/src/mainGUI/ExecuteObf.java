@@ -15,6 +15,7 @@ public class ExecuteObf {
 	
 	private boolean running = false;
 	private JButton exeButton;
+	private ArrayList<String> blacklist;
 	protected ExecuteObf(){}
 	
 	public static ExecuteObf getInstance(){
@@ -24,8 +25,9 @@ public class ExecuteObf {
 		return instance;
 	}
 	
-	public void exe(String inputFolder, String outputFolder, ObfCheckList checklist, JButton exeButton) throws IOException{
+	public void exe(String inputFolder, String outputFolder, ObfCheckList checklist, JButton exeButton, ArrayList<String> blacklist) throws IOException{
 		this.exeButton = exeButton;
+		this.blacklist = blacklist;
 		setRunning(true);
 		File inputLoc = new File(inputFolder);
 		File outputLoc = new File(outputFolder);
@@ -37,7 +39,7 @@ public class ExecuteObf {
 			return;
 		};
 		
-		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), new ArrayList<String>(), checklist.getCheckListMap());
+		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), blacklist, checklist.getCheckListMap());
 		mor.run();
 		
 	}

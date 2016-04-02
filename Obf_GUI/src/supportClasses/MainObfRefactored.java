@@ -30,7 +30,6 @@ public class MainObfRefactored extends SwingWorker<Void,String>{
 
 		addFilesToHashMap(outputFolder);
 		addObfuscaters();
-		
 	}
 
 	private void addObfuscaters() {
