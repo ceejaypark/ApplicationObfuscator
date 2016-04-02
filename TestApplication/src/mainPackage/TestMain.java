@@ -21,6 +21,8 @@ public class TestMain {
 	public static void main(String[] args) {
 		//Random comment lines for removal. 
 		
+		Log.d(TAG, "This is for testing");
+		
 //===========================================================================================================================================
 		//Test very basic classes. Tests renaming, minification and comment removal.
 		//Will also test if for loop functionality is altered.
