@@ -16,7 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 public class NameObfuscater implements Obfuscater {
 
@@ -37,42 +41,63 @@ public class NameObfuscater implements Obfuscater {
 			//set up the character set for writing back to the file
 			Charset charset = StandardCharsets.UTF_8;
 
-			//try catch is used to access all field and method names in the class
-			try {
-				// Convert file to a URL
-				URL url = file.toURI().toURL();;        
-				URL[] urls = new URL[]{url};
-				//load in file as a class so we can use reflection
-				URLClassLoader ucl = new URLClassLoader(urls);
-				
-				Class<?> c = ucl.loadClass(file.getName().replaceFirst("[.][^.]+$", "") ); 
-				//iterate through each declared field and rename it
-				for(Field f: c.getDeclaredFields()) {
-					content = Pattern.compile("\\b"+ f.getName() + "\\b").matcher(content).replaceAll(getNewName());
-					//content = content.replace(, getNewName());
+			//use regex pattern matching to find mathod declarations
+			Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
+			Matcher matcher = pattern.matcher(content);
+
+			while (matcher.find()) {
+				String methodDec = matcher.group();
+				//parse the name from the declaration
+				Pattern nameMatch = Pattern.compile("\\w+(\\s+|\\b)(\\()");
+
+				Matcher matcher2 = nameMatch.matcher(methodDec);
+				String methodName = "";
+				if (matcher2.find()) {
+					methodName = matcher2.group();
 				}
-				//iterate through declared methods and rename
-				for(Method m: c.getDeclaredMethods()) {
-					//check if in hashmap already, if yes, then rename to new name
-					//otherwise assign a name, add it to hashmap, then rename in file
-
-					if(!methodMap.containsKey(m.getName())){
-						methodMap.put(m.getName(), getNewName());
-					}
-					content = Pattern.compile("\\b"+ m.getName() + "\\b").matcher(content).replaceAll(methodMap.get(m.getName()));
-
+				methodName= methodName.replace("(", "");
+				//check if is main method, and ignore if so
+				if(methodName.equals("main")){
+					continue;
 				}
 
-				//Write the result back to the file
-				Files.write((Paths.get(file.toURI())), content.getBytes(charset));
+				//check if declarationg is in in hashmap already, if yes, then rename to new name
+				//otherwise parse the name, assign a new one, add it to hashmap, then rename all instances in the file
+				if(!methodMap.containsKey(methodName)){
 
-				ucl.close();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}			
+					//String renamed = methodDec.replace(methodName, getNewName() + "(");
+					//add to hashmap
+					methodMap.put(methodName, getNewName());
+				}
+				//rename in file
+				content = content.replace(methodName, methodMap.get(methodName));
+			}
+
+
+
+			//				//iterate through each declared field and rename it
+			//				for(Field f: c.getDeclaredFields()) {
+			//					content = Pattern.compile("\\b"+ f.getName() + "\\b").matcher(content).replaceAll(getNewName());
+			//					//content = content.replace(, getNewName());
+			//
+			//				}
+
+
+			//iterate through declared methods and rename
+			//				for(Method m: c.getDeclaredMethods()) {
+			//					//check if in hashmap already, if yes, then rename to new name
+			//					//otherwise assign a name, add it to hashmap, then rename in file
+			//
+			//					if(!methodMap.containsKey(m.getName())){
+			//						methodMap.put(m.getName(), getNewName());
+			//					}
+			//					content = Pattern.compile("\\b"+ m.getName() + "\\b").matcher(content).replaceAll(methodMap.get(m.getName()));
+			//
+			//				}
+
+			//Write the result back to the file
+			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
 		}	
 
