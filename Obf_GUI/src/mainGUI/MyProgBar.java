@@ -2,21 +2,27 @@ package mainGUI;
 
 import javax.swing.JProgressBar;
 
-public class MyProgBar extends JProgressBar{
+@SuppressWarnings("serial")
+public class MyProgBar extends JProgressBar {
 
-	public MyProgBar(){
-		this.setStringPainted(true);
-		this.setString("Begin obfuscation by clicking the \"Obfuscate\" button.");
+	public MyProgBar() {
+		restart();
 	}
-	
-	public void changeVal(String info, int increase){
-		double currentVal = this.getPercentComplete();
-		double newVal = currentVal + increase;
+
+	public void changeVal(String info, int increase) {
+		this.setValue(increase);
+
+		double percent = ((double)increase /(double)this.getMaximum()) * 100;
 		
-		String newText = newVal + " - " + info;
+		String newText = (int)percent + "% - " + info;
 		this.setString(newText);
 	}
-	
-	
-	
+
+	public void restart() {
+		this.setMaximum(1000);
+		this.setStringPainted(true);
+		this.setValue(0);
+		this.setString("Begin obfuscation by clicking the \"Obfuscate\" button.");
+	}
+
 }

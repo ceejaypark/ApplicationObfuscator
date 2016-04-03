@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import supportClasses.MainObfRefactored;
 
@@ -16,6 +18,7 @@ public class ExecuteObf {
 	private boolean running = false;
 	private JButton exeButton;
 	private ArrayList<String> blacklist;
+	private MyProgBar mpb;
 	protected ExecuteObf(){}
 	
 	public static ExecuteObf getInstance(){
@@ -25,9 +28,10 @@ public class ExecuteObf {
 		return instance;
 	}
 	
-	public void exe(String inputFolder, String outputFolder, ObfCheckList checklist, JButton exeButton, ArrayList<String> blacklist) throws IOException{
+	public void exe(String inputFolder, String outputFolder, ObfCheckList checklist, JButton exeButton, ArrayList<String> blacklist, MyProgBar mpb) throws IOException{
 		this.exeButton = exeButton;
 		this.blacklist = blacklist;
+		this.mpb = mpb;
 		setRunning(true);
 		File inputLoc = new File(inputFolder);
 		File outputLoc = new File(outputFolder);
@@ -39,8 +43,10 @@ public class ExecuteObf {
 			return;
 		};
 		
-		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), blacklist, checklist.getCheckListMap());
-		mor.run();
+		
+		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), blacklist, checklist.getCheckListMap(), mpb);
+		
+		SwingUtilities.invokeLater(mor);
 		
 	}
 	

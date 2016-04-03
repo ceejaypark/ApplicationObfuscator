@@ -110,7 +110,7 @@ public class MainWindow {
 		gbc_fl.gridx = 2;
 		gbc_fl.gridy = 1;
 		frame.getContentPane().add(tree, gbc_fl);
-		
+
 		GridBagConstraints gbc_mpb = new GridBagConstraints();
 		gbc_mpb.gridwidth = 2;
 		gbc_mpb.fill = GridBagConstraints.BOTH;
@@ -118,14 +118,14 @@ public class MainWindow {
 		gbc_mpb.gridx = 1;
 		gbc_mpb.gridy = 3;
 		frame.getContentPane().add(mpb, gbc_mpb);
-		
-				exeButton = new JButton("Obfuscate");
-				GridBagConstraints gbc_exeButton = new GridBagConstraints();
-				gbc_exeButton.insets = new Insets(0, 0, 0, 5);
-				gbc_exeButton.anchor = GridBagConstraints.NORTHEAST;
-				gbc_exeButton.gridx = 2;
-				gbc_exeButton.gridy = 4;
-				frame.getContentPane().add(exeButton, gbc_exeButton);
+
+		exeButton = new JButton("Obfuscate");
+		GridBagConstraints gbc_exeButton = new GridBagConstraints();
+		gbc_exeButton.insets = new Insets(0, 0, 0, 5);
+		gbc_exeButton.anchor = GridBagConstraints.NORTHEAST;
+		gbc_exeButton.gridx = 2;
+		gbc_exeButton.gridy = 4;
+		frame.getContentPane().add(exeButton, gbc_exeButton);
 	}
 
 	private void addListeners() {
@@ -164,7 +164,7 @@ public class MainWindow {
 					try {
 						obfuscate.exe(inputFolder.getFolderLoc(),
 								outputFolder.getFolderLoc(), checklist,
-								exeButton, tree.getCheckList());
+								exeButton, tree.getCheckList(), mpb);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
