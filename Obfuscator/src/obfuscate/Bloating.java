@@ -15,6 +15,17 @@ public class Bloating implements Obfuscater {
 
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+		
+		FileReader fr = new FileReader("/Users/cjpark/Desktop/2016 Workspace/702_Group_Project/Obfuscator/resources/Dictionary");
+		BufferedReader br = new BufferedReader(fr);
+		String line = br.readLine();
+		String[] dictionary = new String[58];
+		for (int i = 0; i < dictionary.length; i++) {
+			if(line != null) {
+				dictionary[i] = line;
+				line = br.readLine();
+			}
+		}
 
 		List<String> linesOfCode = new ArrayList<String>();
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
@@ -26,7 +37,7 @@ public class Bloating implements Obfuscater {
 
 			while ((lineInFile = fileInput.readLine()) != null) {
 				if (randomTrueOrFalse()) {
-					replaceSpace(lineInFile);
+					replaceSpace(lineInFile, dictionary);
 				}
 				linesOfCode.add(lineInFile);
 			}
@@ -47,19 +58,16 @@ public class Bloating implements Obfuscater {
 		return files;
 	}
 
-	private String randomCommentGenerator()
+	private String randomCommentGenerator(String[] dictionary)
 	{
-		return null;
+		int max = dictionary.length;
+		int min = 0;
+		int random = min + (int)(Math.random() * ((max-min)+1));
+		return "/*" + dictionary[random] + "*/";
 	}
 
-	private String replaceSpace(String lineInFile) {
-		String[] lineArray = lineInFile.split("\\s+");
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i<lineArray.length;i++) {
-			sb.append(lineArray[i]);
-			sb.append(randomCommentGenerator());
-		}
-		String alteredLine = sb.toString();
+	private String replaceSpace(String lineInFile, String[] dictionary) {
+		String alteredLine = lineInFile.replaceAll(" ", randomCommentGenerator(dictionary));
 		return alteredLine; 
 	}
 
