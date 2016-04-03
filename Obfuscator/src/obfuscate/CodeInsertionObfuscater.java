@@ -33,14 +33,14 @@ public class CodeInsertionObfuscater implements Obfuscater {
 			
 			String lineInFile;
 			
-			boolean inClass = false;
+			boolean inMethod = false;
 			
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
 				lineInFile = lineInFile.trim();
 				
-				if (inClass) {
-					
+				
+				if (inMethod) {
 					//recognition of starting braces and ending braces to track end of class
 					//end of class indicates stopping of code insertion
 					if (braces.isEmpty()) {
@@ -49,7 +49,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 						}
 						if (lineInFile.contains("}")) {
 							//class ends here
-							inClass = false;
+							inMethod = false;
 							linesOfCode.add(original);
 							continue;
 						}
@@ -65,7 +65,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 					//select a random number between 1~100, if below 3, insert code
 					Random rand = new Random();
 					int randomNum = rand.nextInt((100 - 1) + 1) +1;
-					if (randomNum < 5) {
+					if (randomNum < 101) {
 						linesOfCode.add(getStartWhitespace(original) + codeToBeInserted.get(0));
 					}
 					linesOfCode.add(original);
@@ -73,11 +73,10 @@ public class CodeInsertionObfuscater implements Obfuscater {
 				} else {
 					//copy lines of code that aren't in class to its exact format
 					linesOfCode.add(original);
-					String[] lineSplit = lineInFile.split(" ");
 					
 					//start of class allows code insertion
-					if (isClassDeclaration(lineSplit)) {
-						inClass = true;
+					if (lineInFile.matches("((public|private|protected|static|final|native|synchronized|abstract|transient)+\\s)+[\\$_\\w\\<\\>\\[\\]]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?")) {
+						inMethod = true;
 					}
 					continue;
 				}
@@ -96,30 +95,6 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		}
 		
 		return files;
-	}
-	
-	private boolean isClassDeclaration(String[] lineOfCode) {
-		boolean isClassDeclaration = false;
-		
-		//if the first word is a access modifier
-		if (lineOfCode[0].equals("public") || lineOfCode[0].equals("private") || lineOfCode[0].equals("protected")) {
-			//followed by second word 'class' is a class declaration
-			if (lineOfCode[1].equals("class")) {
-				isClassDeclaration =  true;
-			} else if (lineOfCode[1].equals("static")) {
-				//case for static classes
-				if (lineOfCode[2].equals("class")) {
-					isClassDeclaration = true;
-				}
-			}
-		}
-		
-		//class with no modifiers
-		if (lineOfCode[0].equals("class")) {
-			isClassDeclaration = true;
-		}
-		
-		return isClassDeclaration;
 	}
 	
 	private String getStartWhitespace(String s) {
