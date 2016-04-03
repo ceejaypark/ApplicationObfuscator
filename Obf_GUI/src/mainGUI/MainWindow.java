@@ -27,7 +27,8 @@ public class MainWindow {
 	private FileChoose outputFolder;
 	private ObfCheckList checklist;
 	private JButton exeButton;
-	private MyTree tree = new MyTree();;
+	private MyTree tree = new MyTree();
+	private MyProgBar mpb = new MyProgBar();
 
 	/**
 	 * Launch the application.
@@ -62,7 +63,7 @@ public class MainWindow {
 	private void initialize() throws IOException {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 759, 431);
+		frame.setBounds(100, 100, 759, 410);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		addComponents();
@@ -71,11 +72,11 @@ public class MainWindow {
 
 	private void addComponents() throws IOException {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 508, 176, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 55, 257, 19, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 0.0,
+		gridBagLayout.columnWidths = new int[] { 16, 508, 194, 5, 0 };
+		gridBagLayout.rowHeights = new int[] { 20, 55, 257, 19, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0,
 				Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0,
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0,
 				Double.MIN_VALUE };
 		frame.getContentPane().setLayout(gridBagLayout);
 		this.inputFolder = new FileChoose("Input Folder:",
@@ -98,26 +99,33 @@ public class MainWindow {
 		gbc_wrapper.gridheight = 2;
 		gbc_wrapper.fill = GridBagConstraints.BOTH;
 		gbc_wrapper.insets = new Insets(0, 0, 5, 5);
-		gbc_wrapper.gridx = 0;
-		gbc_wrapper.gridy = 0;
+		gbc_wrapper.gridx = 1;
+		gbc_wrapper.gridy = 1;
 		frame.getContentPane().add(wrapper, gbc_wrapper);
 
 		GridBagConstraints gbc_fl = new GridBagConstraints();
 		gbc_fl.gridheight = 2;
-		gbc_fl.gridwidth = 2;
 		gbc_fl.fill = GridBagConstraints.BOTH;
-		gbc_fl.insets = new Insets(0, 0, 5, 0);
-		gbc_fl.gridx = 1;
-		gbc_fl.gridy = 0;
+		gbc_fl.insets = new Insets(0, 0, 5, 5);
+		gbc_fl.gridx = 2;
+		gbc_fl.gridy = 1;
 		frame.getContentPane().add(tree, gbc_fl);
-
-		exeButton = new JButton("Obfuscate");
-		GridBagConstraints gbc_exeButton = new GridBagConstraints();
-		gbc_exeButton.insets = new Insets(0, 0, 0, 5);
-		gbc_exeButton.anchor = GridBagConstraints.NORTHEAST;
-		gbc_exeButton.gridx = 1;
-		gbc_exeButton.gridy = 3;
-		frame.getContentPane().add(exeButton, gbc_exeButton);
+		
+		GridBagConstraints gbc_mpb = new GridBagConstraints();
+		gbc_mpb.gridwidth = 2;
+		gbc_mpb.fill = GridBagConstraints.BOTH;
+		gbc_mpb.insets = new Insets(0, 0, 5, 5);
+		gbc_mpb.gridx = 1;
+		gbc_mpb.gridy = 3;
+		frame.getContentPane().add(mpb, gbc_mpb);
+		
+				exeButton = new JButton("Obfuscate");
+				GridBagConstraints gbc_exeButton = new GridBagConstraints();
+				gbc_exeButton.insets = new Insets(0, 0, 0, 5);
+				gbc_exeButton.anchor = GridBagConstraints.NORTHEAST;
+				gbc_exeButton.gridx = 2;
+				gbc_exeButton.gridy = 4;
+				frame.getContentPane().add(exeButton, gbc_exeButton);
 	}
 
 	private void addListeners() {
