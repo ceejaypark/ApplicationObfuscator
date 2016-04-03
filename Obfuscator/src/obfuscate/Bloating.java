@@ -60,7 +60,7 @@ public class Bloating implements Obfuscater {
 
     private String randomCommentGenerator(String[] dictionary)
     {
-        int max = dictionary.length;
+        int max = dictionary.length-1;
         int min = 0;
         int random = min + (int)(Math.random() * ((max-min)+1));
         return "/*" + dictionary[random] + "*/";
