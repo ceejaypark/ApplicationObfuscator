@@ -13,78 +13,77 @@ import java.util.Map;
 
 public class Bloating implements Obfuscater {
 
-	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
-		
-		FileReader fr = new FileReader("/Users/cjpark/Desktop/2016 Workspace/702_Group_Project/Obfuscator/resources/Dictionary");
-		BufferedReader br = new BufferedReader(fr);
-		String line = br.readLine();
-		String[] dictionary = new String[58];
-		for (int i = 0; i < dictionary.length; i++) {
-			if(line != null) {
-				dictionary[i] = line;
-				line = br.readLine();
-			}
-		}
+    @Override
+    public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
 
-		List<String> linesOfCode = new ArrayList<String>();
-		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
-			File file = fileEntry.getValue();
-			FileReader fileReader = new FileReader(file);
-			BufferedReader fileInput = new BufferedReader(fileReader);
+        FileReader fr = new FileReader("/Users/cjpark/Desktop/2016 Workspace/702_Group_Project/Obfuscator/resources/Dictionary");
+        BufferedReader br = new BufferedReader(fr);
+        String line = br.readLine();
+        String[] dictionary = new String[58];
+        for (int i = 0; i < dictionary.length; i++) {
+            if(line != null) {
+                dictionary[i] = line;
+                line = br.readLine();
+            }
+        }
 
-			String lineInFile;
+        List<String> linesOfCode = new ArrayList<String>();
+        for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+            File file = fileEntry.getValue();
+            FileReader fileReader = new FileReader(file);
+            BufferedReader fileInput = new BufferedReader(fileReader);
 
-			while ((lineInFile = fileInput.readLine()) != null) {
-				if (randomTrueOrFalse()) {
-					replaceSpace(lineInFile, dictionary);
-				}
-				linesOfCode.add(lineInFile);
-			}
+            String lineInFile;
 
-			FileWriter fileWriter = new FileWriter(file);
-			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
+            while ((lineInFile = fileInput.readLine()) != null) {
+                if (randomTrueOrFalse()) {
+                    replaceSpace(lineInFile, dictionary);
+                }
+                linesOfCode.add(lineInFile);
+            }
 
-			for (String s: linesOfCode) {
-				s = s + "\n";
-				fileOutput.write(s);
-			}
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter fileOutput = new BufferedWriter(fileWriter);
 
-			fileOutput.flush();
-			fileOutput.close();
-			fileInput.close();
-		}
+            for (String s: linesOfCode) {
+                s = s + "\n";
+                fileOutput.write(s);
+            }
 
-		return files;
-	}
+            fileOutput.flush();
+            fileOutput.close();
+            fileInput.close();
+        }
 
-	private String randomCommentGenerator(String[] dictionary)
-	{
-		int max = dictionary.length;
-		int min = 0;
-		int random = min + (int)(Math.random() * ((max-min)+1));
-		return "/*" + dictionary[random] + "*/";
-	}
-    
-    private String replaceSpace(String lineInFile) {
-        String alteredLine = lineInFile.replaceAll(" ", randomCommentGenerator(dictionary));
+        return files;
+    }
+
+    private String randomCommentGenerator(String[] dictionary)
+    {
+        int max = dictionary.length;
+        int min = 0;
+        int random = min + (int)(Math.random() * ((max-min)+1));
+        return "/*" + dictionary[random] + "*/";
+    }
+
+    private String replaceSpace(String lineInFile, String[] dictionary) {
         String[] lineArray = lineInFile.split("\\s+");
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i<lineArray.length;i++) {
             sb.append(lineArray[i]);
-            sb.append(randomCommentGenerator());
-            }
+            sb.append(randomCommentGenerator(dictionary));
+        }
         String alteredLine = sb.toString();
         return alteredLine; 
     }
 
 
-	private boolean randomTrueOrFalse() {
-		double i = Math.random();
-		if (i < 0.3) {
-			return true;
-		}
-		return false;
-	}
+    private boolean randomTrueOrFalse() {
+        double i = Math.random();
+        if (i < 0.3) {
+            return true;
+        }
+        return false;
+    }
 
 }
