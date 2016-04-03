@@ -65,11 +65,19 @@ public class Bloating implements Obfuscater {
 		int random = min + (int)(Math.random() * ((max-min)+1));
 		return "/*" + dictionary[random] + "*/";
 	}
+    
+    private String replaceSpace(String lineInFile) {
+        String alteredLine = lineInFile.replaceAll(" ", randomCommentGenerator(dictionary));
+        String[] lineArray = lineInFile.split("\\s+");
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i<lineArray.length;i++) {
+            sb.append(lineArray[i]);
+            sb.append(randomCommentGenerator());
+            }
+        String alteredLine = sb.toString();
+        return alteredLine; 
+    }
 
-	private String replaceSpace(String lineInFile, String[] dictionary) {
-		String alteredLine = lineInFile.replaceAll(" ", randomCommentGenerator(dictionary));
-		return alteredLine; 
-	}
 
 	private boolean randomTrueOrFalse() {
 		double i = Math.random();
