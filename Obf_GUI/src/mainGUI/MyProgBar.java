@@ -25,4 +25,9 @@ public class MyProgBar extends JProgressBar {
 		this.setString("Begin obfuscation by clicking the \"Obfuscate\" button.");
 	}
 
+	//Create custom overload to change value
+	public void setValue(String info, int value){
+		this.setValue(value);
+		this.setString(info);
+	}
 }
