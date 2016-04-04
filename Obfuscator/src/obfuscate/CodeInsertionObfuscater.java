@@ -13,11 +13,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class CodeInsertionObfuscater implements Obfuscater {
-	public static ArrayList<String> codeToBeInserted = new ArrayList<String>();
-	
-	public CodeInsertionObfuscater() {
-		codeToBeInserted.add("int 123 = 5;");
-	}
 
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
@@ -33,14 +28,14 @@ public class CodeInsertionObfuscater implements Obfuscater {
 			
 			String lineInFile;
 			
-			boolean inClass = false;
+			boolean inMethod = false;
 			
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
 				lineInFile = lineInFile.trim();
 				
-				if (inClass) {
-					
+				
+				if (inMethod) {
 					//recognition of starting braces and ending braces to track end of class
 					//end of class indicates stopping of code insertion
 					if (braces.isEmpty()) {
@@ -49,7 +44,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 						}
 						if (lineInFile.contains("}")) {
 							//class ends here
-							inClass = false;
+							inMethod = false;
 							linesOfCode.add(original);
 							continue;
 						}
@@ -63,21 +58,19 @@ public class CodeInsertionObfuscater implements Obfuscater {
 					}
 					
 					//select a random number between 1~100, if below 3, insert code
-					Random rand = new Random();
-					int randomNum = rand.nextInt((100 - 1) + 1) +1;
-					if (randomNum < 5) {
-						linesOfCode.add(getStartWhitespace(original) + codeToBeInserted.get(0));
+					int randomNum = getRandomNumber(100, 1);
+					if (randomNum < 10) {
+						linesOfCode.add(generateRandomCode(getStartWhitespace(original)));
 					}
 					linesOfCode.add(original);
 					
 				} else {
 					//copy lines of code that aren't in class to its exact format
 					linesOfCode.add(original);
-					String[] lineSplit = lineInFile.split(" ");
 					
 					//start of class allows code insertion
-					if (isClassDeclaration(lineSplit)) {
-						inClass = true;
+					if (lineInFile.matches("((public|private|protected|static|final|native|synchronized|abstract|transient)+\\s)+[\\$_\\w\\<\\>\\[\\]]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?")) {
+						inMethod = true;
 					}
 					continue;
 				}
@@ -98,30 +91,6 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		return files;
 	}
 	
-	private boolean isClassDeclaration(String[] lineOfCode) {
-		boolean isClassDeclaration = false;
-		
-		//if the first word is a access modifier
-		if (lineOfCode[0].equals("public") || lineOfCode[0].equals("private") || lineOfCode[0].equals("protected")) {
-			//followed by second word 'class' is a class declaration
-			if (lineOfCode[1].equals("class")) {
-				isClassDeclaration =  true;
-			} else if (lineOfCode[1].equals("static")) {
-				//case for static classes
-				if (lineOfCode[2].equals("class")) {
-					isClassDeclaration = true;
-				}
-			}
-		}
-		
-		//class with no modifiers
-		if (lineOfCode[0].equals("class")) {
-			isClassDeclaration = true;
-		}
-		
-		return isClassDeclaration;
-	}
-	
 	private String getStartWhitespace(String s) {
 		String whitespace = "";
 		
@@ -140,5 +109,46 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		
 		//return whitespaces as string
 		return whitespace;
+	}
+	
+	private String generateRandomCode(String whitespace) {
+		String randomCode = "";
+		
+		int numOfVariables = getRandomNumber(3, 1);
+		ArrayList<String> variables = new ArrayList<String>();
+		
+		for (int i = 0; i < numOfVariables; i++) {
+			variables.add("v" + getRandomNumber(999,100));
+		}
+		
+		for (int i = 0; i < numOfVariables; i ++) {
+			randomCode = randomCode + whitespace + "int " + variables.get(i) + " = " + getRandomNumber(100,1) + ";\n";
+		}
+		
+		//add for loop or if statement start
+		int forOrIf = getRandomNumber(2,1);
+		if (forOrIf == 1) {
+			//add for loop
+			randomCode = randomCode + whitespace + "for (int i = 0; i < " + variables.get(getRandomNumber(variables.size(),1)-1) + "; i++) {\n";
+		} else {
+			randomCode = randomCode + whitespace + "if (" + variables.get(getRandomNumber(variables.size(),1)-1) + " < 2 || 30 == "
+					+ variables.get(getRandomNumber(variables.size(),1)-1) + ") {\n";
+		}
+		
+		for (int i = 0; i < getRandomNumber(5,1); i ++) {
+			randomCode = randomCode + whitespace + "    " + variables.get(getRandomNumber(variables.size(),1)-1) + " = "
+					+ variables.get(getRandomNumber(variables.size(),1)-1) + " + " +variables.get(getRandomNumber(variables.size(),1)-1) + ";\n";
+		}
+		
+		randomCode = randomCode + whitespace + "}";
+
+		return randomCode;
+	}
+	
+	private int getRandomNumber(int maximum, int minimum) {
+		Random rand = new Random();
+		int number = rand.nextInt((maximum - minimum) + 1) + minimum;
+		
+		return number;
 	}
 }

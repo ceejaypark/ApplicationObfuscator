@@ -17,7 +17,7 @@ public class ClassNameObfuscator implements Obfuscater{
 
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
-		List<String> linesOfCode = new ArrayList<String>();
+		//List<String> linesOfCode = new ArrayList<String>();
 		// List containing obfuscated names - So we don't obfuscated class names that have
 		// already been obfuscated
 		List<String> obfuscatedNames = new ArrayList<String>();
@@ -28,6 +28,7 @@ public class ClassNameObfuscator implements Obfuscater{
 		
 		while (iterationCounter < 2) {
 			for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+				List<String> linesOfCode = new ArrayList<String>();
 				File file = fileEntry.getValue();
 
 				FileReader fileReader = new FileReader(file);

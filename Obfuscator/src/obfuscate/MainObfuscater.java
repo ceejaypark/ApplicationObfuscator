@@ -57,11 +57,11 @@ public class MainObfuscater {
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
 		if (Boolean.parseBoolean(configProperties.getProperty("watermark"))){
-			obfuscaters.add(new WatermarkObfuscator());
+			//obfuscaters.add(new WatermarkObfuscator());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
-			obfuscaters.add(new CommentRemover());
+			//obfuscaters.add(new CommentRemover());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
 			// add code insertion obfuscater
@@ -76,17 +76,20 @@ public class MainObfuscater {
 		if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
 			// add to 'obfuscaters', minification obfuscater class
 		}
+		if (Boolean.parseBoolean(configProperties.getProperty("bloating"))) {
+			obfuscaters.add(new Bloating());
+		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
 			//obfuscaters.add(new NameObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("directoryflatenor"))){
 			// add to 'obfuscaters', get rid of directories
-			obfuscaters.add(new DirectoryFlatenorObfuscator());
+			//obfuscaters.add(new DirectoryFlatenorObfuscator());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("logdelete"))){
 			// add to 'obfuscaters', get rid of logs
-			obfuscaters.add(new LogDeleteObfuscator());
+			//obfuscaters.add(new LogDeleteObfuscator());
 		}
 		
 		
