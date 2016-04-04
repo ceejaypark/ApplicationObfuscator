@@ -15,15 +15,12 @@ import mainGUI.ExecuteObf;
 import mainGUI.MyProgBar;
 import obfuscate.*;
 
-public class MainObfRefactored extends SwingWorker<Void, String> implements PropertyChangeListener{
+public class MainObfRefactored {
 	private ArrayList<Obfuscater> obfuscaters = new ArrayList<Obfuscater>();
 	private HashMap<String, File> filesForObf = new HashMap<String, File>();
 	private HashMap<String, JRadioButton> selectedTechniques;
 	private ArrayList<String> blacklist = new ArrayList<String>();
 	private MyProgBar mpb;
-	private int totalTasks;
-	private int currentTask = 0;
-	private ArrayList<String> infos = new ArrayList<String>();
 
 	public MainObfRefactored(File inputFolder, File outputFolder,
 			ArrayList<String> blacklist,
@@ -32,12 +29,8 @@ public class MainObfRefactored extends SwingWorker<Void, String> implements Prop
 		this.blacklist = blacklist;
 		this.selectedTechniques = selectedTechniques;
 		this.mpb = mpb;
-		this.addPropertyChangeListener(this);
+
 		addObfuscaters();
-		
-		totalTasks = obfuscaters.size()+2;
-		infos.add("Preparing files to obfuscate.");
-		setProgress(currentTask);
 		
 		FolderCopy fc = new FolderCopy();
 		fc.beginCopy(inputFolder, outputFolder, blacklist);
@@ -46,43 +39,27 @@ public class MainObfRefactored extends SwingWorker<Void, String> implements Prop
 		
 		addFilesToHashMap(outputFolder);
 
-		currentTask++;
-		infos.add("Beginning obfuscation process.");
-		setProgress(currentTask);
-	}
-
-	private int progBarVal(){
-		double percentComplete = ((double)currentTask) /((double)totalTasks);
-		
-		double val = ((double)mpb.getMaximum()) * percentComplete;
-		return (int)val;
-		
 	}
 	
 	private void addObfuscaters() {
-		if (selectedTechniques.get("Class Name Obfuscation").isSelected()) {
-			obfuscaters.add(new ClassNameObfuscator());
-		}
-		if (selectedTechniques.get("Method Name Obfuscation").isSelected()) {
 
+		if (selectedTechniques.get("Class Name Obfuscation").isSelected()) {
 		}
-		if (selectedTechniques.get("Variable Name Obfuscation").isSelected()) {
-			obfuscaters.add(new NameObfuscater());
+		if (selectedTechniques.get("Method and Variable Name Obfuscation").isSelected()) {
 		}
 		if (selectedTechniques.get("Minification").isSelected()) {
-
 		}
 		if (selectedTechniques.get("Watermark").isSelected()) {
-
 		}
 		if (selectedTechniques.get("Comment Removal").isSelected()) {
-			obfuscaters.add(new CommentRemover());
 		}
 		if (selectedTechniques.get("Bloating").isSelected()) {
-
 		}
 		if (selectedTechniques.get("Random Code Insertion").isSelected()) {
-
+		}
+		if (selectedTechniques.get("Directory Flattener").isSelected()) {
+		}
+		if (selectedTechniques.get("Console Output Remover (Android)").isSelected()) {
 		}
 	}
 
@@ -124,49 +101,4 @@ public class MainObfRefactored extends SwingWorker<Void, String> implements Prop
 		return nameSplit[nameSplit.length - 1];
 	}
 
-	@Override
-	protected Void doInBackground() throws Exception {
-		Thread.sleep(200);
-		for (int i = 0; i < obfuscaters.size(); i++) {
-			currentTask++;
-			infos.add("Obfuscation technique " + (i+1) + " out of "+ obfuscaters.size()+" is executing.");
-			setProgress(currentTask);
-			obfuscaters.get(i).execute(filesForObf);
-			Thread.sleep(2000);
-			
-		}
-		
-		infos.add("Obfuscation completed.");
-		currentTask++;
-		setProgress(currentTask);
-		Thread.sleep(1000);
-
-		return null;
-	}
-
-	@Override
-	protected void process(List<String> string) {
-		for(String x: string){
-			mpb.changeVal(x, progBarVal());
-			mpb.revalidate();
-			mpb.repaint();
-		}
-	}
-
-	@Override
-	protected void done() {
-		mpb.restart();
-		ExecuteObf.getInstance().setRunning(false);
-	}
-	
-	@Override
-	public void propertyChange(PropertyChangeEvent e) {
-		if("progress" == e.getPropertyName()){
-			mpb.changeVal(infos.get(currentTask), progBarVal());
-			if(currentTask == totalTasks){
-				infos.clear();
-			}
-		}
-		
-	}
 }

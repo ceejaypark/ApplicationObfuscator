@@ -46,7 +46,6 @@ public class ExecuteObf {
 		
 		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), blacklist, checklist.getCheckListMap(), mpb);
 		
-		SwingUtilities.invokeLater(mor);
 		
 	}
 	
