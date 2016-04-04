@@ -41,7 +41,7 @@ public class Bloating implements Obfuscater {
 
             // if the line isn't null replace the spaces
             while ((lineInFile = fileInput.readLine()) != null) {
-                replaceSpace(lineInFile, dictionary);
+                lineInFile = replaceSpace(lineInFile, dictionary);
                 linesOfCode.add(lineInFile);
             }
 
