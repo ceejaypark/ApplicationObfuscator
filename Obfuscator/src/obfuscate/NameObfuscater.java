@@ -30,6 +30,7 @@ import javax.tools.ToolProvider;
 public class NameObfuscater implements Obfuscater {
 
 	static int count = 1;
+	static boolean overflow = false;
 	static HashMap<String,String> methodMap = new HashMap<String,String>();
 	static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
 	@Override
@@ -84,9 +85,7 @@ public class NameObfuscater implements Obfuscater {
 				Pattern p = Pattern.compile("\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
 				Matcher m = p.matcher(line);
 				while(m.find()){
-					System.out.println(m.group());
 					//matcher group index 1 is the name of the variable
-					System.out.println(m.group(1));
 					//get variables new name
 					String newName = getNewName();
 					//check if variable is public, and if so add to the global hashmap
@@ -116,21 +115,28 @@ public class NameObfuscater implements Obfuscater {
 
 	}
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
-		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
-		Matcher matcher = replacePattern.matcher(buff);
-		while(matcher.find()){
-			 System.out.println(matcher.start());//this will give you index
-			 System.out.println(matcher.group());//this will give you index
+//		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
+//		Matcher matcher = replacePattern.matcher(buff);
+//		while(matcher.find()){
+//			 System.out.println(matcher.start());//this will give you index
+//			 System.out.println(matcher.group());//this will give you index
+//
+//			int index = matcher.start();
+//System.out.print(buff.substring(index, index+toReplace.length()));
+//	//	buff.replace(index,index+toReplace.length(),replaceTo);
+//
+//		 System.out.println("CHANGED");//this will give you index
 
-			int index = matcher.start();
-System.out.print(buff.substring(index, index+toReplace.length()));
-	//	buff.replace(index,index+toReplace.length(),replaceTo);
+		//}
 
-		 System.out.println("CHANGED");//this will give you index
-
-		}
-
-
+		int index = buff.indexOf("\\b"+toReplace+"\\b");
+	    while (index != -1)
+	    {
+	        buff.replace(index, index + toReplace.length(), replaceTo);
+	        index += replaceTo.length(); // Move to the end of the replacement
+	        index = buff.indexOf(toReplace, index);
+	    }
+	    
 		return buff;
 	}
 	//return content;
@@ -196,10 +202,18 @@ System.out.print(buff.substring(index, index+toReplace.length()));
 	private String getNewName(){
 		int asciiCode = 76;
 		StringBuffer sb = new StringBuffer();
+		if(count >= 70){
+			count = 1;
+			overflow = true;
+		}
 		for (int i = 0; i < count; i++){
 			// if i is even, then the next letter should be L/l, otherwise 1/one
-			if ( (i % 2) ==0){
-				asciiCode = 108;
+			if ( (i % 2) == 0){
+				if(overflow){
+					asciiCode = 76;
+				}else{
+					asciiCode = 108;
+				}
 			} else{
 				asciiCode = 49;
 			}
