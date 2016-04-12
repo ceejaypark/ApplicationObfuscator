@@ -115,8 +115,13 @@ public class NameObfuscater implements Obfuscater {
 
 	}
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
-//		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
-//		Matcher matcher = replacePattern.matcher(buff);
+		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
+		Matcher matcher = replacePattern.matcher(buff);
+
+		while(matcher.find()){
+			matcher.appendReplacement(buff, replaceTo);
+		}
+		
 //		while(matcher.find()){
 //			 System.out.println(matcher.start());//this will give you index
 //			 System.out.println(matcher.group());//this will give you index
@@ -128,14 +133,21 @@ public class NameObfuscater implements Obfuscater {
 //		 System.out.println("CHANGED");//this will give you index
 
 		//}
+System.out.println(toReplace);
+System.out.println(replaceTo);
+System.out.println("CHANGED");
 
-		int index = buff.indexOf("\\b"+toReplace+"\\b");
-	    while (index != -1)
-	    {
-	        buff.replace(index, index + toReplace.length(), replaceTo);
-	        index += replaceTo.length(); // Move to the end of the replacement
-	        index = buff.indexOf(toReplace, index);
-	    }
+//INDEX ISN'T BEING SET AFTER PULL why ;;;
+//int index = buff.indexOf(toReplace);
+
+
+//		int index = buff.indexOf("\\b"+toReplace+"\\b");
+// 	    while (index != -1)
+//	    {
+//	        buff.replace(index, index + toReplace.length(), replaceTo);
+//	        index += replaceTo.length(); // Move to the end of the replacement
+//	        index = buff.indexOf(toReplace, index);
+//	    }
 	    
 		return buff;
 	}
