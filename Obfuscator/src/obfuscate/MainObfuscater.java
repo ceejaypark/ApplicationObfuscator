@@ -77,11 +77,11 @@ public class MainObfuscater {
 			// add to 'obfuscaters', minification obfuscater class
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("bloating"))) {
-			obfuscaters.add(new Bloating());
+			//obfuscaters.add(new Bloating());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
-			//obfuscaters.add(new NameObfuscater());
+			obfuscaters.add(new NameObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("directoryflatenor"))){
 			// add to 'obfuscaters', get rid of directories
