@@ -74,6 +74,7 @@ static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
 
 
 	private String replaceFields(File file,String content) throws FileNotFoundException, IOException{
+		StringBuffer contentsb = new StringBuffer(content);
 		//Extract the file line by line
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
@@ -91,38 +92,36 @@ static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
 					//check if variable is public, and if so add to the global hashmap
 					if(line.contains("\\bpublic\\b")){
 						publicFieldsMap.put(m.group(1), newName);
-					}					
+					}
+					//TODO rename variable in the rest of the file using string build
+					contentsb = replaceSB(contentsb,m.group(1),newName);
+					
+					//TODO create another method that is called on the second iteration 
+					// through the files. do a search for variable calls (Class.publicvariable)
+					// and then replace it
+					
 					//rename variable in the rest of the file
 					//content = m.replaceAll(getNewName());
 					//content = content.replaceAll(m.group(1), getNewName());
 				}
-				//also check each line for public variable use using another regex
-				Pattern p2 = Pattern.compile("");
-				Matcher m2 = p2.matcher(line);
-				//if so, then check the hashmap if it exists. if it does, then rename it using the value from the hashmap
-				//otherwise rename it, add it to the hashmap
-				while(m2.find()){
-					//System.out.println(m.group());
-					//matcher group index 1 is the name of the variable
-					//System.out.println(m.group(1));
-					//check if variable is public, and if so add to the global hashmap
-					
-					//rename variable
-					
-					//rename variable in the rest of the file
-
-				}
 				
+	
 			}
 			
 		}
-		StringBuffer sb = new StringBuffer();
 		//matches the field names 
-		return content;
+		
+		return contentsb.toString();
 
 	
 	}
-
+	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
+		 int start;
+		 while ((start=buff.indexOf("\\b"+toReplace+"\\b"))>=0){
+		   buff.replace(start,start+toReplace.length(),replaceTo);
+		 }
+		 return buff;
+		}
 	//return content;
 //}
 
