@@ -31,7 +31,7 @@ public class NameObfuscater implements Obfuscater {
 
 	static int count = 1;
 	static HashMap<String,String> methodMap = new HashMap<String,String>();
-static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
+	static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
 	@Override
 	public  HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
 
@@ -95,110 +95,121 @@ static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
 					}
 					//TODO rename variable in the rest of the file using string build
 					contentsb = replaceSB(contentsb,m.group(1),newName);
-					
+
 					//TODO create another method that is called on the second iteration 
 					// through the files. do a search for variable calls (Class.publicvariable)
 					// and then replace it
-					
+
 					//rename variable in the rest of the file
 					//content = m.replaceAll(getNewName());
 					//content = content.replaceAll(m.group(1), getNewName());
 				}
-				
-	
+
+
 			}
-			
+
 		}
 		//matches the field names 
-		
+
 		return contentsb.toString();
 
-	
+
 	}
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
-		 int start;
-		 while ((start=buff.indexOf("\\b"+toReplace+"\\b"))>=0){
-		   buff.replace(start,start+toReplace.length(),replaceTo);
-		 }
-		 return buff;
+		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
+		Matcher matcher = replacePattern.matcher(buff);
+		while(matcher.find()){
+			 System.out.println(matcher.start());//this will give you index
+			 System.out.println(matcher.group());//this will give you index
+
+			int index = matcher.start();
+System.out.print(buff.substring(index, index+toReplace.length()));
+	//	buff.replace(index,index+toReplace.length(),replaceTo);
+
+		 System.out.println("CHANGED");//this will give you index
+
 		}
+
+
+		return buff;
+	}
 	//return content;
-//}
+	//}
 
-private String replaceDeclaredMethods(String content){
-	StringBuilder sb = new StringBuilder(content);
+	private String replaceDeclaredMethods(String content){
+		StringBuilder sb = new StringBuilder(content);
 
-	//use regex pattern matching to find mathod declarations
-	Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
+		//use regex pattern matching to find mathod declarations
+		Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
-	Matcher matcher = pattern.matcher(content);
+		Matcher matcher = pattern.matcher(content);
 
-	while (matcher.find()) {
-		String methodDec = matcher.group();
-		//parse the name from the declaration
-		Pattern nameMatch = Pattern.compile("\\w+(\\s+|\\b)(\\()");
+		while (matcher.find()) {
+			String methodDec = matcher.group();
+			//parse the name from the declaration
+			Pattern nameMatch = Pattern.compile("\\w+(\\s+|\\b)(\\()");
 
-		Matcher matcher2 = nameMatch.matcher(methodDec);
-		String methodName = "";
-		if (matcher2.find()) {
-			methodName = matcher2.group();
+			Matcher matcher2 = nameMatch.matcher(methodDec);
+			String methodName = "";
+			if (matcher2.find()) {
+				methodName = matcher2.group();
+			}
+			methodName= methodName.replace("(", "");
+			//check if is main method, and ignore if so
+			if(methodName.equals("main")){
+				continue;
+			}
+
+			//check if declaration is in in hashmap already, if yes, then rename to new name
+			//otherwise parse the name, assign a new one, add it to hashmap, then rename all instances in the file
+			if(!methodMap.containsKey(methodName)){
+
+				//String renamed = methodDec.replace(methodName, getNewName() + "(");
+				//add to hashmap
+				methodMap.put(methodName, getNewName());
+			}
+			//rename in file
+			content = content.replace(methodName, methodMap.get(methodName));
 		}
-		methodName= methodName.replace("(", "");
-		//check if is main method, and ignore if so
-		if(methodName.equals("main")){
-			continue;
-		}
-
-		//check if declaration is in in hashmap already, if yes, then rename to new name
-		//otherwise parse the name, assign a new one, add it to hashmap, then rename all instances in the file
-		if(!methodMap.containsKey(methodName)){
-
-			//String renamed = methodDec.replace(methodName, getNewName() + "(");
-			//add to hashmap
-			methodMap.put(methodName, getNewName());
-		}
-		//rename in file
-		content = content.replace(methodName, methodMap.get(methodName));
+		return content;
 	}
-	return content;
-}
-/*
- * Iterates through files again to rename method calls
- */
-private String checkMethodCalls(String content){
-	for (Entry<String, String> entry : methodMap.entrySet()){
-		String ya = entry.getKey();
-		String h = entry.getValue();
+	/*
+	 * Iterates through files again to rename method calls
+	 */
+	private String checkMethodCalls(String content){
+		for (Entry<String, String> entry : methodMap.entrySet()){
+			String ya = entry.getKey();
+			String h = entry.getValue();
+			StringBuffer sb = new StringBuffer();
+
+			content = content.replaceAll("\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(");
+
+		}
+
+		return content;
+	}
+
+	/*
+	 * Method that retrieves the new name for the field 
+	 * Returns some variation of the letter a 108 (l) and 49 (1)
+	 * */
+	private String getNewName(){
+		int asciiCode = 76;
 		StringBuffer sb = new StringBuffer();
-
-		content = content.replaceAll("\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(");
-
-	}
-
-	return content;
-}
-
-/*
- * Method that retrieves the new name for the field 
- * Returns some variation of the letter a 108 (l) and 49 (1)
- * */
-private String getNewName(){
-	int asciiCode = 76;
-	StringBuffer sb = new StringBuffer();
-	for (int i = 0; i < count; i++){
-		// if i is even, then the next letter should be L/l, otherwise 1/one
-		if ( (i % 2) ==0){
-			asciiCode = 108;
-		} else{
-			asciiCode = 49;
+		for (int i = 0; i < count; i++){
+			// if i is even, then the next letter should be L/l, otherwise 1/one
+			if ( (i % 2) ==0){
+				asciiCode = 108;
+			} else{
+				asciiCode = 49;
+			}
+			sb.append(Character.toString((char)asciiCode)) ;
 		}
-		sb.append(Character.toString((char)asciiCode)) ;
+		count++;
+
+
+		return sb.toString();
 	}
-	count++;
-
-
-	return sb.toString();
-}
 }
 
 
