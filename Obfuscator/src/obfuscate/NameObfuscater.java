@@ -65,7 +65,8 @@ public class NameObfuscater implements Obfuscater {
 			Charset charset = StandardCharsets.UTF_8;
 
 			content = checkMethodCalls( content);
-
+			//TODO implement this method that searches through the entire file for public variables in the hashmap and rename
+//content = checkFieldCalls(content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
 		}
@@ -92,7 +93,7 @@ public class NameObfuscater implements Obfuscater {
 					if(line.contains("\\bpublic\\b")){
 						publicFieldsMap.put(m.group(1), newName);
 					}
-					//TODO rename variable in the rest of the file using string build
+					//TODO for some reason is writing to the file a lot...
 					contentsb = replaceSB(contentsb,m.group(1),newName);
 
 					//TODO create another method that is called on the second iteration 
@@ -119,7 +120,7 @@ public class NameObfuscater implements Obfuscater {
 		Matcher matcher = replacePattern.matcher(buff);
 
 		while(matcher.find()){
-			matcher.appendReplacement(buff, replaceTo);
+			buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
 		}
 		
 //		while(matcher.find()){
