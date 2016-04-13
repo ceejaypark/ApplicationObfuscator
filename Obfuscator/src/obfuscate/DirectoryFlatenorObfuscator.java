@@ -3,6 +3,7 @@ package obfuscate;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,13 +16,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DirectoryFlatenorObfuscator implements Obfuscater{
 	
 	private HashMap<String, Boolean> importsToDelete = new HashMap<String, Boolean>();
-
+	private File manifest;
 	@Override
 	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
+		
+		this.manifest = manifest;
 		
 		HashMap<String, File> newFiles = new HashMap<String, File>();
 		
@@ -60,7 +64,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 				String[] tempDirectories = p.toString().split("\\\\");
 				String key = tempDirectories[tempDirectories.length-1];
 				importsToDelete.put(key, new Boolean(true));
-				Files.delete(p);
+				Files.delete(p); 
 			}
 		}
 		
@@ -111,8 +115,43 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 			fileOutput.flush();
 			fileOutput.close();
 			fileInput.close();
+			fileReader.close();
 		}
 		
+		this.changeManifest();
+		
 		return files;
+	}
+	
+	private void changeManifest() throws IOException{
+		Set<String> keys = importsToDelete.keySet();
+		FileReader fr = new FileReader(this.manifest);
+		BufferedReader br = new BufferedReader(fr);
+		
+		List<String> outputString = new ArrayList<String>(); 
+		String line;
+		
+		while ((line = br.readLine()) != null){
+			for (String x:keys){
+				if (line.contains(x) && line.contains("android:name")){
+					line.replaceAll(x + ".", "");
+					break;
+				}
+			}
+			outputString.add(line);
+		}
+		
+		FileWriter fw = new FileWriter(this.manifest);
+		BufferedWriter bw = new BufferedWriter(fw);
+		
+		for(String s : outputString){
+			s = s + "\n";
+			bw.write(s);
+		}
+		
+		br.close();
+		fr.close();
+		fw.close();
+		bw.close();
 	}
 }
