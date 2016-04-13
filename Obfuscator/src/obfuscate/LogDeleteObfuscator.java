@@ -22,8 +22,7 @@ import java.util.Map;
 public class LogDeleteObfuscator implements Obfuscater {
 
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files)
-			throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
 		//Delete logs
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {

@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 public class DirectoryFlatenorObfuscator implements Obfuscater{
+	
+	private HashMap<String, Boolean> importsToDelete = new HashMap<String, Boolean>();
 
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 		
 		HashMap<String, File> newFiles = new HashMap<String, File>();
-		HashMap<String, Boolean> importsToDelete = new HashMap<String, Boolean>();
 		
 		String[] directories = MainObfuscater.OUTPUT.split("\\\\");
 		String output = directories[directories.length-1] + "\\\\";
@@ -109,7 +110,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 			
 			fileOutput.flush();
 			fileOutput.close();
-			fileInput.close();		
+			fileInput.close();
 		}
 		
 		return files;

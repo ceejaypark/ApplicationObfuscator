@@ -16,8 +16,7 @@ import java.security.NoSuchAlgorithmException;
 public class WatermarkObfuscator implements Obfuscater{
 
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files)
-			throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
 		//Produce watermark
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {

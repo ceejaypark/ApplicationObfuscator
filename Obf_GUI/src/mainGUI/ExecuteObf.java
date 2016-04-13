@@ -44,7 +44,7 @@ public class ExecuteObf {
 		};
 		
 		
-		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), blacklist, checklist.getCheckListMap(), mpb);
+		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), this.blacklist, checklist.getCheckListMap(), this.mpb);
 		
 		
 	}

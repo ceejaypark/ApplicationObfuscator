@@ -1,17 +1,12 @@
 package supportClasses;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.JRadioButton;
-import javax.swing.SwingWorker;
 
-import mainGUI.ExecuteObf;
 import mainGUI.MyProgBar;
 import obfuscate.*;
 
@@ -20,6 +15,7 @@ public class MainObfRefactored {
 	private HashMap<String, File> filesForObf = new HashMap<String, File>();
 	private HashMap<String, JRadioButton> selectedTechniques;
 	private ArrayList<String> blacklist = new ArrayList<String>();
+	private HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
 	private MyProgBar mpb;
 
 	public MainObfRefactored(File inputFolder, File outputFolder,
@@ -36,6 +32,7 @@ public class MainObfRefactored {
 		fc.beginCopy(inputFolder, outputFolder, blacklist);
 
 		this.blacklist = fc.copiedBlacklist();
+		this.createBlackListMap();
 		
 		addFilesToHashMap(outputFolder);
 
@@ -100,5 +97,10 @@ public class MainObfRefactored {
 
 		return nameSplit[nameSplit.length - 1];
 	}
-
+	
+	private void createBlackListMap(){
+		for (String x :blacklist){
+			mappedBlacklist.put(x, new File(x));
+		}
+	}
 }
