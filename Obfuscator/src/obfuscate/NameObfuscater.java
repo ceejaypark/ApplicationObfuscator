@@ -24,7 +24,7 @@ public class NameObfuscater implements Obfuscater {
 	static HashMap<String,String> methodMap = new HashMap<String,String>();
 
 	@Override
-	public  HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
 		//iterate through each file
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {

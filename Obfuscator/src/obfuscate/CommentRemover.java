@@ -14,7 +14,7 @@ import java.util.Map;
 public class CommentRemover implements Obfuscater{
 	
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			List<String> linesOfCode = new ArrayList<String>();

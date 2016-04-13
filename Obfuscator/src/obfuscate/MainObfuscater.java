@@ -20,7 +20,8 @@ public class MainObfuscater {
 	public static ArrayList<Obfuscater> obfuscaters = new ArrayList<Obfuscater>();
 	public static HashMap<String, File> filesForObfuscation = new HashMap<String, File>();
 	public static List<String> blackList = new ArrayList<String>();
-
+	public static HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
+	public static File manifest;
 	public static String OUTPUT = "";
 	
 	public static void main(String[] args) throws IOException {
@@ -51,6 +52,10 @@ public class MainObfuscater {
 		String singleStringBlackList = configProperties.getProperty("blacklist");
 		String[] blackListAsArray = singleStringBlackList.split(",");
 		blackList = addBlackListToList(blackListAsArray);
+		for (String x : blackList){
+			mappedBlacklist.put(x,  new File(x));
+		}
+		
 		// add non black listed files to hash map
 		addFilesToHashMap(outputDir);
 
@@ -95,7 +100,7 @@ public class MainObfuscater {
 		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
-			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
+			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
 		}
 
 		// --------------RANDOM TEST----------------//
@@ -139,7 +144,13 @@ public class MainObfuscater {
 			if (blackList.contains(listOfFiles[i].getCanonicalPath())) {
 				// do not add file to hash map and continue
 				continue;
-			} else {
+			}
+			
+			else if(listOfFiles[i].getCanonicalPath().contains("AndroidManifest.xml")){
+				manifest = listOfFiles[i];
+			}
+			
+			else {
 				if (listOfFiles[i].isDirectory()) {
 					//recursive call to any directory
 					addFilesToHashMap(listOfFiles[i]);
