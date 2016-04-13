@@ -11,6 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Removes lines with Log (for android) and System.out.println (for Java).
+ * WILL REMOVE ANY CODE IN SAME LINE LOG AND SYSTEM.OUT.PRINTLN IS IN!!!
+ * 
+ * @author jkim506
+ *
+ */
+
 public class LogDeleteObfuscator implements Obfuscater {
 
 	@Override
@@ -31,7 +39,7 @@ public class LogDeleteObfuscator implements Obfuscater {
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
 				
-				if (original.contains("Log."))
+				if (original.contains("Log.") || original.contains("System.out.println"))
 					continue;
 				
 				linesOfCode.add(original);
