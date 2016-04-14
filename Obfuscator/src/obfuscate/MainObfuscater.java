@@ -66,11 +66,11 @@ public class MainObfuscater {
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
-			//obfuscaters.add(new CommentRemover());
+			obfuscaters.add(new CommentRemover());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
 			// add code insertion obfuscater
-			//obfuscaters.add(new CodeInsertionObfuscater());
+			obfuscaters.add(new CodeInsertionObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
 			// add to 'obfuscaters', rename field obfuscater class
@@ -82,7 +82,7 @@ public class MainObfuscater {
 			// add to 'obfuscaters', minification obfuscater class
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("bloating"))) {
-			obfuscaters.add(new Bloating());
+			//obfuscaters.add(new Bloating());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
