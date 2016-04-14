@@ -65,15 +65,36 @@ public class NameObfuscater implements Obfuscater {
 			Charset charset = StandardCharsets.UTF_8;
 
 			content = checkMethodCalls( content);
-			//TODO implement this method that searches through the entire file for public variables in the hashmap and rename
-//content = checkFieldCalls(content);
+			//content = checkFieldCalls(content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
-
+//TODO METHOD SINGATURE VAIRABLES AS WELL!
+		
 		}
 
 		return files;
 	}
 
+private String checkFieldCalls(File file,String content) throws FileNotFoundException, IOException{
+	//get line
+	StringBuffer contentsb = new StringBuffer(content);
+	//Extract the file line by line
+	try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		String line;
+		while ((line = br.readLine()) != null) {
+			//variable use check
+			Pattern p = Pattern.compile("[\\w]*[.][\\w]*[^\\(]");
+			Matcher m = p.matcher(line);
+			while(m.find()){
+				if(publicFieldsMap.containsKey(m.group())){
+					//rename in file
+					//content.replaceAll(//entire class.variable call);
+				}
+			}
+			
+		}
+	}
+	return content;
+}
 
 	private String replaceFields(File file,String content) throws FileNotFoundException, IOException{
 		StringBuffer contentsb = new StringBuffer(content);
@@ -122,38 +143,9 @@ public class NameObfuscater implements Obfuscater {
 		while(matcher.find()){
 			buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
 		}
-		
-//		while(matcher.find()){
-//			 System.out.println(matcher.start());//this will give you index
-//			 System.out.println(matcher.group());//this will give you index
-//
-//			int index = matcher.start();
-//System.out.print(buff.substring(index, index+toReplace.length()));
-//	//	buff.replace(index,index+toReplace.length(),replaceTo);
-//
-//		 System.out.println("CHANGED");//this will give you index
-
-		//}
-System.out.println(toReplace);
-System.out.println(replaceTo);
-System.out.println("CHANGED");
-
-//INDEX ISN'T BEING SET AFTER PULL why ;;;
-//int index = buff.indexOf(toReplace);
-
-
-//		int index = buff.indexOf("\\b"+toReplace+"\\b");
-// 	    while (index != -1)
-//	    {
-//	        buff.replace(index, index + toReplace.length(), replaceTo);
-//	        index += replaceTo.length(); // Move to the end of the replacement
-//	        index = buff.indexOf(toReplace, index);
-//	    }
 	    
 		return buff;
 	}
-	//return content;
-	//}
 
 	private String replaceDeclaredMethods(String content){
 		StringBuilder sb = new StringBuilder(content);
