@@ -16,7 +16,7 @@ public class ClassNameObfuscator implements Obfuscater{
 	static int name_counter = 65;
 
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 		//List<String> linesOfCode = new ArrayList<String>();
 		// List containing obfuscated names - So we don't obfuscated class names that have
 		// already been obfuscated

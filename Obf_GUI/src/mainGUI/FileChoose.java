@@ -105,4 +105,8 @@ public class FileChoose extends JPanel{
 	public String getFolderLoc(){
 		return jtf.getText();
 	}
+	
+	public JTextField getTextField(){
+		return this.jtf;
+	}
 }

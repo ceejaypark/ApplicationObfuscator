@@ -23,7 +23,7 @@ public class ObfCheckList extends JPanel{
 	private HashMap<String, JRadioButton> map = new HashMap<String, JRadioButton>();
 	
 	public ObfCheckList(){
-		setLayout(new GridLayout(4, 2, 0, 0));
+		setLayout(new GridLayout(5, 2, 0, 0));
 		obfNames = new ArrayList<String>();
 		populate();
 	}
@@ -43,13 +43,14 @@ public class ObfCheckList extends JPanel{
 	
 	private void populateObfNames(){
 		obfNames.add("Class Name Obfuscation");
-		obfNames.add("Method Name Obfuscation");
-		obfNames.add("Variable Name Obfuscation");
+		obfNames.add("Method and Variable Name Obfuscation");
 		obfNames.add("Minification");
 		obfNames.add("Watermark");
 		obfNames.add("Comment Removal");
 		obfNames.add("Bloating");
 		obfNames.add("Random Code Insertion");
+		obfNames.add("Directory Flattener");
+		obfNames.add("Console Output Remover (Android)");
 	}
 	
 	public HashMap<String, JRadioButton> getCheckListMap(){

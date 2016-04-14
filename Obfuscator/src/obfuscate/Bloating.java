@@ -14,7 +14,7 @@ import java.util.Map;
 public class Bloating implements Obfuscater {
 
     @Override
-    public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
         //Takes in the dictionary with bohemian rhapsody lyrics
         FileReader fr = new FileReader("resources/Dictionary");
