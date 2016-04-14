@@ -86,7 +86,7 @@ public class MainObfuscater {
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
-			//obfuscaters.add(new NameObfuscater());
+			obfuscaters.add(new NameObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("directoryflatenor"))){
 			// add to 'obfuscaters', get rid of directories

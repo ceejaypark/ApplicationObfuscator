@@ -1,6 +1,9 @@
 package obfuscate;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,15 +17,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 public class NameObfuscater implements Obfuscater {
 
-	static int count = 30;
+	static int count = 1;
+	static boolean overflow = false;
 	static HashMap<String,String> methodMap = new HashMap<String,String>();
-
+	static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
 	@Override
 	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
@@ -36,48 +46,160 @@ public class NameObfuscater implements Obfuscater {
 
 			//set up the character set for writing back to the file
 			Charset charset = StandardCharsets.UTF_8;
+			content = replaceFields(file,content);
+			content = replaceDeclaredMethods(content);
 
-			//try catch is used to access all field and method names in the class
-			try {
-				// Convert file to a URL
-				URL url = file.toURI().toURL();;        
-				URL[] urls = new URL[]{url};
-				//load in file as a class so we can use reflection
-				URLClassLoader ucl = new URLClassLoader(urls);
-				
-				Class<?> c = ucl.loadClass(file.getName().replaceFirst("[.][^.]+$", "") ); 
-				//iterate through each declared field and rename it
-				for(Field f: c.getDeclaredFields()) {
-					content = Pattern.compile("\\b"+ f.getName() + "\\b").matcher(content).replaceAll(getNewName());
-					//content = content.replace(, getNewName());
+			//Write the result back to the file
+			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
-				}
-				//iterate through declared methods and rename
-				for(Method m: c.getDeclaredMethods()) {
-					//check if in hashmap already, if yes, then rename to new name
-					//otherwise assign a name, add it to hashmap, then rename in file
+		}
+		//iterate through files again to rename method calls as well
+		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			File file = fileEntry.getValue();
+			//get the entire files contents in a string
+			Scanner sc = new Scanner(file);
+			String content =sc.useDelimiter("\\Z").next();
+			sc.close();
 
-					if(!methodMap.containsKey(m.getName())){
-						methodMap.put(m.getName(), getNewName());
-					}
-					content = Pattern.compile("\\b"+ m.getName() + "\\b").matcher(content).replaceAll(methodMap.get(m.getName()));
+			//set up the character set for writing back to the file
+			Charset charset = StandardCharsets.UTF_8;
 
-				}
-
-				//Write the result back to the file
-				Files.write((Paths.get(file.toURI())), content.getBytes(charset));
-
-				ucl.close();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}			
-
-		}	
+			content = checkMethodCalls( content);
+			//content = checkFieldCalls(content);
+			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
+//TODO METHOD SINGATURE VAIRABLES AS WELL!
+		
+		}
 
 		return files;
 	}
+
+private String checkFieldCalls(File file,String content) throws FileNotFoundException, IOException{
+	//get line
+	StringBuffer contentsb = new StringBuffer(content);
+	//Extract the file line by line
+	try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		String line;
+		while ((line = br.readLine()) != null) {
+			//variable use check
+			Pattern p = Pattern.compile("[\\w]*[.][\\w]*[^\\(]");
+			Matcher m = p.matcher(line);
+			while(m.find()){
+				if(publicFieldsMap.containsKey(m.group())){
+					//rename in file
+					//content.replaceAll(//entire class.variable call);
+				}
+			}
+			
+		}
+	}
+	return content;
+}
+
+	private String replaceFields(File file,String content) throws FileNotFoundException, IOException{
+		StringBuffer contentsb = new StringBuffer(content);
+		//Extract the file line by line
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				// process the line
+				//variable declaration check
+				Pattern p = Pattern.compile("\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
+				Matcher m = p.matcher(line);
+				while(m.find()){
+					//matcher group index 1 is the name of the variable
+					//get variables new name
+					String newName = getNewName();
+					//check if variable is public, and if so add to the global hashmap
+					if(line.contains("\\bpublic\\b")){
+						publicFieldsMap.put(m.group(1), newName);
+					}
+					//TODO for some reason is writing to the file a lot...
+					contentsb = replaceSB(contentsb,m.group(1),newName);
+
+					//TODO create another method that is called on the second iteration 
+					// through the files. do a search for variable calls (Class.publicvariable)
+					// and then replace it
+
+					//rename variable in the rest of the file
+					//content = m.replaceAll(getNewName());
+					//content = content.replaceAll(m.group(1), getNewName());
+				}
+
+
+			}
+
+		}
+		//matches the field names 
+
+		return contentsb.toString();
+
+
+	}
+	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
+		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
+		Matcher matcher = replacePattern.matcher(buff);
+
+		while(matcher.find()){
+			buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
+		}
+	    
+		return buff;
+	}
+
+	private String replaceDeclaredMethods(String content){
+		StringBuilder sb = new StringBuilder(content);
+
+		//use regex pattern matching to find mathod declarations
+		Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
+
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			String methodDec = matcher.group();
+			//parse the name from the declaration
+			Pattern nameMatch = Pattern.compile("\\w+(\\s+|\\b)(\\()");
+
+			Matcher matcher2 = nameMatch.matcher(methodDec);
+			String methodName = "";
+			if (matcher2.find()) {
+				methodName = matcher2.group();
+			}
+			methodName= methodName.replace("(", "");
+			//check if is main method, and ignore if so
+			if(methodName.equals("main")){
+				continue;
+			}
+
+			//check if declaration is in in hashmap already, if yes, then rename to new name
+			//otherwise parse the name, assign a new one, add it to hashmap, then rename all instances in the file
+			if(!methodMap.containsKey(methodName)){
+
+				//String renamed = methodDec.replace(methodName, getNewName() + "(");
+				//add to hashmap
+				methodMap.put(methodName, getNewName());
+			}
+			//rename in file
+			content = content.replace(methodName, methodMap.get(methodName));
+		}
+		return content;
+	}
+	/*
+	 * Iterates through files again to rename method calls
+	 */
+	private String checkMethodCalls(String content){
+		for (Entry<String, String> entry : methodMap.entrySet()){
+			String ya = entry.getKey();
+			String h = entry.getValue();
+			StringBuffer sb = new StringBuffer();
+
+			content = content.replaceAll("\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(");
+
+		}
+
+		return content;
+	}
+
 	/*
 	 * Method that retrieves the new name for the field 
 	 * Returns some variation of the letter a 108 (l) and 49 (1)
@@ -85,10 +207,18 @@ public class NameObfuscater implements Obfuscater {
 	private String getNewName(){
 		int asciiCode = 76;
 		StringBuffer sb = new StringBuffer();
+		if(count >= 70){
+			count = 1;
+			overflow = true;
+		}
 		for (int i = 0; i < count; i++){
 			// if i is even, then the next letter should be L/l, otherwise 1/one
-			if ( (i % 2) ==0){
-				asciiCode = 108;
+			if ( (i % 2) == 0){
+				if(overflow){
+					asciiCode = 76;
+				}else{
+					asciiCode = 108;
+				}
 			} else{
 				asciiCode = 49;
 			}
