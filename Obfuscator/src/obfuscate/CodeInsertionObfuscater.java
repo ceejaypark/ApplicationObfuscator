@@ -124,7 +124,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 					//Testing for annotations
 					String x = lineInFile.replaceAll("\\s", "");
 					
-					if(x.startsWith("@") && !inMethod){
+					if(x.startsWith("@") && !inMethod && inClass){
 						if (!deadMethodGenerated) {
 							if (getRandomNumber(4, 0) <= 2) {
 								linesOfCode.add(generateDeadMethod());
