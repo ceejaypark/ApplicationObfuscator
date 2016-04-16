@@ -30,6 +30,8 @@ public class MainWindow {
 	private JButton exeButton;
 	private MyTree tree = new MyTree();
 	private MyProgBar mpb = new MyProgBar();
+	
+	public static File sourceFolderPath;
 
 	/**
 	 * Launch the application.
@@ -175,9 +177,11 @@ public class MainWindow {
 					File f = new File(sourceFolder.getFolderLoc());
 					if(f.isDirectory()){
 						checklist.enableDFAndCR();
+						sourceFolderPath = f;
 					}
 					else{
 						checklist.disableDFAndCR();
+						f = null;
 					}
 				};
 				
