@@ -23,6 +23,7 @@ public class FileChoose extends JPanel{
 	private JButton jb;
 	private String defaultText;
 	private String inputPrompt;
+	private String restriction = "";
 
 	public FileChoose(String inputPrompt, String defaultText){
 		this.inputPrompt = inputPrompt;
@@ -92,6 +93,9 @@ public class FileChoose extends JPanel{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					MyDirChooser mfc = new MyDirChooser();
+					if(!restriction.equals("")){
+						mfc.setRestriction(restriction);
+					}
 					String temp = mfc.activate();
 					if (!temp.equals("")){
 						jtf.setText(temp);
@@ -108,5 +112,13 @@ public class FileChoose extends JPanel{
 	
 	public JTextField getTextField(){
 		return this.jtf;
+	}
+	
+	public JButton getButton(){
+		return this.jb;
+	}
+	
+	public void restrict(String loc){
+		this.restriction = loc;
 	}
 }

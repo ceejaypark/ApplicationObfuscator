@@ -25,6 +25,7 @@ public class MainWindow {
 	private JFrame frame;
 	private FileChoose inputFolder;
 	private FileChoose outputFolder;
+	private FileChoose sourceFolder;
 	private ObfCheckList checklist;
 	private JButton exeButton;
 	private MyTree tree = new MyTree();
@@ -83,12 +84,16 @@ public class MainWindow {
 				"Select input folder...");
 		this.outputFolder = new FileChoose("Output Folder:",
 				"Select output folder...");
+		this.sourceFolder = new FileChoose("Source Folder:", 
+				"Required for directory flattenor and code insertion...");
+		this.sourceFolder.getButton().setEnabled(false);
 		this.checklist = new ObfCheckList();
 
 		JPanel wrapper = new JPanel();
 		wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
 		wrapper.add(inputFolder);
 		wrapper.add(outputFolder);
+		wrapper.add(sourceFolder);
 		JLabel label = new JLabel(
 				"Select the obfuscation techiniques to be used:");
 		label.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -132,30 +137,67 @@ public class MainWindow {
 		inputFolder.getTextField().getDocument()
 				.addDocumentListener(new DocumentListener() {
 
-					@Override
-					public void changedUpdate(DocumentEvent arg0) {
+					private void Process(){
 						File f = new File(inputFolder.getFolderLoc());
 						if (f.isDirectory()) {
+							sourceFolder.getButton().setEnabled(true);
+							sourceFolder.restrict(inputFolder.getFolderLoc());
 							tree.update(f);
 						}
+						else{
+							sourceFolder.getButton().setEnabled(false);
+							sourceFolder.getTextField().setText("");
+							sourceFolder.restrict(inputFolder.getFolderLoc());
+							checklist.disableDFAndCR();
+						}
+					}
+					
+					@Override
+					public void changedUpdate(DocumentEvent arg0) {
+						Process();
 					}
 
 					@Override
 					public void insertUpdate(DocumentEvent arg0) {
-						File f = new File(inputFolder.getFolderLoc());
-						if (f.isDirectory()) {
-							tree.update(f);
-						}
+						Process();
 					}
 
 					@Override
 					public void removeUpdate(DocumentEvent arg0) {
-						File f = new File(inputFolder.getFolderLoc());
-						if (f.isDirectory()) {
-							tree.update(f);
-						}
+						Process();
 					}
 				});
+		
+		sourceFolder.getTextField().getDocument()
+			.addDocumentListener(new DocumentListener(){
+
+				private void Process(){
+					File f = new File(sourceFolder.getFolderLoc());
+					if(f.isDirectory()){
+						checklist.enableDFAndCR();
+					}
+					else{
+						checklist.disableDFAndCR();
+					}
+				};
+				
+				@Override
+				public void changedUpdate(DocumentEvent arg0) {
+					Process();
+				}
+
+				@Override
+				public void insertUpdate(DocumentEvent arg0) {
+					Process();
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent arg0) {
+					Process();
+				}
+				
+			});
+		
 		exeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -177,6 +219,8 @@ public class MainWindow {
 				}
 			}
 		});
-
+		
+		
+		
 	}
 }
