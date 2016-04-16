@@ -28,6 +28,10 @@ import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.NoSuchPaddingException;
+
 public class LandingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         UniversityClassFragment.OnListFragmentInteractionListener {
@@ -42,7 +46,13 @@ public class LandingActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        StringHelper.initialise();
+        try {
+            StringHelper.initialise(getApplicationContext());
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

