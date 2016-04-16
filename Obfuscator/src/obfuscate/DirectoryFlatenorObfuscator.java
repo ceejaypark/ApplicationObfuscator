@@ -50,7 +50,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 				file = newFile;
 			}
 			
-			newFiles.put(path, file);			
+			newFiles.put(path, file);
 		}
 		//Get the output directory
 		File outputFileDirectory = new File(MainObfuscater.OUTPUT);

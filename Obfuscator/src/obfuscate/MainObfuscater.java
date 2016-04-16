@@ -44,6 +44,10 @@ public class MainObfuscater {
 		File outputDir = new File(configProperties.getProperty("output") + outputDirectoryName);
 		OUTPUT = outputDir.getCanonicalPath();
 		
+		if(!outputDir.exists()){
+			outputDir.mkdir();
+		}
+		
 		//copy all files from input directory to the output directory
 		copyFolder(inputDir,outputDir);
 
@@ -66,14 +70,11 @@ public class MainObfuscater {
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
-			//obfuscaters.add(new CommentRemover());
+			obfuscaters.add(new CommentRemover());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
 			// add code insertion obfuscater
-			//obfuscaters.add(new CodeInsertionObfuscater());
-		} 
-		if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
-			// add to 'obfuscaters', rename field obfuscater class
+			obfuscaters.add(new CodeInsertionObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
@@ -103,10 +104,6 @@ public class MainObfuscater {
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
 		}
 
-		// --------------RANDOM TEST----------------//
-		for (Entry<String, File> entry : filesForObfuscation.entrySet()) {
-			System.out.println("KEY: " + entry.getKey() + " +++ " + "FILE: " + entry.getValue().getName());
-		}
 	}
 
 	/**
@@ -177,7 +174,7 @@ public class MainObfuscater {
 
 			// if directory not exists, create it
 			if (!dest.exists()) {
-				dest.mkdir();
+				dest.mkdirs();
 				//System.out.println("Directory copied from " + src + "  to " + dest);
 			}
 
