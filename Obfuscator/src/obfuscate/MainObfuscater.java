@@ -23,6 +23,7 @@ public class MainObfuscater {
 	public static HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
 	public static File manifest;
 	public static String OUTPUT = "";
+	public static File sourceFolder;
 	
 	public static void main(String[] args) throws IOException {
 
@@ -47,6 +48,8 @@ public class MainObfuscater {
 		if(!outputDir.exists()){
 			outputDir.mkdir();
 		}
+		
+		sourceFolder = new File(configProperties.getProperty("projectSourceFolder"));
 		
 		//copy all files from input directory to the output directory
 		copyFolder(inputDir,outputDir);
