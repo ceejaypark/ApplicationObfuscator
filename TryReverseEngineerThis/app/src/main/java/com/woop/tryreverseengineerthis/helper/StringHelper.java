@@ -31,7 +31,7 @@ import static javax.crypto.Cipher.*;
 public class StringHelper {
 
     private static HashMap<String, String> dynamicHashMap;
-    private static HashMap<String, byte[]> staticHashMap;
+    private static HashMap<String, String> staticHashMap;
     private static Cipher cipher;
 
     private static Object lock;
@@ -66,6 +66,18 @@ public class StringHelper {
         dynamicHashMap.put("NINE999999999", t);
         dynamicHashMap.put("TEN0000000000", n);
         dynamicHashMap.put("ELVEN11111111", tl);
+
+        staticHashMap.put("OnceUponATime","ï›½t<2¾½£Au4€/;");
+        staticHashMap.put("LivedABunnyCalled","UÓÂM«L’¡Œ£û©”#2");
+        staticHashMap.put("Judy.SheWasGoingTo","YòNÒþ‰%ˆ7=f¦ÉÓ");
+        staticHashMap.put("beTheBestCopIn","ÁH^Ö²Q9_óËÎÈYø");
+        staticHashMap.put("Zo0o0o0o0Topia","™¬‘çörç?š`sàð½ËCKŒy©±ì¬G<D");
+        staticHashMap.put("SheDidNotRealise",":|dó2?œÀ.õe?®ÀL");
+        staticHashMap.put("however,ThatShe","ºÆ¢Ÿy˜bÜšâ?VÞ?");
+        staticHashMap.put("wasJustGoingtobe","þÏ)é0K®S›¡n„ši+");
+        staticHashMap.put("amereparkingWarden","³Ê²+G/F•“QRSïÄ");
+        staticHashMap.put("sadfacebunny", "1yÇÞ³’IÀ$“V„¬Ê");
+        staticHashMap.put("theend", "„új–_ý‡[»¬k@ƒr");
     }
 
     public static String getStringDynamic(String encyrptedKey, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
@@ -79,7 +91,7 @@ public class StringHelper {
     }
 
     public static String getStringStatic(String id, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        byte[] encrypted = staticHashMap.get(id);
+        byte[] encrypted = staticHashMap.get(id).getBytes();
         Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
         String decryptedText = "";
         synchronized (lock) {

