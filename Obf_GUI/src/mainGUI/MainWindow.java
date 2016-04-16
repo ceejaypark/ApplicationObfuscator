@@ -143,12 +143,13 @@ public class MainWindow {
 						File f = new File(inputFolder.getFolderLoc());
 						if (f.isDirectory()) {
 							sourceFolder.getButton().setEnabled(true);
+							sourceFolder.getTextField().setEditable(true);
 							sourceFolder.restrict(inputFolder.getFolderLoc());
 							tree.update(f);
 						}
 						else{
 							sourceFolder.getButton().setEnabled(false);
-							sourceFolder.getTextField().setText("");
+							sourceFolder.getTextField().setEditable(false);
 							sourceFolder.restrict(inputFolder.getFolderLoc());
 							checklist.disableDFAndCR();
 						}
@@ -223,8 +224,5 @@ public class MainWindow {
 				}
 			}
 		});
-		
-		
-		
 	}
 }

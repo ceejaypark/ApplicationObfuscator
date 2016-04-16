@@ -70,7 +70,7 @@ public class FileChoose extends JPanel{
 
 				@Override
 				public void focusGained(FocusEvent e) {
-					if (jtf.getText().equals(defaultText)){
+					if (jtf.getText().equals(defaultText) && jtf.isEditable()){
 						jtf.setText("");
 						jtf.setForeground(Color.BLACK);
 					}
