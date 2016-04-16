@@ -76,9 +76,6 @@ public class MainObfuscater {
 			// add code insertion obfuscater
 			obfuscaters.add(new CodeInsertionObfuscater());
 		} 
-		if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
-			// add to 'obfuscaters', rename field obfuscater class
-		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
 		} 
