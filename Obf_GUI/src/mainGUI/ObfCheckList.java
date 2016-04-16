@@ -26,6 +26,7 @@ public class ObfCheckList extends JPanel{
 		setLayout(new GridLayout(5, 2, 0, 0));
 		obfNames = new ArrayList<String>();
 		populate();
+		 disableDFAndCR();
 	}
 	
 	private void populate(){
@@ -55,5 +56,17 @@ public class ObfCheckList extends JPanel{
 	
 	public HashMap<String, JRadioButton> getCheckListMap(){
 		return this.map;
+	}
+	
+	public void disableDFAndCR(){
+		map.get("Random Code Insertion").setSelected(false);
+		map.get("Random Code Insertion").setEnabled(false);
+		map.get("Directory Flattener").setSelected(false);
+		map.get("Directory Flattener").setEnabled(false);
+	}
+	
+	public void enableDFAndCR(){
+		map.get("Random Code Insertion").setEnabled(true);
+		map.get("Directory Flattener").setEnabled(true);
 	}
 }
