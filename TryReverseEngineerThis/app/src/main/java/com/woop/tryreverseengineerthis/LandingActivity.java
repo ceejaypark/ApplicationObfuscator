@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import com.woop.tryreverseengineerthis.helper.StringHelper;
 
 import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
@@ -40,6 +41,8 @@ public class LandingActivity extends AppCompatActivity
         setContentView(R.layout.activity_landing);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        StringHelper.initialise();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
