@@ -7,6 +7,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -33,8 +34,11 @@ public class StringHelper {
     private static HashMap<String, byte[]> staticHashMap;
     private static Cipher cipher;
 
+    private static Object lock;
+
     public static void initialise(Context applicationContext) throws NoSuchPaddingException, NoSuchAlgorithmException {
 
+        lock = new Object();
         dynamicHashMap = new HashMap<>();
         staticHashMap = new HashMap<>();
         cipher = getInstance("AES");
@@ -51,28 +55,38 @@ public class StringHelper {
         String n = NETWORK_PROVIDER;
         String tl = ((TelephonyManager)applicationContext.getSystemService(t)).getNetworkOperator();
 
-        dynamicHashMap.put("aasdpososjdoa", f);
-        dynamicHashMap.put("d1oas0odja0jd", m);
-        dynamicHashMap.put("d12j012jd0d1j", b);
-        dynamicHashMap.put("dpqsa;ojasodj", p);
-        dynamicHashMap.put("asdln12palslm", h);
-        dynamicHashMap.put("asldmlmsldm21", c);
-        dynamicHashMap.put("asod122omd2o2", l);
-        dynamicHashMap.put("asdoj122d0jd2", g);
-        dynamicHashMap.put("asdlm1dmdmdm2", t);
-        dynamicHashMap.put("d20kd20kd0222", n);
-        dynamicHashMap.put("a0jd2d20j220j", tl);
+        dynamicHashMap.put("ONE1111111111", f);
+        dynamicHashMap.put("TWO2222222222", m);
+        dynamicHashMap.put("THREE33333333", b);
+        dynamicHashMap.put("FOUR444444444", p);
+        dynamicHashMap.put("FIVE555555555", h);
+        dynamicHashMap.put("SIX6666666666", c);
+        dynamicHashMap.put("SEVEN77777777", l);
+        dynamicHashMap.put("EIGHT88888888", g);
+        dynamicHashMap.put("NINE999999999", t);
+        dynamicHashMap.put("TEN0000000000", n);
+        dynamicHashMap.put("ELVEN11111111", tl);
     }
 
-    public static String getStringDynamic(byte[] encyrptedKey, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public static String getStringDynamic(String encyrptedKey, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-        cipher.init(DECRYPT_MODE, aesKey);
-        String hashMapKey = new String(cipher.doFinal(encyrptedKey));
+        String hashMapKey = "";
+        synchronized (lock) {
+            cipher.init(DECRYPT_MODE, aesKey);
+            hashMapKey = new String(cipher.doFinal(encyrptedKey.getBytes()));
+        }
         return dynamicHashMap.get(hashMapKey);
     }
 
-    public static String getStringStatic(String id, String key){
-        return "";
+    public static String getStringStatic(String id, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        byte[] encrypted = staticHashMap.get(id);
+        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+        String decryptedText = "";
+        synchronized (lock) {
+            cipher.init(DECRYPT_MODE, aesKey);
+            decryptedText = new String(cipher.doFinal(encrypted));
+        }
+        return decryptedText;
     }
 
 

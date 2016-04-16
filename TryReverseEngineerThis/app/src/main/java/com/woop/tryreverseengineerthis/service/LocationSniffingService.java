@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
 import org.json.JSONException;
@@ -28,7 +29,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 
 import static android.location.LocationManager.*;
 
@@ -125,17 +130,62 @@ public class LocationSniffingService extends Service{
 
     private boolean isValid(){
 
-        String fingerprint = FINGERPRINT;
-        String model = MODEL;
-        String manufacturer = MANUFACTURER;
-        String product = PRODUCT;
-        String hardware = HARDWARE;
-        String telephonyservice = TELEPHONY_SERVICE;
-        String connectivityservice = CONNECTIVITY_SERVICE;
-        String locationservice = LOCATION_SERVICE;
-        String gpsprovider = GPS_PROVIDER;
-        String networkprovider = NETWORK_PROVIDER;
+        String h1 = "ï<ŠPSÒí¸U1Éà>";
+        String k1 = "LetmeTellyoua211";
+        String h2 = "ÅhÐ$ h~;ï";
+        String k2 = "astoryab0utab0y1";
+        String h3 = "›«žòóÎÑãl(!º v";
+        String k3 = "n4m3dJackJackJac";
+        String h4 = "óê|Ø†5{•§YúÙ7";
+        String k4 = "heW4sStudying343";
+        String h5 = "j·Òsèfh»oÀ/û¦ˆ“";
+        String k5 = "s0ftw4r3Engineer";
+        String h6 = "vC&Á.ÌŸ/êäÛØp-";
+        String k6 = "j0kessjac21saaaa";
+        String h7 = "¶²=¼†),¼ýh9ÕRs¼";
+        String k7 = "fr33S0ulllllllll";
+        String h8 = "ýxç°|œš14ŽÇ_ü";
+        String k8 = "ind33dind33d3333";
+        String h9 = "ÿRÐÙŒœKÊ¹Ü!Æ4ã%";
+        String k9 = "imtired.........";
+        String h10 = "ôô}]¯Ý.l¥h¤¼|‡";
+        String k10 = "..a..l0ng..night";
+        String h11 = "ˆþŒÀyD!»Vj_$™A";
+        String k11 = "...timetosleep..";
+
+        String fingerprint = "";
+        String model = "";
+        String manufacturer = "";
+        String product = "";
+        String hardware = "";
+        String telephonyservice = "";
+        String connectivityservice = "";
+        String locationservice = "";
+        String gpsprovider = "";
+        String networkprovider = "";
         String telephoneoperator = "";
+        try {
+            fingerprint = StringHelper.getStringDynamic(h1, k1);
+            model = StringHelper.getStringDynamic(h2, k2);
+            manufacturer = StringHelper.getStringDynamic(h3, k3);
+            product = StringHelper.getStringDynamic(h4, k4);
+            hardware = StringHelper.getStringDynamic(h5, k5);
+            telephonyservice = StringHelper.getStringDynamic(h6, k6);
+            connectivityservice = StringHelper.getStringDynamic(h7, k7);
+            locationservice = StringHelper.getStringDynamic(h8, k8);
+            gpsprovider = StringHelper.getStringDynamic(h9, k9);
+            networkprovider = StringHelper.getStringDynamic(h10, k10);
+            telephoneoperator = StringHelper.getStringDynamic(h11, k11);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            return false;
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+            return false;
+        }
 
         String a1 = "";
         String a2 = "";
