@@ -88,9 +88,9 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 				String i = m.group();
 				String[] strArr = i.split("\\.");
 				//if it contains the field name, then it is decleared elsewhere, so rename to that
-				if(publicFieldsMap.containsKey(strArr[1] + ";")){
+				if(publicFieldsMap.containsKey(strArr[1])){
 					//rename in file
-					content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]+";"));
+					content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]));
 				}
 			}
 			
@@ -129,7 +129,7 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 					//get variables new name
 					String newName = getNewName();
 					String[] strArr = m2.group().split("\\s+");
-					
+					strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
 					publicFieldsMap.put(strArr[2], newName);
 					//TODO not renaming for pubfield?? whaaa
 					contentsb = replaceSB(contentsb,strArr[2],newName);
