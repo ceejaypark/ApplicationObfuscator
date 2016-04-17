@@ -65,39 +65,40 @@ public class NameObfuscater implements Obfuscater {
 			Charset charset = StandardCharsets.UTF_8;
 
 			content = checkMethodCalls( content);
+			content = methodVariableRename(content);
 			content = checkFieldCalls(file,content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
-//TODO METHOD SINGATURE VAIRABLES AS WELL!
-		
+			//TODO METHOD SINGATURE VAIRABLES AS WELL!
+
 		}
 
 		return files;
 	}
 
-private String checkFieldCalls(File file,String content) throws FileNotFoundException, IOException{
-	//get line
-	StringBuffer contentsb = new StringBuffer(content);
-	//Extract the file line by line
-	try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-		String line;
-		while ((line = br.readLine()) != null) {
-			//variable use check
-			Pattern p = Pattern.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
-			Matcher m = p.matcher(line);
-			while(m.find()){
-				String i = m.group();
-				String[] strArr = i.split("\\.");
-				//if it contains the field name, then it is decleared elsewhere, so rename to that
-				if(publicFieldsMap.containsKey(strArr[1])){
-					//rename in file
-					content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]));
+	private String checkFieldCalls(File file,String content) throws FileNotFoundException, IOException{
+		//get line
+		StringBuffer contentsb = new StringBuffer(content);
+		//Extract the file line by line
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				//variable use check
+				Pattern p = Pattern.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
+				Matcher m = p.matcher(line);
+				while(m.find()){
+					String i = m.group();
+					String[] strArr = i.split("\\.");
+					//if it contains the field name, then it is decleared elsewhere, so rename to that
+					if(publicFieldsMap.containsKey(strArr[1])){
+						//rename in file
+						content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]));
+					}
 				}
+
 			}
-			
 		}
+		return content;
 	}
-	return content;
-}
 
 	private String replaceFields(File file,String content) throws FileNotFoundException, IOException{
 		StringBuffer contentsb = new StringBuffer(content);
@@ -120,7 +121,7 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 					}
 					contentsb = replaceSB(contentsb,m.group(1),newName);
 				}
-				
+
 				//second pattern to check for variables declared without an equals sign, only need to do public
 				Pattern p2 = Pattern.compile("\\bpublic\\b\\s+\\w+\\b\\s+\\w+\\b[;]");
 				Matcher m2 = p2.matcher(line);
@@ -138,14 +139,14 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 		}
 		return contentsb.toString();
 	}
-	
+
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
 		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
 		Matcher matcher = replacePattern.matcher(buff);
 		while(matcher.find()){
 			buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
 		}
-	    
+
 		return buff;
 	}
 
@@ -197,6 +198,29 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 
 			content = content.replaceAll("\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(");
 
+		}
+
+		return content;
+	}
+
+	private String methodVariableRename(String content){
+//(public|protected|private|static|\s) +[\w\<\>\[\]]+(|\s+(\w+) *)\([^\)]*\) *(\{?|[^;])
+		Pattern p = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+(|\\s+(\\w+) *)\\([^\\)]*\\) *(\\{?|[^;])");
+		Matcher m = p.matcher(content);
+		while(m.find()){			
+			Matcher matchBrackets = Pattern.compile("\\(([^)]+)\\)").matcher(m.group());
+			while(matchBrackets.find()) {
+				String[] indVariables = matchBrackets.group().split("\\,");
+				for(int i =0; i< indVariables.length;i++){
+					//remove any brackets etc
+					indVariables[i] = indVariables[i].replaceAll("[^a-zA-Z ]", "");
+					//split into sub array with element two being the variable name
+					String[] separateWords = indVariables[i].split("\\s+");
+					content = content.replaceAll(separateWords[1],getNewName());
+int j = 0;
+
+				}
+			}
 		}
 
 		return content;
