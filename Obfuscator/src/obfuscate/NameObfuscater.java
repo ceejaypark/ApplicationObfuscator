@@ -65,7 +65,7 @@ public class NameObfuscater implements Obfuscater {
 			Charset charset = StandardCharsets.UTF_8;
 
 			content = checkMethodCalls( content);
-			//content = checkFieldCalls(content);
+			content = checkFieldCalls(file,content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 //TODO METHOD SINGATURE VAIRABLES AS WELL!
 		
@@ -82,12 +82,15 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 		String line;
 		while ((line = br.readLine()) != null) {
 			//variable use check
-			Pattern p = Pattern.compile("[\\w]*[.][\\w]*[^\\(]");
+			Pattern p = Pattern.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
 			Matcher m = p.matcher(line);
 			while(m.find()){
-				if(publicFieldsMap.containsKey(m.group())){
+				String i = m.group();
+				String[] strArr = i.split("\\.");
+				//if it contains the field name, then it is decleared elsewhere, so rename to that
+				if(publicFieldsMap.containsKey(strArr[1] + ";")){
 					//rename in file
-					//content.replaceAll(//entire class.variable call);
+					content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]+";"));
 				}
 			}
 			
@@ -103,7 +106,7 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 			String line;
 			while ((line = br.readLine()) != null) {
 				// process the line
-				//variable declaration check
+				//variable declaration check (only checks if it has a = sign
 				Pattern p = Pattern.compile("\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
 				Matcher m = p.matcher(line);
 				while(m.find()){
@@ -111,35 +114,34 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 					//get variables new name
 					String newName = getNewName();
 					//check if variable is public, and if so add to the global hashmap
-					if(line.contains("\\bpublic\\b")){
+					Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
+					if(m1.find()){
 						publicFieldsMap.put(m.group(1), newName);
 					}
-					//TODO for some reason is writing to the file a lot...
 					contentsb = replaceSB(contentsb,m.group(1),newName);
-
-					//TODO create another method that is called on the second iteration 
-					// through the files. do a search for variable calls (Class.publicvariable)
-					// and then replace it
-
-					//rename variable in the rest of the file
-					//content = m.replaceAll(getNewName());
-					//content = content.replaceAll(m.group(1), getNewName());
 				}
-
-
+				
+				//second pattern to check for variables declared without an equals sign, only need to do public
+				Pattern p2 = Pattern.compile("\\bpublic\\b\\s+\\w+\\b\\s+\\w+\\b[;]");
+				Matcher m2 = p2.matcher(line);
+				while(m2.find()){
+					//matcher group index 1 is the name of the variable
+					//get variables new name
+					String newName = getNewName();
+					String[] strArr = m2.group().split("\\s+");
+					
+					publicFieldsMap.put(strArr[2], newName);
+					//TODO not renaming for pubfield?? whaaa
+					contentsb = replaceSB(contentsb,strArr[2],newName);
+				}
 			}
-
 		}
-		//matches the field names 
-
 		return contentsb.toString();
-
-
 	}
+	
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
 		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
 		Matcher matcher = replacePattern.matcher(buff);
-
 		while(matcher.find()){
 			buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
 		}
@@ -150,7 +152,7 @@ private String checkFieldCalls(File file,String content) throws FileNotFoundExce
 	private String replaceDeclaredMethods(String content){
 		StringBuilder sb = new StringBuilder(content);
 
-		//use regex pattern matching to find mathod declarations
+		//use regex pattern matching to find method declarations
 		Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
 		Matcher matcher = pattern.matcher(content);
