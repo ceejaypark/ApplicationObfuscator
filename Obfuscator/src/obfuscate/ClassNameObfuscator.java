@@ -117,8 +117,8 @@ public class ClassNameObfuscator implements Obfuscater{
 				fileOutput.flush();
 				fileOutput.close();
 				fileInput.close();
-				if (classNameHM.containsKey(nameChange.getCanonicalPath()) == false) {
-					classNameHM.put(nameChange.getCanonicalPath(), nameChange);
+				if (classNameHM.containsKey(nameChange.getAbsolutePath()) == false) {
+					classNameHM.put(nameChange.getAbsolutePath(), nameChange);
 				}
 			}
 			iterationCounter++;
