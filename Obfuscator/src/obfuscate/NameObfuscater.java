@@ -67,6 +67,11 @@ public class NameObfuscater implements Obfuscater {
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
 		}
+		
+		//need to iterate through the blacklisted files to rename public variables and method calls in them too
+		for(Map.Entry<String, File> blacklistFile : blacklist.entrySet()){
+			
+		}
 
 		return files;
 	}
@@ -108,7 +113,7 @@ public class NameObfuscater implements Obfuscater {
 				}
 
 				//second pattern to check for variables declared without an equals sign, only need to do public
-				Pattern p2 = Pattern.compile("\\bpublic\\b\\s+\\w+\\b\\s+\\w+\\b[;]");
+				Pattern p2 = Pattern.compile("\\bpublic\\b\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
 				Matcher m2 = p2.matcher(line);
 				while(m2.find()){
 					//matcher group index 1 is the name of the variable
