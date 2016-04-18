@@ -25,100 +25,42 @@ public class ClassNameObfuscator implements Obfuscater{
 		// Hashmap containing the old name as key and new name as value
 		HashMap<String, String> classNames = new HashMap<String,String>();
 		HashMap<String, File> classNameHM = new HashMap<String, File>();
-		int iterationCounter = 0;
-
-
+		
+		// Iterate through the files once and add names of any encountered
+		// classes into classNameHM
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
-			List<String> linesOfCode = new ArrayList<String>();
 			File file = fileEntry.getValue();
-			String canonicalPath = fileEntry.getKey();
 			FileReader fileReader = new FileReader(file);
 			BufferedReader fileInput = new BufferedReader(fileReader);
-			int classCounter = 0;
-			String mainClassName = file.getName();
 			// New path for the new file. 
-			String newPath = new String();
 			String lineInFile;
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String className = classNameReturner(lineInFile);
-
 				if (className != null) {
 					String obfName = asciiToString(name_counter);
 					obfuscatedNames.add(obfName);
 					classNames.put(className, obfName);
 				}
-
-				/*
-
-
-				boolean existsInHash = false;
-				// get the class name in the line. If there is no class name, the 
-				// string should be null
-				String className = classNameReturner(lineInFile);
-				// if it isn't null and if the name hasn't been obfuscated before
-				// iterate through hashmap to check if name exists
-				if ((className != null) && (obfuscatedChecker(obfuscatedNames, className) == false)) {
-					for (String key : classNames.keySet()) {
-						// if the name already exists, check the value of the key 
-						// which is the new name of the class
-						if (className.equals(key)) {
-							// obf is the new name
-							String obfName = classNames.get(className);
-							lineInFile = renameClass(obfName, className, lineInFile);
-							existsInHash = true;
-						}
-					}
-					// If it doesn't exist in the hash, create a new name for it
-					// and add the class name to the list of encountered classes
-					// and put it in the hashmap and also rename it in the line of code
-					if (existsInHash == false) {
-						String obfName = asciiToString(name_counter);
-						obfuscatedNames.add(obfName);
-						classNames.put(className, obfName);
-						lineInFile = renameClass(obfName, className, lineInFile);
-						if (classCounter == 0) {
-							newPath = canonicalPath.replaceAll(mainClassName, obfName + ".java");
-							classCounter++;
-						}
-					}
-				}
-				// Iterate through all class names encountered and replace in line of code if
-				// necessary
-				for (String key: classNames.keySet()) {
-					lineInFile = lineInFile.replaceAll(key, classNames.get(key));
-				}
-				// Add the line of code to the list of lines
-				linesOfCode.add(lineInFile);
 			}
-			File nameChange = new File(newPath);
-			FileWriter fileWriter = new FileWriter(nameChange);
-			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
-			for (String s: linesOfCode) {
-				s = s + "\n";
-				fileOutput.write(s);
-			}
-			fileOutput.flush();
-			fileOutput.close();
 			fileInput.close();
-			if (classNameHM.containsKey(nameChange.getAbsolutePath()) == false) {
-				classNameHM.put(nameChange.getAbsolutePath(), nameChange);
-			}
-
-				 */
-			}
 		}
+		
+		//Iterate through the files once more, replacing all instances of names
+		//Found within the classNameHM into the obfuscated names.
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			if (blacklist.containsKey(fileEntry.getValue().getCanonicalPath()) != true){
+				
+				// List containing lines of code
 				List<String> linesOfCode = new ArrayList<String>();
 				File file = fileEntry.getValue();
 				String canonicalPath = fileEntry.getKey();
 				FileReader fileReader = new FileReader(file);
 				BufferedReader fileInput = new BufferedReader(fileReader);
-				int classCounter = 0;
 				String mainClassName = file.getName();
 				// New path for the new file. 
 				String newPath = new String();
 				String lineInFile;
+				// boolean to check if a file name has been changed at all.
 				boolean fileChanged = false;
 				while ((lineInFile = fileInput.readLine()) != null) {
 					String className = classNameReturner(lineInFile);
@@ -128,7 +70,7 @@ public class ClassNameObfuscator implements Obfuscater{
 							// if the name already exists, check the value of the key 
 							// which is the new name of the class
 							if (className.equals(key)) {
-								// obf is the new name
+								// obfNa
 								String obfName = classNames.get(className);
 								lineInFile = renameClass(obfName, className, lineInFile);
 								if (fileChanged == false) {
@@ -144,7 +86,6 @@ public class ClassNameObfuscator implements Obfuscater{
 					linesOfCode.add(lineInFile);
 
 				}
-				System.out.println(newPath);
 				File nameChange = new File(newPath);
 				FileWriter fileWriter = new FileWriter(nameChange);
 				BufferedWriter fileOutput = new BufferedWriter(fileWriter);
@@ -155,29 +96,22 @@ public class ClassNameObfuscator implements Obfuscater{
 				fileOutput.flush();
 				fileOutput.close();
 				fileInput.close();
+				
+				// Add the newly named files into the new hashmap
 				if (classNameHM.containsKey(nameChange.getCanonicalPath()) == false) {
 					classNameHM.put(nameChange.getCanonicalPath(), nameChange);
 				}
 			}
 		}
 
-
-
 		// Updates blacklist file
 		for (Map.Entry<String, File> fileEntry : blacklist.entrySet()) {
 			File file = fileEntry.getValue();
-			System.out.println(fileEntry.getValue());
 			replaceClass(file,classNames);
 		}
-
 		replaceClass(manifest,classNames);
-
-
 		return classNameHM;
-
-
 	}
-
 
 	/*
 	 * Takes a file and replaces all the class names with hashmap values
