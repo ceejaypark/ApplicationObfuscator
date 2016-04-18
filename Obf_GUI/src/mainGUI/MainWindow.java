@@ -150,6 +150,7 @@ public class MainWindow {
 						else{
 							sourceFolder.getButton().setEnabled(false);
 							sourceFolder.getTextField().setEditable(false);
+							sourceFolder.setDefaultText();
 							sourceFolder.restrict(inputFolder.getFolderLoc());
 							checklist.disableDFAndCR();
 						}
