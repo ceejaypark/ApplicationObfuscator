@@ -1,13 +1,13 @@
-package testPackage3;/*Pulled my trigger, now he's dead.*/
-/*Bismillah! We will not let you go. (Let me go!)*/
-public abstract class TestAbstract {/*Anyway the wind blows.*/
+package testPackage3;
 
- public void l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l(){ 
+public abstract class TestAbstract {
+	
+	public void l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1(){
 		System.out.println("parent template");
- } 
-
- public void l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1(){ 
+	}
+	
+	public void l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l1l(){
 		System.out.println("Override this");
- }/*Nothing really matters,*/
-
-} 
+	}
+	
+}
