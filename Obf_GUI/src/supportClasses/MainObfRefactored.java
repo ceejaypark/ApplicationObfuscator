@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import javax.swing.JRadioButton;
 
+import mainGUI.MyProgBar;
 import obfuscate.*;
 
 public class MainObfRefactored {
@@ -14,48 +15,48 @@ public class MainObfRefactored {
 	private HashMap<String, File> filesForObf = new HashMap<String, File>();
 	private HashMap<String, JRadioButton> selectedTechniques;
 	private ArrayList<String> blacklist = new ArrayList<String>();
+	private HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
+	private MyProgBar mpb;
 
 	public MainObfRefactored(File inputFolder, File outputFolder,
 			ArrayList<String> blacklist,
-			HashMap<String, JRadioButton> selectedTechniques)
+			HashMap<String, JRadioButton> selectedTechniques, MyProgBar mpb)
 			throws IOException {
 		this.blacklist = blacklist;
 		this.selectedTechniques = selectedTechniques;
+		this.mpb = mpb;
 
-		FolderCopy fc = new FolderCopy();
-		fc.beginCopy(inputFolder, outputFolder);
-
-		addFilesToHashMap(outputFolder);
 		addObfuscaters();
-		for(Obfuscater obf : obfuscaters){
-			filesForObf = obf.execute(filesForObf);
-		}
-	}
+		
+		FolderCopy fc = new FolderCopy();
+		fc.beginCopy(inputFolder, outputFolder, blacklist);
 
+		this.blacklist = fc.copiedBlacklist();
+		this.createBlackListMap();
+		
+		addFilesToHashMap(outputFolder);
+
+	}
+	
 	private void addObfuscaters() {
+
 		if (selectedTechniques.get("Class Name Obfuscation").isSelected()) {
-			obfuscaters.add(new ClassNameObfuscator());
 		}
-		if (selectedTechniques.get("Method Name Obfuscation").isSelected()) {
-			
-		}
-		if (selectedTechniques.get("Variable Name Obfuscation").isSelected()) {
-			obfuscaters.add(new NameObfuscater());
+		if (selectedTechniques.get("Method and Variable Name Obfuscation").isSelected()) {
 		}
 		if (selectedTechniques.get("Minification").isSelected()) {
-			
 		}
 		if (selectedTechniques.get("Watermark").isSelected()) {
-			
 		}
 		if (selectedTechniques.get("Comment Removal").isSelected()) {
-			obfuscaters.add(new CommentRemover());
 		}
 		if (selectedTechniques.get("Bloating").isSelected()) {
-
 		}
 		if (selectedTechniques.get("Random Code Insertion").isSelected()) {
-
+		}
+		if (selectedTechniques.get("Directory Flattener").isSelected()) {
+		}
+		if (selectedTechniques.get("Console Output Remover (Android)").isSelected()) {
 		}
 	}
 
@@ -63,8 +64,15 @@ public class MainObfRefactored {
 		File[] listOfFiles = folder.listFiles();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
+			boolean skip = false;
+			for (String x : blacklist) {
 
-			if (blacklist.contains(listOfFiles[i].getCanonicalPath())) {
+				if (x.equals(listOfFiles[i].getCanonicalPath())) {
+					skip = true;
+					break;
+				}
+			}
+			if (skip) {
 				continue;
 			} else {
 				if (listOfFiles[i].isDirectory()) {
@@ -88,5 +96,11 @@ public class MainObfRefactored {
 		}
 
 		return nameSplit[nameSplit.length - 1];
+	}
+	
+	private void createBlackListMap(){
+		for (String x :blacklist){
+			mappedBlacklist.put(x, new File(x));
+		}
 	}
 }

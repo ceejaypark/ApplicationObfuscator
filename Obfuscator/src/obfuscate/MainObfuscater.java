@@ -20,8 +20,10 @@ public class MainObfuscater {
 	public static ArrayList<Obfuscater> obfuscaters = new ArrayList<Obfuscater>();
 	public static HashMap<String, File> filesForObfuscation = new HashMap<String, File>();
 	public static List<String> blackList = new ArrayList<String>();
-
+	public static HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
+	public static File manifest;
 	public static String OUTPUT = "";
+	public static File sourceFolder;
 	
 	public static void main(String[] args) throws IOException {
 
@@ -43,6 +45,12 @@ public class MainObfuscater {
 		File outputDir = new File(configProperties.getProperty("output") + outputDirectoryName);
 		OUTPUT = outputDir.getCanonicalPath();
 		
+		if(!outputDir.exists()){
+			outputDir.mkdir();
+		}
+		
+		sourceFolder = new File(configProperties.getProperty("projectSourceFolder"));
+		
 		//copy all files from input directory to the output directory
 		copyFolder(inputDir,outputDir);
 
@@ -51,13 +59,17 @@ public class MainObfuscater {
 		String singleStringBlackList = configProperties.getProperty("blacklist");
 		String[] blackListAsArray = singleStringBlackList.split(",");
 		blackList = addBlackListToList(blackListAsArray);
+		for (String x : blackList){
+			mappedBlacklist.put(x,  new File(x));
+		}
+		
 		// add non black listed files to hash map
 		addFilesToHashMap(outputDir);
 
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
 		if (Boolean.parseBoolean(configProperties.getProperty("watermark"))){
-			obfuscaters.add(new WatermarkObfuscator());
+			//obfuscaters.add(new WatermarkObfuscator());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
@@ -65,10 +77,7 @@ public class MainObfuscater {
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
 			// add code insertion obfuscater
-			//obfuscaters.add(new CodeInsertionObfuscater());
-		} 
-		if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
-			// add to 'obfuscaters', rename field obfuscater class
+			obfuscaters.add(new CodeInsertionObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
@@ -76,29 +85,28 @@ public class MainObfuscater {
 		if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
 			// add to 'obfuscaters', minification obfuscater class
 		}
+		if (Boolean.parseBoolean(configProperties.getProperty("bloating"))) {
+			//obfuscaters.add(new Bloating());
+		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
-			//obfuscaters.add(new NameObfuscater());
+			obfuscaters.add(new NameObfuscater());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("directoryflatenor"))){
 			// add to 'obfuscaters', get rid of directories
-			obfuscaters.add(new DirectoryFlatenorObfuscator());
+			//obfuscaters.add(new DirectoryFlatenorObfuscator());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("logdelete"))){
 			// add to 'obfuscaters', get rid of logs
-			obfuscaters.add(new LogDeleteObfuscator());
+			//obfuscaters.add(new LogDeleteObfuscator());
 		}
 		
 		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
-			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
+			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
 		}
 
-		// --------------RANDOM TEST----------------//
-		for (Entry<String, File> entry : filesForObfuscation.entrySet()) {
-			System.out.println("KEY: " + entry.getKey() + " +++ " + "FILE: " + entry.getValue().getName());
-		}
 	}
 
 	/**
@@ -136,7 +144,13 @@ public class MainObfuscater {
 			if (blackList.contains(listOfFiles[i].getCanonicalPath())) {
 				// do not add file to hash map and continue
 				continue;
-			} else {
+			}
+			
+			else if(listOfFiles[i].getCanonicalPath().contains("AndroidManifest.xml")){
+				manifest = listOfFiles[i];
+			}
+			
+			else {
 				if (listOfFiles[i].isDirectory()) {
 					//recursive call to any directory
 					addFilesToHashMap(listOfFiles[i]);
@@ -163,7 +177,7 @@ public class MainObfuscater {
 
 			// if directory not exists, create it
 			if (!dest.exists()) {
-				dest.mkdir();
+				dest.mkdirs();
 				//System.out.println("Directory copied from " + src + "  to " + dest);
 			}
 

@@ -14,7 +14,7 @@ import java.util.Map;
 public class CommentRemover implements Obfuscater{
 	
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			List<String> linesOfCode = new ArrayList<String>();
@@ -100,6 +100,8 @@ public class CommentRemover implements Obfuscater{
 		boolean endOfCode = false;
 		boolean inDoubleQuotes = false;
 		boolean inSingleQuotes = false;
+		List<Integer> inBrackets = new ArrayList<Integer>();
+		//boolean inBrackets = false;
 		
 		//iterate through every char in the string of code
 		for (int i = 0; i < line.length(); i++) {
@@ -133,9 +135,22 @@ public class CommentRemover implements Obfuscater{
 				}
 			}
 			
-			// code is not in string or char mode and ';' is shown, end of code
+			//checks for bracket openings and closings
 			if (!inDoubleQuotes && !inSingleQuotes) {
+				if (line.charAt(i) == ')') {
+					inBrackets.remove(0);
+				}
+				if (line.charAt(i) == '(') {
+					inBrackets.add(0);
+				}
+			}
+			
+			// code is not in string or char mode or in between brackets and ';' or '{' or '}' is shown, end of code
+			if (!inDoubleQuotes && !inSingleQuotes && inBrackets.isEmpty()) {
 				if (line.charAt(i) == ';') {
+					endOfCode = true;
+				}
+				if (line.charAt(i) == '{' || line.charAt(i) == '}') {
 					endOfCode = true;
 				}
 			}
