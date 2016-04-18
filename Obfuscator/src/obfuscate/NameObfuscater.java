@@ -54,6 +54,7 @@ public class NameObfuscater implements Obfuscater {
 
 		}
 		//iterate through files again to rename method calls as well
+		//TODO add blacklist files as well
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			File file = fileEntry.getValue();
 			//get the entire files contents in a string
@@ -68,7 +69,6 @@ public class NameObfuscater implements Obfuscater {
 			content = methodVariableRename(content);
 			content = checkFieldCalls(file,content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
-			//TODO METHOD SINGATURE VAIRABLES AS WELL!
 
 		}
 
@@ -204,7 +204,6 @@ public class NameObfuscater implements Obfuscater {
 	}
 
 	private String methodVariableRename(String content){
-//(public|protected|private|static|\s) +[\w\<\>\[\]]+(|\s+(\w+) *)\([^\)]*\) *(\{?|[^;])
 		Pattern p = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+(|\\s+(\\w+) *)\\([^\\)]*\\) *(\\{?|[^;])");
 		Matcher m = p.matcher(content);
 		while(m.find()){			
@@ -215,10 +214,11 @@ public class NameObfuscater implements Obfuscater {
 					//remove any brackets etc
 					indVariables[i] = indVariables[i].replaceAll("[^a-zA-Z ]", "");
 					//split into sub array with element two being the variable name
+					//TODO use string.split()
+					indVariables[i] = indVariables[i].trim();
 					String[] separateWords = indVariables[i].split("\\s+");
+					//TODO separation not going good ;;;
 					content = content.replaceAll(separateWords[1],getNewName());
-int j = 0;
-
 				}
 			}
 		}
