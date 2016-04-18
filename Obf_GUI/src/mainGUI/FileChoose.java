@@ -79,8 +79,7 @@ public class FileChoose extends JPanel{
 				@Override
 				public void focusLost(FocusEvent e) {
 					if (jtf.getText().equals("")){
-						jtf.setText(defaultText);
-						jtf.setForeground(Color.LIGHT_GRAY);
+						setDefaultText();
 					}
 				}
 				
@@ -120,5 +119,10 @@ public class FileChoose extends JPanel{
 	
 	public void restrict(String loc){
 		this.restriction = loc;
+	}
+	
+	public void setDefaultText(){
+		jtf.setText(this.defaultText);
+		jtf.setForeground(Color.LIGHT_GRAY);
 	}
 }

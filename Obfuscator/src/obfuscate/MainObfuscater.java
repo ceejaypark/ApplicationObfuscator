@@ -69,6 +69,7 @@ public class MainObfuscater {
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
 		if (Boolean.parseBoolean(configProperties.getProperty("watermark"))){
+			//obfuscaters.add(new WatermarkObfuscator());
 			obfuscaters.add(new WatermarkObfuscator());
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
@@ -81,11 +82,12 @@ public class MainObfuscater {
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
+			obfuscaters.add(new ClassNameObfuscator());
 		} 
 		if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
 			// add to 'obfuscaters', minification obfuscater class
+			
 		}
-
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
 			obfuscaters.add(new NameObfuscater());
