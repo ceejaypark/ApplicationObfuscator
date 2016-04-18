@@ -73,22 +73,26 @@ public class Bloating implements Obfuscater {
 	 * Method that goes through a line of code and has 30% chance of replacing each space with
 	 * a line from bohemian rhapsody
 	 */
-    private String replaceSpace(String lineInFile, String[] dictionary) {
-        String[] lineArray = lineInFile.split("\\s+");
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i<lineArray.length;i++) {
-            if (randomTrueOrFalse()) {
-                sb.append(lineArray[i]);
-                sb.append(randomCommentGenerator(dictionary));
-            }
-            else  {
-                sb.append(lineArray[i]);
-                sb.append(" ");
-            }
-        }
-        String alteredLine = sb.toString();
-        return alteredLine; 
-    }
+	private String replaceSpace(String lineInFile, String[] dictionary) {
+		if (!lineInFile.contains("\"")){
+			String[] lineArray = lineInFile.split("\\s+");
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i<lineArray.length;i++) {
+				if (randomTrueOrFalse()) {
+					sb.append(lineArray[i]);
+					sb.append(randomCommentGenerator(dictionary));
+				}
+				else  {
+					sb.append(lineArray[i]);
+					sb.append(" ");
+				}
+			}
+			String alteredLine = sb.toString();
+			return alteredLine; 
+		}
+		return lineInFile;
+	}
+
 
 
     // Random true or false
