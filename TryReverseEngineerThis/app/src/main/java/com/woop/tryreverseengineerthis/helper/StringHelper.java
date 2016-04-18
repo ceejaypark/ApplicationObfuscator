@@ -100,6 +100,4 @@ public class StringHelper {
         }
         return decryptedText;
     }
-
-
 }
