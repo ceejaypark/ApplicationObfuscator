@@ -65,7 +65,7 @@ public class NameObfuscater implements Obfuscater {
 			//set up the character set for writing back to the file
 			Charset charset = StandardCharsets.UTF_8;
 
-			content = checkMethodCalls( content);
+			content = checkMethodCalls(content);
 			content = methodVariableRename(content);
 			content = checkFieldCalls(file,content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
@@ -119,7 +119,13 @@ public class NameObfuscater implements Obfuscater {
 					if(m1.find()){
 						publicFieldsMap.put(m.group(1), newName);
 					}
-					contentsb = replaceSB(contentsb,m.group(1),newName);
+					if(publicFieldsMap.containsKey(m.group(1))){
+						contentsb = replaceSB(contentsb,m.group(1),publicFieldsMap.get(m.group(1)));
+
+					}else{
+						contentsb = replaceSB(contentsb,m.group(1),newName);
+
+					}
 				}
 
 				//second pattern to check for variables declared without an equals sign, only need to do public
@@ -214,10 +220,8 @@ public class NameObfuscater implements Obfuscater {
 					//remove any brackets etc
 					indVariables[i] = indVariables[i].replaceAll("[^a-zA-Z ]", "");
 					//split into sub array with element two being the variable name
-					//TODO use string.split()
 					indVariables[i] = indVariables[i].trim();
 					String[] separateWords = indVariables[i].split("\\s+");
-					//TODO separation not going good ;;;
 					content = content.replaceAll(separateWords[1],getNewName());
 				}
 			}
