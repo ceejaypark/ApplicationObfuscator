@@ -81,7 +81,10 @@ public class ClassNameObfuscator implements Obfuscater{
 						}
 					}
 					for (String key: classNames.keySet()) {
-						lineInFile = lineInFile.replaceAll(key, classNames.get(key));
+						
+						if(Character.isLetter(key.charAt(0))){
+							lineInFile = lineInFile.replaceAll(' '+key, ' '+classNames.get(key));
+						}
 					}
 					linesOfCode.add(lineInFile);
 
@@ -126,7 +129,9 @@ public class ClassNameObfuscator implements Obfuscater{
 
 			while ((lineInFile = fileInput.readLine()) != null) {
 				for(String s: classNames.keySet()) {
-					lineInFile.replaceAll(s, classNames.get(s));
+					if(Character.isLetter(s.charAt(0))){
+						lineInFile.replaceAll(s, classNames.get(s));
+					}
 				}
 				linesOfCode.add(lineInFile);
 			}
@@ -153,8 +158,12 @@ public class ClassNameObfuscator implements Obfuscater{
 	 * Method that rewrites a line of code with a class name in it
 	 */
 	private String renameClass (String newName, String oldName, String codeLine) {		
-		String result = codeLine.replaceAll(oldName, newName);
-		return result;
+		if(Character.isLetter(oldName.charAt(0))){
+			String result = codeLine.replaceAll(oldName, newName);
+			return result;
+		}
+		return codeLine;
+		
 	}
 
 	/*
