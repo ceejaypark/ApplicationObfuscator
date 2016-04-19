@@ -92,8 +92,7 @@ public class NameObfuscater implements Obfuscater {
 			while ((line = br.readLine()) != null) {
 				// process the line
 				//variable declaration check (only checks if it has a = sign
-
-				Pattern p = Pattern.compile("[^\\.]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
+				Pattern p = Pattern.compile("[([^\\.]]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
 				Matcher m = p.matcher(line);
 				while(m.find()){
 					//matcher group index 1 is the name of the variable
@@ -102,28 +101,39 @@ public class NameObfuscater implements Obfuscater {
 					//check if variable is public, and if so add to the global hashmap
 					Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
 					if(m1.find()){
-						publicFieldsMap.put(m.group(1), newName);
+						if(!publicFieldsMap.containsKey(m.group(1))){
+							publicFieldsMap.put(m.group(1), newName);
+
+						}
 					}
 					if(publicFieldsMap.containsKey(m.group(1))){
+						
 						contentsb = replaceSB(contentsb,m.group(1),publicFieldsMap.get(m.group(1)));
 
 					}else{
 						contentsb = replaceSB(contentsb,m.group(1),newName);
 
 					}
-				}
 
-				//second pattern to check for variables declared without an equals sign, only need to do public
-				Pattern p2 = Pattern.compile("\\bpublic\\b\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
+				}
+	
+				//second pattern to check for variables declared without an equals sign
+				Pattern p2 = Pattern.compile("\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
 				Matcher m2 = p2.matcher(line);
 				while(m2.find()){
-					//matcher group index 1 is the name of the variable
-					//get variables new name
-					String newName = getNewName();
-					String[] strArr = m2.group().split("\\s+");
-					strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
-					publicFieldsMap.put(strArr[2], newName);
-					contentsb = replaceSB(contentsb,strArr[2],newName);
+					if(!(m2.group().contains("public"))){
+						String[] varDec = m2.group().split("\\s+");
+						varDec[2] = varDec[2].replaceAll("[^a-zA-Z ]", "");
+						contentsb = replaceSB(contentsb,varDec[2],getNewName());
+					}else{
+						//matcher group index 1 is the name of the variable
+						//get variables new name
+						String newName = getNewName();
+						String[] strArr = m2.group().split("\\s+");
+						strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
+						publicFieldsMap.put(strArr[2], newName);
+						contentsb = replaceSB(contentsb,strArr[2],newName);
+					}
 				}
 			}
 		}
@@ -239,8 +249,7 @@ public class NameObfuscater implements Obfuscater {
 			}
 		}
 		return content;
-	}
-	
+	}	
 /**
  * Method to rename variables using stringbuffer
  * @param buff
@@ -288,6 +297,5 @@ public class NameObfuscater implements Obfuscater {
 		return sb.toString();
 	}
 }
-
 
 
