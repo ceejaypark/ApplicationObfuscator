@@ -176,7 +176,6 @@ public class NameObfuscater implements Obfuscater {
 			patternMethodDec = patternMethodDec.replace("(", "\\(");
 			patternMethodDec = patternMethodDec.replace(")", "\\)");
 
-			//TODO check if the line beforehand was override, if it then ignore
 			Matcher match = Pattern.compile("\\n(.*)\\n\\s+(\\w+|)\\s+" + patternMethodDec).matcher(content);
 			boolean isOverriden = false;
 			while(match.find()){
