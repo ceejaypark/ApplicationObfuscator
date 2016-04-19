@@ -110,6 +110,8 @@ public class LandingActivity extends AppCompatActivity
                 }
             });
             dialog.show();
+        }else{
+            Log.d(TAG, "Starting GPS");
         }
     }
 
@@ -122,9 +124,9 @@ public class LandingActivity extends AppCompatActivity
         mLocationListener = new CurrentLocationListener();
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    5000, 0, mLocationListener);
+                    0, 0, mLocationListener);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    5000, 0, mLocationListener);
+                    0, 0, mLocationListener);
             Log.d(TAG, "Hi");
         }catch(SecurityException e)
         {
@@ -220,7 +222,7 @@ public class LandingActivity extends AppCompatActivity
                     .show();
         }
         else{
-            Toast.makeText(getApplicationContext(), "There is no class for " + item.content + "today",
+            Toast.makeText(getApplicationContext(), "There is no class for " + item.content + " today",
                     Toast.LENGTH_SHORT).show();
         }
     }
