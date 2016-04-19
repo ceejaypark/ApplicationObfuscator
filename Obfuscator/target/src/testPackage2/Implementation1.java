@@ -18,8 +18,6 @@ public class Implementation1 implements TestInterface {
 	
 	public Implementation1(){
 		populateMenuAndTimes();
-        TestClass2 ffff = new TestClass2();
-        ffff.hello;
 	}
 	
 	@Override

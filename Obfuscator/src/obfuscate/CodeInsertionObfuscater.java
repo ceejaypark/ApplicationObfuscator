@@ -15,12 +15,15 @@ import java.util.Random;
 public class CodeInsertionObfuscater implements Obfuscater {
 	int deadCodeStatus = 0;
 	boolean deadMethodGenerated = false;
+	boolean misleadCreated = false;
 
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files,
 			HashMap<String, File> blacklist, File manifest) throws IOException {
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			
 
+			
 			setDeadCodeStatus();
 			deadMethodGenerated = false;
 
@@ -29,6 +32,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 			List<Integer> classBraces = new ArrayList<Integer>();
 
 			File file = fileEntry.getValue();
+			createMislead();
 
 			FileReader fileReader = new FileReader(file);
 			BufferedReader fileInput = new BufferedReader(fileReader);
@@ -211,9 +215,9 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		int forOrIf = getRandomNumber(2, 1);
 		if (forOrIf == 1) {
 			// add for loop
-			randomCode = randomCode + whitespace + "for (int i = 0; i < "
+			randomCode = randomCode + whitespace + "for (int fjhdafcjvklzxjcklzx = 0; fjhdafcjvklzxjcklzx < "
 					+ variables.get(getRandomNumber(variables.size(), 1) - 1)
-					+ "; i++) {\n";
+					+ "; fjhdafcjvklzxjcklzx++) {\n";
 		} else {
 			randomCode = randomCode + whitespace + "if ("
 					+ variables.get(getRandomNumber(variables.size(), 1) - 1)
@@ -321,5 +325,9 @@ public class CodeInsertionObfuscater implements Obfuscater {
 					+ "}\n";
 		}
 		return output;
+	}
+	
+	private void createMislead(){
+		
 	}
 }
