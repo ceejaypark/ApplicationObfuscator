@@ -164,31 +164,41 @@ public class ClassNameObfuscator implements Obfuscater{
 	private String renameClass (String newName, String oldName, String codeLine, HashMap className) {		
 		if(Character.isLetter(oldName.charAt(0))){
 			String result = codeLine.replaceAll(" "+oldName, " "+newName);
+			result = result.replaceAll("<"+oldName, "<"+newName);
+			result = result.replaceAll("\\("+oldName, "\\("+newName);
 			
 			if(result.contains("." + oldName)){
-				String toExamine = result.split(("." + oldName))[0];
-				String previousClassName = "";
 				
-				System.out.println(toExamine);
+				System.out.println("Old Name: " + oldName);
+				System.out.println("New Name: " + newName);
 				
-				for(int i = toExamine.length()-1; i >= 0; i--){
-					char tempChar = toExamine.charAt(i);
-					if(Character.isLetter(tempChar)){
-						previousClassName = tempChar + previousClassName;
+				if(result.contains("import")){
+					result = result.replaceAll(oldName, newName);
+				}else{
+					String toExamine = result.split(("." + oldName))[0];
+					String previousClassName = "";
+					
+					for(int i = toExamine.length()-1; i >= 0; i--){
+						char tempChar = toExamine.charAt(i);
+						if(Character.isLetter(tempChar)){
+							previousClassName = tempChar + previousClassName;
+						}
+						else{
+							break;
+						}
 					}
-					else{
-						break;
+									
+					System.out.println("Previous Class Name: " + previousClassName);
+					
+					if(className.containsValue(previousClassName)){
+						result = codeLine.replaceAll("."+oldName, "."+newName);
 					}
-				}
-				
-				System.out.println(previousClassName);				
-				
-				if(className.containsValue(previousClassName)){
-					result = codeLine.replaceAll("."+oldName, "."+newName);
+					else if(className.containsKey(previousClassName)){
+						result = codeLine.replaceAll("."+oldName, "."+newName);
+					}
 				}
 			}
 			
-			result = result.replaceAll("<"+oldName, "<"+newName);
 			return result;
 		}
 		return codeLine;
