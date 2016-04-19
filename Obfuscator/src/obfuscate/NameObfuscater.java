@@ -92,7 +92,8 @@ public class NameObfuscater implements Obfuscater {
 			while ((line = br.readLine()) != null) {
 				// process the line
 				//variable declaration check (only checks if it has a = sign
-				Pattern p = Pattern.compile("\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
+
+				Pattern p = Pattern.compile("[^\\.]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
 				Matcher m = p.matcher(line);
 				while(m.find()){
 					//matcher group index 1 is the name of the variable
