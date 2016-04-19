@@ -28,7 +28,7 @@ public class NameObfuscater implements Obfuscater {
 	static boolean overflow = false;
 	static HashMap<String,String> methodMap = new HashMap<String,String>();
 	static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
-	
+
 	@Override
 	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
@@ -67,10 +67,10 @@ public class NameObfuscater implements Obfuscater {
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
 		}
-		
+
 		//need to iterate through the blacklisted files to rename public variables and method calls in them too
 		for(Map.Entry<String, File> blacklistFile : blacklist.entrySet()){
-			
+
 		}
 
 		return files;
@@ -86,61 +86,66 @@ public class NameObfuscater implements Obfuscater {
 	 */
 	private String replaceFields(File file,String content) throws FileNotFoundException, IOException{
 		StringBuffer contentsb = new StringBuffer(content);
+		boolean inClass = false;
 		//Extract the file line by line
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				// process the line
-				//variable declaration check (only checks if it has a = sign
-				Pattern p = Pattern.compile("[([^\\.]]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
-				Matcher m = p.matcher(line);
-				while(m.find()){
-					//matcher group index 1 is the name of the variable
-					//get variables new name
-					String newName = getNewName();
-					//check if variable is public, and if so add to the global hashmap
-					Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
-					if(m1.find()){
-						if(!publicFieldsMap.containsKey(m.group(1))){
-							publicFieldsMap.put(m.group(1), newName);
 
-						}
-					}
-					if(publicFieldsMap.containsKey(m.group(1))){
-						
-						contentsb = replaceSB(contentsb,m.group(1),publicFieldsMap.get(m.group(1)));
-
-					}else{
-						contentsb = replaceSB(contentsb,m.group(1),newName);
-
-					}
-
+				if (line.matches(".*class\\s+(\\w+)(\\s+extends\\s+(\\w+))?(\\s+implements\\s+([\\w,\\s]+))?\\s*\\{.*$")) {
+					inClass = true;
 				}
-	
-				//second pattern to check for variables declared without an equals sign
-				Pattern p2 = Pattern.compile("\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
-				Matcher m2 = p2.matcher(line);
-				while(m2.find()){
-					if(!(m2.group().contains("public"))){
-						String[] varDec = m2.group().split("\\s+");
-						varDec[2] = varDec[2].replaceAll("[^a-zA-Z ]", "");
-						contentsb = replaceSB(contentsb,varDec[2],getNewName());
-					}else{
+				if(inClass){
+					// process the line
+					//variable declaration check (only checks if it has a = sign
+					Pattern p = Pattern.compile("[([^\\.]]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
+					Matcher m = p.matcher(line);
+					while(m.find()){
 						//matcher group index 1 is the name of the variable
 						//get variables new name
 						String newName = getNewName();
-						String[] strArr = m2.group().split("\\s+");
-						strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
-						publicFieldsMap.put(strArr[2], newName);
-						contentsb = replaceSB(contentsb,strArr[2],newName);
+						//check if variable is public, and if so add to the global hashmap
+						Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
+						if(m1.find()){
+							if(!publicFieldsMap.containsKey(m.group(1))){
+								publicFieldsMap.put(m.group(1), newName);
+
+							}
+						}
+						if(publicFieldsMap.containsKey(m.group(1))){
+
+							contentsb = replaceSB(contentsb,m.group(1),publicFieldsMap.get(m.group(1)));
+
+						}else{
+							contentsb = replaceSB(contentsb,m.group(1),newName);
+						}
+					}
+
+					//second pattern to check for variables declared without an equals sign
+					Pattern p2 = Pattern.compile("\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
+					Matcher m2 = p2.matcher(line);
+					while(m2.find()){
+						if(!(m2.group().contains("public"))){
+							String[] varDec = m2.group().split("\\s+");
+							varDec[2] = varDec[2].replaceAll("[^a-zA-Z ]", "");
+							contentsb = replaceSB(contentsb,varDec[2],getNewName());
+						}else{
+							//matcher group index 1 is the name of the variable
+							//get variables new name
+							String newName = getNewName();
+							String[] strArr = m2.group().split("\\s+");
+							strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
+							publicFieldsMap.put(strArr[2], newName);
+							contentsb = replaceSB(contentsb,strArr[2],newName);
+						}
 					}
 				}
 			}
 		}
 		return contentsb.toString();
 	}
-	
-	
+
+
 	/**
 	 * Method used to rename method signatures andn their refereneces within a file
 	 * @param content
@@ -156,7 +161,6 @@ public class NameObfuscater implements Obfuscater {
 			String methodDec = matcher.group();
 			//parse the name from the declaration
 			Pattern nameMatch = Pattern.compile("\\w+(\\s+|\\b)(\\()");
-
 			Matcher matcher2 = nameMatch.matcher(methodDec);
 			String methodName = "";
 			if (matcher2.find()) {
@@ -168,6 +172,23 @@ public class NameObfuscater implements Obfuscater {
 				continue;
 			}
 
+			String patternMethodDec = methodDec.replace("{", "\\{");
+			patternMethodDec = patternMethodDec.replace("(", "\\(");
+			patternMethodDec = patternMethodDec.replace(")", "\\)");
+
+			//TODO check if the line beforehand was override, if it then ignore
+			Matcher match = Pattern.compile("\\n(.*)\\n\\s+(\\w+|)\\s+" + patternMethodDec).matcher(content);
+			boolean isOverriden = false;
+			while(match.find()){
+				String a = new String(match.group());
+				//System.out.println(a);
+				if(a.contains("@Override")){
+					isOverriden = true;
+				}
+			}
+			if(isOverriden){
+				continue;
+			}
 			//check if declaration is in in hashmap already, if yes, then rename to new name
 			//otherwise parse the name, assign a new one, add it to hashmap, then rename all instances in the file
 			if(!methodMap.containsKey(methodName)){
@@ -176,12 +197,13 @@ public class NameObfuscater implements Obfuscater {
 				//add to hashmap
 				methodMap.put(methodName, getNewName());
 			}
+
 			//rename in file
 			content = content.replace(methodName, methodMap.get(methodName));
 		}
 		return content;
 	}
-	
+
 	/**
 	 * Iterates through files again to rename method calls
 	 */
@@ -228,35 +250,41 @@ public class NameObfuscater implements Obfuscater {
 	 * @throws IOException
 	 */
 	private String checkFieldCalls(File file,String content) throws FileNotFoundException, IOException{
-	
+		boolean inClass = false;
 		//Extract the file line by line
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				//variable use check
-				Pattern p = Pattern.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
-				Matcher m = p.matcher(line);
-				while(m.find()){
-					String i = m.group();
-					String[] strArr = i.split("\\.");
-					//if it contains the field name, then it is decleared elsewhere, so rename to that
-					if(publicFieldsMap.containsKey(strArr[1])){
-						//rename in file
-						content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]));
-					}
-				}
 
+				if (line.matches(".*class\\s+(\\w+)(\\s+extends\\s+(\\w+))?(\\s+implements\\s+([\\w,\\s]+))?\\s*\\{.*$")) {
+					inClass = true;
+				}
+				if(inClass){
+					//variable use check
+					Pattern p = Pattern.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
+					Matcher m = p.matcher(line);
+					while(m.find()){
+						String i = m.group();
+						String[] strArr = i.split("\\.");
+						//if it contains the field name, then it is decleared elsewhere, so rename to that
+						if(publicFieldsMap.containsKey(strArr[1])){
+							//rename in file
+							content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]));
+						}
+					}
+
+				}
 			}
 		}
 		return content;
 	}	
-/**
- * Method to rename variables using stringbuffer
- * @param buff
- * @param toReplace
- * @param replaceTo
- * @return
- */
+	/**
+	 * Method to rename variables using stringbuffer
+	 * @param buff
+	 * @param toReplace
+	 * @param replaceTo
+	 * @return
+	 */
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
 		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
 		Matcher matcher = replacePattern.matcher(buff);
@@ -297,5 +325,4 @@ public class NameObfuscater implements Obfuscater {
 		return sb.toString();
 	}
 }
-
 
