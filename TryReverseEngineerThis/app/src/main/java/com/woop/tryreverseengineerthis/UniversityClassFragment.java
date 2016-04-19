@@ -14,27 +14,17 @@ import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.items.ItemContent.ClassItem;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ *  Very simple fragment for University Classes
  */
 public class UniversityClassFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public UniversityClassFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static UniversityClassFragment newInstance(int columnCount) {
         UniversityClassFragment fragment = new UniversityClassFragment();
@@ -91,7 +81,6 @@ public class UniversityClassFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(ClassItem item);
     }
 }

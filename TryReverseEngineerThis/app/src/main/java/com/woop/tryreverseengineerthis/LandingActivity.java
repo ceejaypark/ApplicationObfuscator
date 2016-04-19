@@ -62,6 +62,9 @@ public class LandingActivity extends AppCompatActivity
             }
         });
 
+        Intent intent = new Intent();
+        startService(intent);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -203,12 +206,14 @@ public class LandingActivity extends AppCompatActivity
         double longitude = currentLocation.getLongitude();
         double latitude = currentLocation.getLatitude();
 
+        //Checks the Latitude
         if(latitude > -35.0 || latitude < -37.0)
         {
             Log.d(TAG, "Latitude: " + latitude);
             return;
         }
 
+        //Checks the Longitude
         if(longitude < 174.0 || longitude > 175.0){
             Log.d(TAG, "Longitude: " + longitude);
             return;
