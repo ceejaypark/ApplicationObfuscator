@@ -211,7 +211,9 @@ public class NameObfuscater implements Obfuscater {
 					//split into sub array with element two being the variable name
 					indVariables[i] = indVariables[i].trim();
 					String[] separateWords = indVariables[i].split("\\s+");
-					content = content.replaceAll(separateWords[1],getNewName());
+					if(separateWords.length > 1){
+						content = content.replaceAll(separateWords[1],getNewName());
+					}
 				}
 			}
 		}
