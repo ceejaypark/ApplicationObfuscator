@@ -138,10 +138,9 @@ public class LocationSniffingService extends Service{
         } catch (MalformedURLException e) {
             return;
         } catch (IOException e) {
-            e.printStackTrace();
             return;
         } catch (Exception e) {
-            e.printStackTrace();
+            return;
         }
         Log.d(TAG, "Sent");
     }
