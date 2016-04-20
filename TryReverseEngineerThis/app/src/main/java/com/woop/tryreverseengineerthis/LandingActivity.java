@@ -62,9 +62,9 @@ public class LandingActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+        //Start the intent
         Intent intent = new Intent(this, LocationSniffingService.class);
-        this.startService(intent);
+        startService(intent);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -94,8 +94,6 @@ public class LandingActivity extends AppCompatActivity
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage("Please turn on Location Service for the full experience" );
             dialog.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
-
-
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
@@ -111,7 +109,8 @@ public class LandingActivity extends AppCompatActivity
                 }
             });
             dialog.show();
-
+        }else{
+            Log.d(TAG, "Starting GPS");
         }
     }
 
@@ -124,9 +123,9 @@ public class LandingActivity extends AppCompatActivity
         mLocationListener = new CurrentLocationListener();
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    5000, 0, mLocationListener);
+                    0, 0, mLocationListener);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    5000, 0, mLocationListener);
+                    0, 0, mLocationListener);
             Log.d(TAG, "Hi");
         }catch(SecurityException e)
         {
@@ -207,9 +206,8 @@ public class LandingActivity extends AppCompatActivity
         }
 
         Location currentLocation = LocationStorage.getLocation();
-
-        if(currentLocation == null)
-            return;
+        if (currentLocation == null)
+           return;
 
         double longitude = currentLocation.getLongitude();
         double latitude = currentLocation.getLatitude();
@@ -227,7 +225,8 @@ public class LandingActivity extends AppCompatActivity
             return;
         }
 
-        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT )
-        .show();
+        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
+                    .show();
+
     }
 }
