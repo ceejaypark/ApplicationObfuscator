@@ -359,7 +359,7 @@ public class NameObfuscater implements Obfuscater {
 			}
 
 
-			Pattern replacePattern = Pattern.compile("\\b" + toReplace + "\\b");
+			Pattern replacePattern = Pattern.compile("\\b(?!R\\.)" + toReplace + "\\b");
 			Matcher matcher = replacePattern.matcher(found);
 			if (matcher.find()) {
 				// buff = new
