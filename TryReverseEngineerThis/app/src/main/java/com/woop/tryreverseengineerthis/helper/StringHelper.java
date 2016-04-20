@@ -3,20 +3,13 @@ package com.woop.tryreverseengineerthis.helper;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
-import android.util.Log;
-
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Objects;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
-
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.os.Build.FINGERPRINT;
@@ -25,7 +18,6 @@ import static android.os.Build.MODEL;
 import static android.os.Build.PRODUCT;
 import static android.os.Build.MANUFACTURER;
 import static javax.crypto.Cipher.*;
-
 
 /**
  * Created by Jay on 4/16/2016.
@@ -70,13 +62,13 @@ public class StringHelper {
         //hardware
         dynamicHashMap.put("FIVE555555555", h);
         //telephonyservice
-        dynamicHashMap.put("SIX6666666666", c);
+        dynamicHashMap.put("SIX6666666666", t);
         //connectivityservice
-        dynamicHashMap.put("SEVEN77777777", l);
+        dynamicHashMap.put("SEVEN77777777", c);
         //locationservice
-        dynamicHashMap.put("EIGHT88888888", g);
+        dynamicHashMap.put("EIGHT88888888", l);
         //gpsprovider
-        dynamicHashMap.put("NINE999999999", t);
+        dynamicHashMap.put("NINE999999999", g);
         //networkprovider
         dynamicHashMap.put("TEN0000000000", n);
         //telephoneoperator
