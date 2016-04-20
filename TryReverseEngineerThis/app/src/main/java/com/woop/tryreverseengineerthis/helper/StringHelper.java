@@ -104,6 +104,21 @@ public class StringHelper {
         staticHashMap.put("amereparkingWarden", "Z29sZGZpc2g=");
         //android
         staticHashMap.put("sadfacebunny", "YW5kcm9pZA==");
+
+        //url
+        staticHashMap.put("d102jd012jasd","aHR0cDovL3d3dy50aGlzaXNhZmFrZXVybGZvcmNvbXBzY2k3MDIuY29tLw==");
+        //http
+        staticHashMap.put("uas0j1d12dasDas","UE9TVA==");
+        //requestProperty1
+        staticHashMap.put("aspdk2DasdmaSDa==","Q29udGVudC1UeXBl");
+        //requestProperty2
+        staticHashMap.put("as=a=sdnasd2d22d2","YXBwbGljYXRpb24veC13d3ctZm9ybS11cmxlbmNvZGVk");
+        //requestProperty3
+        staticHashMap.put("ask20asdj20jd9","Y2hhcnNldA==");
+        //requestProperty4
+        staticHashMap.put("asdSDs22d@d222==","dXRmLTg=");
+        //requestProperty5
+        staticHashMap.put("20k20dk20ASD/**/2d==","Q29udGVudC1MZW5ndGg=");
     }
 
     public static String getStringDynamic(String encryptedKey) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
