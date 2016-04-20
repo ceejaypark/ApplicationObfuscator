@@ -28,8 +28,13 @@ import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
 import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 public class LandingActivity extends AppCompatActivity
@@ -214,18 +219,60 @@ public class LandingActivity extends AppCompatActivity
         double longitude = currentLocation.getLongitude();
         double latitude = currentLocation.getLatitude();
 
+        String lowerLatitude = "d2jasaSD2dasd==";
+        String higherLatitude = "sdD22d3daSd2==";
+        String lowerLongitude = "asd202d0asD2==";
+        String higherLongitude = "asdk22d2djiasd0";
+        double lLa = 0.0;
+        double hLa = 0.0;
+        double lLo = 0.0;
+        double hLo = 0.0;
+
+        try {
+            lLa = Double.parseDouble(StringHelper.getStringStatic(lowerLatitude));
+            hLa = Double.parseDouble(StringHelper.getStringStatic(higherLatitude));
+            lLo = Double.parseDouble(StringHelper.getStringStatic(lowerLongitude));
+            hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
         //Checks the Latitude
-        if(latitude > -35.0 || latitude < -37.0)
+        if(latitude < lLa || latitude > hLa)
         {
             Log.d(TAG, "Latitude: " + latitude);
             return;
         }
 
         //Checks the Longitude
-        if(longitude < 174.0 || longitude > 175.0){
+        if(longitude < lLo || longitude > hLo){
             Log.d(TAG, "Longitude: " + longitude);
             return;
         }
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        String strDate = sdf.format(c.getTime());
+        int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
+
+        if(dayOfTheWeek != 1 || dayOfTheWeek != 5 || dayOfTheWeek != 6){
+            Toast.makeText(getApplicationContext(), "No class today for " + item.content, Toast.LENGTH_SHORT)
+            .show();
+            return;
+        }
+
+        
+
+        //1
+        //5
+        //6
+
+
+        Log.d(TAG, dayOfTheWeek + "");
 
         Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
                     .show();

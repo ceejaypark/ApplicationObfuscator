@@ -119,6 +119,17 @@ public class StringHelper {
         staticHashMap.put("asdSDs22d@d222==","dXRmLTg=");
         //requestProperty5
         staticHashMap.put("20k20dk20ASD/**/2d==","Q29udGVudC1MZW5ndGg=");
+        //lowerLatitude
+        staticHashMap.put("d2jasaSD2dasd==","LTM2Ljg2");
+        //higherLatitude
+        staticHashMap.put("sdD22d3daSd2==","LTM2Ljg0");
+        //lowerLongitude
+        staticHashMap.put("asd202d0asD2==","MTc0Ljc2");
+        //higherLongitude
+        staticHashMap.put("asdk22d2djiasd0","MTc1Ljc4");
+        //hour
+        //minute
+        //dayOfTheWeek
     }
 
     public static String getStringDynamic(String encryptedKey) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
