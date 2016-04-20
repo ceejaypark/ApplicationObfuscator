@@ -223,6 +223,7 @@ public class LandingActivity extends AppCompatActivity
         String higherLatitude = "sdD22d3daSd2==";
         String lowerLongitude = "asd202d0asD2==";
         String higherLongitude = "asdk22d2djiasd0";
+        String validDays = "a2d0jdASd22ASd22j0";
         double lLa = 0.0;
         double hLa = 0.0;
         double lLo = 0.0;
@@ -233,6 +234,7 @@ public class LandingActivity extends AppCompatActivity
             hLa = Double.parseDouble(StringHelper.getStringStatic(higherLatitude));
             lLo = Double.parseDouble(StringHelper.getStringStatic(lowerLongitude));
             hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
+            validDays = StringHelper.getStringStatic(validDays);
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
@@ -255,24 +257,41 @@ public class LandingActivity extends AppCompatActivity
         }
 
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String strDate = sdf.format(c.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("HH");
+        String strHour = sdf.format(c.getTime());
         int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
 
-        if(dayOfTheWeek != 1 || dayOfTheWeek != 5 || dayOfTheWeek != 6){
-            Toast.makeText(getApplicationContext(), "No class today for " + item.content, Toast.LENGTH_SHORT)
+
+        Log.d(TAG, dayOfTheWeek + "");
+        Log.d(TAG, strHour);
+
+        dayOfTheWeek = 2;
+
+        if(!validDays.contains(dayOfTheWeek + "")){
+            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT)
             .show();
             return;
         }
 
-        
+        String time = "ajd202ASsd20L02";
 
-        //1
-        //5
-        //6
+        try {
+            time = StringHelper.getStringStatic(time + dayOfTheWeek);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            return;
+        }
 
-
-        Log.d(TAG, dayOfTheWeek + "");
+        if(!time.equals(strHour)){
+            Toast.makeText(getApplicationContext(), "Class is not now!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
 
         Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
                     .show();
