@@ -1,7 +1,6 @@
 package com.woop.tryreverseengineerthis.items;
 
 import com.woop.tryreverseengineerthis.R;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

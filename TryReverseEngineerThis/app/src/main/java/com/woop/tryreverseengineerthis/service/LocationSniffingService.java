@@ -3,12 +3,8 @@ import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Debug;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import com.woop.tryreverseengineerthis.helper.StringHelper;
@@ -23,7 +19,6 @@ import java.security.InvalidKeyException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
