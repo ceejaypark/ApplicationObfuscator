@@ -112,6 +112,8 @@ public class LandingActivity extends AppCompatActivity
         }else{
             Log.d(TAG, "Starting GPS");
         }
+
+        Log.d(TAG, "Hi");
     }
 
     @Override

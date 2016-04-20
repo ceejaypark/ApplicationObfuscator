@@ -3,6 +3,7 @@ package com.woop.tryreverseengineerthis.helper;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.Log;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -36,6 +37,8 @@ public class StringHelper {
     private static Cipher cipher;
 
     private static Object lock;
+
+    private final static String TAG = "StringHelper";
 
     public static void initialise(Context applicationContext) throws NoSuchPaddingException, NoSuchAlgorithmException {
 
@@ -90,7 +93,7 @@ public class StringHelper {
         //android_sdk_86
         staticHashMap.put("beTheBestCopIn","YW5kcm9pZF9zZGtfODY=");
         //genymotion
-        staticHashMap.put("Zo0o0o0o0Topia","2VueW1vdGlvbg==");
+        staticHashMap.put("Zo0o0o0o0Topia","Z2VueW1vdGlvbg==");
         //sdk
         staticHashMap.put("SheDidNotRealise","c2Rr");
         //sdk86
@@ -110,6 +113,9 @@ public class StringHelper {
 
     public static String getStringStatic(String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         String base64Encoded = staticHashMap.get(key);
+
+        Log.d(TAG, base64Encoded);
+
         return new String(Base64.decode(base64Encoded, Base64.DEFAULT));
     }
 }
