@@ -1,17 +1,13 @@
 package com.woop.tryreverseengineerthis.items;
 
 import com.woop.tryreverseengineerthis.R;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Helper class for providing sample content for user interfaces created by
- * Android template wizards.
- * <p/>
- * TODO: Replace all uses of this class before publishing your app.
+ * Simple item
  */
 public class ItemContent {
 

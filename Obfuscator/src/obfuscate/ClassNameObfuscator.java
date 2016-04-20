@@ -115,6 +115,12 @@ public class ClassNameObfuscator implements Obfuscater{
 			replaceClass(file,classNames);
 		}
 		replaceClass(manifest,classNames);
+		
+		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			File file = fileEntry.getValue();
+			file.delete();
+		}
+		
 		return classNameHM;
 	}
 
