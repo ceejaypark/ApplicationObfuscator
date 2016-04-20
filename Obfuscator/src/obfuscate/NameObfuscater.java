@@ -233,7 +233,8 @@ public class NameObfuscater implements Obfuscater {
 					indVariables[i] = indVariables[i].trim();
 					String[] separateWords = indVariables[i].split("\\s+");
 					if(separateWords.length > 1){
-						content = content.replaceAll(separateWords[1],getNewName());
+						content = replaceSB(new StringBuffer(content), separateWords[1],getNewName()).toString();
+						//content = content.replaceAll(,);
 					}
 				}
 			}
@@ -287,13 +288,59 @@ public class NameObfuscater implements Obfuscater {
 	 * @return
 	 */
 	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
-		Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
-		Matcher matcher = replacePattern.matcher(buff);
-		while(matcher.find()){
-			buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
+
+		StringBuffer newBuff = new StringBuffer();
+
+		Matcher m = Pattern.compile("(?m)^.*$").matcher(buff);
+
+		while (m.find()) {
+			if(m.group().contains("import") | m.group().contains("package")){
+				newBuff.append(m.group() + "\n");
+
+				continue;
+			}
+
+			Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
+			Matcher matcher = replacePattern.matcher(m.group());
+			if(matcher.find()){
+				//buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
+				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))+ "\n");
+			}else{
+				newBuff.append(m.group()+ "\n");
+			}
+
+
 		}
 
-		return buff;
+
+		//		String[] lines = buff.toString().split("\\n");
+		//		for (String line: lines){
+		//			if(!line.contains(toReplace)){
+		//				continue;
+		//			}
+		//			if(line.contains("import") | line.contains("package")){
+		//				continue;
+		//			}
+		//			else{
+		//				// not an import statement, so replace in line, then replace in buffer
+		//				String newLine = line.replaceAll("\\b"+toReplace+"\\b", replaceTo);
+		//
+		//				String pattern = line.replace("{", "\\{");
+		//				pattern = pattern.replace("(", "\\(");
+		//				pattern = pattern.replace(")", "\\)");
+		//
+		//				Pattern replacePattern = Pattern.compile(pattern);
+		//				Matcher matcher = replacePattern.matcher(buff);
+		//				while(matcher.find()){				
+		//					buff = new StringBuffer(matcher.replaceAll(newLine));//.appendReplacement(buff, replaceTo);
+		//				}
+		//			}
+		//		}
+
+
+
+
+		return newBuff;
 	}
 
 	/**
