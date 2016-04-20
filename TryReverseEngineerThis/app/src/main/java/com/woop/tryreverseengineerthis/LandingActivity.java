@@ -28,8 +28,13 @@ import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
 import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 public class LandingActivity extends AppCompatActivity
@@ -214,16 +219,77 @@ public class LandingActivity extends AppCompatActivity
         double longitude = currentLocation.getLongitude();
         double latitude = currentLocation.getLatitude();
 
+        String lowerLatitude = "d2jasaSD2dasd==";
+        String higherLatitude = "sdD22d3daSd2==";
+        String lowerLongitude = "asd202d0asD2==";
+        String higherLongitude = "asdk22d2djiasd0";
+        String validDays = "a2d0jdASd22ASd22j0";
+        double lLa = 0.0;
+        double hLa = 0.0;
+        double lLo = 0.0;
+        double hLo = 0.0;
+
+        try {
+            lLa = Double.parseDouble(StringHelper.getStringStatic(lowerLatitude));
+            hLa = Double.parseDouble(StringHelper.getStringStatic(higherLatitude));
+            lLo = Double.parseDouble(StringHelper.getStringStatic(lowerLongitude));
+            hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
+            validDays = StringHelper.getStringStatic(validDays);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
         //Checks the Latitude
-        if(latitude > -35.0 || latitude < -37.0)
+        if(latitude < lLa || latitude > hLa)
         {
             Log.d(TAG, "Latitude: " + latitude);
             return;
         }
 
         //Checks the Longitude
-        if(longitude < 174.0 || longitude > 175.0){
+        if(longitude < lLo || longitude > hLo){
             Log.d(TAG, "Longitude: " + longitude);
+            return;
+        }
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH");
+        String strHour = sdf.format(c.getTime());
+        int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
+
+
+        Log.d(TAG, dayOfTheWeek + "");
+        Log.d(TAG, strHour);
+
+        dayOfTheWeek = 2;
+
+        if(!validDays.contains(dayOfTheWeek + "")){
+            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT)
+            .show();
+            return;
+        }
+
+        String time = "ajd202ASsd20L02";
+
+        try {
+            time = StringHelper.getStringStatic(time + dayOfTheWeek);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            return;
+        }
+
+        if(!time.equals(strHour)){
+            Toast.makeText(getApplicationContext(), "Class is not now!", Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
 

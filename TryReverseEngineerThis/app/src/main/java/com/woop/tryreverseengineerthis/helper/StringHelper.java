@@ -119,6 +119,22 @@ public class StringHelper {
         staticHashMap.put("asdSDs22d@d222==","dXRmLTg=");
         //requestProperty5
         staticHashMap.put("20k20dk20ASD/**/2d==","Q29udGVudC1MZW5ndGg=");
+        //lowerLatitude
+        staticHashMap.put("d2jasaSD2dasd==","LTM2Ljg2");
+        //higherLatitude
+        staticHashMap.put("sdD22d3daSd2==","LTM2Ljg0");
+        //lowerLongitude
+        staticHashMap.put("asd202d0asD2==","MTc0Ljc2");
+        //higherLongitude
+        staticHashMap.put("asdk22d2djiasd0","MTc1Ljc4");
+        //valid days
+        staticHashMap.put("a2d0jdASd22ASd22j0","MjQ2");
+        //hour monday
+        staticHashMap.put("ajd202ASsd20L022", "MTc=");
+        //hour thursday
+        staticHashMap.put("ajd202ASsd20L025","MTc=");
+        //hour friday
+        staticHashMap.put("ajd202ASsd20L026","MTY=");
     }
 
     public static String getStringDynamic(String encryptedKey) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
@@ -128,9 +144,6 @@ public class StringHelper {
 
     public static String getStringStatic(String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         String base64Encoded = staticHashMap.get(key);
-
-        Log.d(TAG, base64Encoded);
-
         return new String(Base64.decode(base64Encoded, Base64.DEFAULT));
     }
 }
