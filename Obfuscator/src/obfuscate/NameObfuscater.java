@@ -153,10 +153,10 @@ public class NameObfuscater implements Obfuscater {
 	 */
 	private String replaceDeclaredMethods(String content){
 		//use regex pattern matching to find method declarations
-		Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
+		Pattern pattern = Pattern.compile("((public|protected|private|\\s) ?((static\\s)))+[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
 		Matcher matcher = pattern.matcher(content);
-
+		int count = 0;
 		while (matcher.find()) {
 			String methodDec = matcher.group();
 			//parse the name from the declaration
@@ -176,12 +176,12 @@ public class NameObfuscater implements Obfuscater {
 			patternMethodDec = patternMethodDec.replace("(", "\\(");
 			patternMethodDec = patternMethodDec.replace(")", "\\)");
 
-			Matcher match = Pattern.compile("\\n(.*)\\n\\s+(\\w+|)\\s+" + patternMethodDec).matcher(content);
+			Matcher match = Pattern.compile("[\r?\n](.*)[\r?\n]\\s+(\\w+|)\\s+" + patternMethodDec).matcher(content);
 			boolean isOverriden = false;
 			while(match.find()){
 				String a = new String(match.group());
-				//System.out.println(a);
-				if(a.contains("@Override")){
+				if(a.trim().startsWith("@Override")){
+					count++;
 					isOverriden = true;
 				}
 			}
@@ -207,8 +207,12 @@ public class NameObfuscater implements Obfuscater {
 	 * Iterates through files again to rename method calls
 	 */
 	private String checkMethodCalls(String content){
+		
+		
 		for (Entry<String, String> entry : methodMap.entrySet()){
-			content = content.replaceAll("\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(");
+			
+			content = replaceSB(new StringBuffer(content),"\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(").toString();
+			
 		}
 
 		return content;
@@ -220,7 +224,7 @@ public class NameObfuscater implements Obfuscater {
 	 * @return
 	 */
 	private String methodVariableRename(String content){
-		Pattern p = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+(|\\s+(\\w+) *)\\([^\\)]*\\) *(\\{?|[^;])");
+		Pattern p = Pattern.compile("((public|protected|private|\\s) ?((static\\s)))+[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 		Matcher m = p.matcher(content);
 		while(m.find()){			
 			Matcher matchBrackets = Pattern.compile("\\(([^)]+)\\)").matcher(m.group());
@@ -232,9 +236,9 @@ public class NameObfuscater implements Obfuscater {
 					//split into sub array with element two being the variable name
 					indVariables[i] = indVariables[i].trim();
 					String[] separateWords = indVariables[i].split("\\s+");
+					
 					if(separateWords.length > 1){
 						content = replaceSB(new StringBuffer(content), separateWords[1],getNewName()).toString();
-						//content = content.replaceAll(,);
 					}
 				}
 			}
@@ -292,24 +296,42 @@ public class NameObfuscater implements Obfuscater {
 		StringBuffer newBuff = new StringBuffer();
 
 		Matcher m = Pattern.compile("(?m)^.*$").matcher(buff);
-
+		boolean isSkip = false;
 		while (m.find()) {
-			if(m.group().contains("import") | m.group().contains("package")){
-				newBuff.append(m.group() + "\n");
-
+			String found = m.group();
+			if(isSkip){
+				isSkip = false;
+				
+				String[] temp = found.split("\\(");
+				newBuff.append(temp[0]+"(");
+				
+				StringBuilder sb = new StringBuilder();
+				
+				for(int i = 1; i < temp.length; i++){
+					sb.append(temp[i]);
+				}
+				
+				found = sb.toString();
+			}
+			
+			if(found.contains("import") | found.contains("package")){
+				newBuff.append(found + "\n");
+				continue;
+			}
+			if(found.contains("@Override")){
+				newBuff.append(found + "\n");
+				isSkip = true;
 				continue;
 			}
 
 			Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
-			Matcher matcher = replacePattern.matcher(m.group());
+			Matcher matcher = replacePattern.matcher(found);
 			if(matcher.find()){
 				//buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
 				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))+ "\n");
 			}else{
-				newBuff.append(m.group()+ "\n");
+				newBuff.append(found+ "\n");
 			}
-
-
 		}
 
 
