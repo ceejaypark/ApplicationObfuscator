@@ -2,6 +2,7 @@ package com.woop.tryreverseengineerthis.helper;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -55,51 +56,60 @@ public class StringHelper {
         String n = NETWORK_PROVIDER;
         String tl = ((TelephonyManager)applicationContext.getSystemService(t)).getNetworkOperator();
 
+        //fingerprint
         dynamicHashMap.put("ONE1111111111", f);
+        //model
         dynamicHashMap.put("TWO2222222222", m);
+        //manufacturer
         dynamicHashMap.put("THREE33333333", b);
+        //product
         dynamicHashMap.put("FOUR444444444", p);
+        //hardware
         dynamicHashMap.put("FIVE555555555", h);
+        //telephonyservice
         dynamicHashMap.put("SIX6666666666", c);
+        //connectivityservice
         dynamicHashMap.put("SEVEN77777777", l);
+        //locationservice
         dynamicHashMap.put("EIGHT88888888", g);
+        //gpsprovider
         dynamicHashMap.put("NINE999999999", t);
+        //networkprovider
         dynamicHashMap.put("TEN0000000000", n);
+        //telephoneoperator
         dynamicHashMap.put("ELVEN11111111", tl);
 
-        staticHashMap.put("OnceUponATime","ï›½t<2¾½£Au4€/;");
-        staticHashMap.put("LivedABunnyCalled","UÓÂM«L’¡Œ£û©”#2");
-        staticHashMap.put("Judy.SheWasGoingTo","YòNÒþ‰%ˆ7=f¦ÉÓ");
-        staticHashMap.put("beTheBestCopIn","ÁH^Ö²Q9_óËÎÈYø");
-        staticHashMap.put("Zo0o0o0o0Topia","™¬‘çörç?š`sàð½ËCKŒy©±ì¬G<D");
-        staticHashMap.put("SheDidNotRealise",":|dó2?œÀ.õe?®ÀL");
-        staticHashMap.put("however,ThatShe","ºÆ¢Ÿy˜bÜšâ?VÞ?");
-        staticHashMap.put("wasJustGoingtobe","þÏ)é0K®S›¡n„ši+");
-        staticHashMap.put("amereparkingWarden","³Ê²+G/F•“QRSïÄ");
-        staticHashMap.put("sadfacebunny", "1yÇÞ³’IÀ$“V„¬Ê");
-        staticHashMap.put("theend", "„új–_ý‡[»¬k@ƒr");
+        //generic
+        staticHashMap.put("OnceUponATime","Z2VuZXJpYw==");
+        //unknown
+        staticHashMap.put("LivedABunnyCalled","dW5rbm93bg==");
+        //google_sdk
+        staticHashMap.put("Judy.SheWasGoingTo","Z29vZ2xlX3Nkaw==");
+        //emulator
+        staticHashMap.put("OoposN10earlyforGot", "ZW11bGF0b3I=");
+        //android_sdk_86
+        staticHashMap.put("beTheBestCopIn","YW5kcm9pZF9zZGtfODY=");
+        //genymotion
+        staticHashMap.put("Zo0o0o0o0Topia","2VueW1vdGlvbg==");
+        //sdk
+        staticHashMap.put("SheDidNotRealise","c2Rr");
+        //sdk86
+        staticHashMap.put("however,ThatShe","c2RrXzg2");
+        //vbox
+        staticHashMap.put("wasJustGoingtobe","dmJveA==");
+        //goldfish
+        staticHashMap.put("amereparkingWarden", "Z29sZGZpc2g=");
+        //android
+        staticHashMap.put("sadfacebunny", "YW5kcm9pZA==");
     }
 
-    public static String getStringDynamic(String encyrptedKey, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-        String hashMapKey = "";
-        synchronized (lock) {
-            cipher.init(DECRYPT_MODE, aesKey);
-            hashMapKey = new String(cipher.doFinal(encyrptedKey.getBytes()));
-        }
-        return dynamicHashMap.get(hashMapKey);
+    public static String getStringDynamic(String encryptedKey) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        String key = new String(Base64.decode(encryptedKey, Base64.DEFAULT));
+        return dynamicHashMap.get(key);
     }
 
-    public static String getStringStatic(String id, String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        byte[] encrypted = staticHashMap.get(id).getBytes();
-        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-        String decryptedText = "";
-        synchronized (lock) {
-            cipher.init(DECRYPT_MODE, aesKey);
-            decryptedText = new String(cipher.doFinal(encrypted));
-        }
-        return decryptedText;
+    public static String getStringStatic(String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        String base64Encoded = staticHashMap.get(key);
+        return new String(Base64.decode(base64Encoded, Base64.DEFAULT));
     }
-
-
 }

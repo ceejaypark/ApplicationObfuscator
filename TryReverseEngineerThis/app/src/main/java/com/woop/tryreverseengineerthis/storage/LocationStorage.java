@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 /**
+ * Class for storing the GPS Updated Data
+ *
  * Created by Jay on 3/19/2016.
  */
 public class LocationStorage {

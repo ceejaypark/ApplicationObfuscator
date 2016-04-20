@@ -72,7 +72,7 @@ public class ClassNameObfuscator implements Obfuscater{
 							if (className.equals(key)) {
 								// obfNa
 								String obfName = classNames.get(className);
-								lineInFile = renameClass(obfName, className, lineInFile);
+								lineInFile = renameClass(obfName, className, lineInFile, classNames);
 								if (fileChanged == false) {
 									newPath = canonicalPath.replaceAll(mainClassName, obfName + ".java");
 									fileChanged = true;
@@ -81,7 +81,12 @@ public class ClassNameObfuscator implements Obfuscater{
 						}
 					}
 					for (String key: classNames.keySet()) {
-						lineInFile = lineInFile.replaceAll(key, classNames.get(key));
+						
+						if(Character.isLetter(key.charAt(0))){
+							String oldName = key;
+							String newName = classNames.get(key);
+							lineInFile = renameClass(newName, oldName, lineInFile, classNames);
+						}
 					}
 					linesOfCode.add(lineInFile);
 
@@ -110,6 +115,12 @@ public class ClassNameObfuscator implements Obfuscater{
 			replaceClass(file,classNames);
 		}
 		replaceClass(manifest,classNames);
+		
+		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			File file = fileEntry.getValue();
+			file.delete();
+		}
+		
 		return classNameHM;
 	}
 
@@ -126,7 +137,11 @@ public class ClassNameObfuscator implements Obfuscater{
 
 			while ((lineInFile = fileInput.readLine()) != null) {
 				for(String s: classNames.keySet()) {
-					lineInFile.replaceAll(s, classNames.get(s));
+					if(Character.isLetter(s.charAt(0))){
+						String oldName = s;
+						String newName = classNames.get(s);
+						lineInFile = renameClass(newName, oldName, lineInFile, classNames);						
+					}
 				}
 				linesOfCode.add(lineInFile);
 			}
@@ -152,9 +167,48 @@ public class ClassNameObfuscator implements Obfuscater{
 	/*
 	 * Method that rewrites a line of code with a class name in it
 	 */
-	private String renameClass (String newName, String oldName, String codeLine) {		
-		String result = codeLine.replaceAll(oldName, newName);
-		return result;
+	private String renameClass (String newName, String oldName, String codeLine, HashMap className) {		
+		if(Character.isLetter(oldName.charAt(0))){
+			String result = codeLine.replaceAll(" "+oldName, " "+newName);
+			result = result.replaceAll("<"+oldName, "<"+newName);
+			result = result.replaceAll("\\("+oldName, "\\("+newName);
+			
+			if(result.contains("." + oldName)){
+				
+				System.out.println("Old Name: " + oldName);
+				System.out.println("New Name: " + newName);
+				
+				if(result.contains("import")){
+					result = result.replaceAll(oldName, newName);
+				}else{
+					String toExamine = result.split(("." + oldName))[0];
+					String previousClassName = "";
+					
+					for(int i = toExamine.length()-1; i >= 0; i--){
+						char tempChar = toExamine.charAt(i);
+						if(Character.isLetter(tempChar)){
+							previousClassName = tempChar + previousClassName;
+						}
+						else{
+							break;
+						}
+					}
+									
+					System.out.println("Previous Class Name: " + previousClassName);
+					
+					if(className.containsValue(previousClassName)){
+						result = codeLine.replaceAll("."+oldName, "."+newName);
+					}
+					else if(className.containsKey(previousClassName)){
+						result = codeLine.replaceAll("."+oldName, "."+newName);
+					}
+				}
+			}
+			
+			return result;
+		}
+		return codeLine;
+		
 	}
 
 	/*

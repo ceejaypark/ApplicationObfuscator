@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -199,31 +198,35 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
-        if(item.id.equals("1")) {
-            Location currentLocation = LocationStorage.getLocation();
 
-            if (currentLocation == null)
-                return;
-
-            double longitude = currentLocation.getLongitude();
-            double latitude = currentLocation.getLatitude();
-
-            if (latitude > -35.0 || latitude < -37.0) {
-                Log.d(TAG, "Latitude: " + latitude);
-                return;
-            }
-
-            if (longitude < 174.0 || longitude > 175.0) {
-                Log.d(TAG, "Longitude: " + longitude);
-                return;
-            }
-
-            Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
+        if(!item.id.equals("1")){
+            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT )
                     .show();
+            return;
         }
-        else{
-            Toast.makeText(getApplicationContext(), "There is no class for " + item.content + " today",
-                    Toast.LENGTH_SHORT).show();
+
+        Location currentLocation = LocationStorage.getLocation();
+        if (currentLocation == null)
+           return;
+
+        double longitude = currentLocation.getLongitude();
+        double latitude = currentLocation.getLatitude();
+
+        //Checks the Latitude
+        if(latitude > -35.0 || latitude < -37.0)
+        {
+            Log.d(TAG, "Latitude: " + latitude);
+            return;
         }
+
+        //Checks the Longitude
+        if(longitude < 174.0 || longitude > 175.0){
+            Log.d(TAG, "Longitude: " + longitude);
+            return;
+        }
+
+        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
+                    .show();
+
     }
 }

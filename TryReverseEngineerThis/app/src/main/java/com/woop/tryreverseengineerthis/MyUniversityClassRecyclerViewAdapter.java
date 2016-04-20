@@ -13,6 +13,9 @@ import com.woop.tryreverseengineerthis.items.ItemContent.ClassItem;
 
 import java.util.List;
 
+/**
+ * Simple view adapter for RecyclerView
+ */
 public class MyUniversityClassRecyclerViewAdapter extends RecyclerView.Adapter<MyUniversityClassRecyclerViewAdapter.ViewHolder> {
 
     private final List<ClassItem> mValues;
