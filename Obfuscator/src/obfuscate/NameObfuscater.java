@@ -128,22 +128,27 @@ public class NameObfuscater implements Obfuscater {
 				// second pattern to check for variables declared without an
 				// equals sign
 				Pattern p2 = Pattern
-						.compile("\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
+						.compile("(public\\s+|)\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
 				Matcher m2 = p2.matcher(line);
 				while (m2.find()) {
 					if (!(m2.group().contains("public"))) {
 						String[] varDec = m2.group().split("\\s+");
-						varDec[2] = varDec[2].replaceAll("[^a-zA-Z ]", "");
-						contentsb = replaceSB(contentsb, varDec[2],
-								getNewName());
-					} else {
+						varDec[varDec.length - 1] = varDec[varDec.length - 1]
+								.replaceAll("[^a-zA-Z ]", "");
+						contentsb = replaceSB(contentsb,
+								varDec[varDec.length - 1], getNewName());
+					}
+
+					else {
 						// matcher group index 1 is the name of the variable
 						// get variables new name
 						String newName = getNewName();
 						String[] strArr = m2.group().split("\\s+");
-						strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
-						publicFieldsMap.put(strArr[2], newName);
-						contentsb = replaceSB(contentsb, strArr[2], newName);
+						strArr[strArr.length - 1] = strArr[strArr.length - 1]
+								.replaceAll("[^a-zA-Z ]", "");
+						publicFieldsMap.put(strArr[strArr.length - 1], newName);
+						contentsb = replaceSB(contentsb,
+								strArr[strArr.length - 1], newName);
 					}
 				}
 			}
@@ -165,7 +170,6 @@ public class NameObfuscater implements Obfuscater {
 				.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
 		Matcher matcher = pattern.matcher(content);
-		int count = 0;
 		while (matcher.find()) {
 			String methodDec = matcher.group();
 
@@ -357,47 +361,38 @@ public class NameObfuscater implements Obfuscater {
 				isSkip = true;
 				continue;
 			}
+			Pattern replacePattern;
+			if (toReplace.startsWith("\\b")) {
+				// if it starts with \\b, it is a method
+				replacePattern = Pattern.compile(toReplace);
 
-
-			Pattern replacePattern = Pattern.compile("\\b(?!R\\.)" + toReplace + "\\b");
+			} else {
+				// replacePattern =
+				// ((?<=(\w+\.))|)\bmItem\b
+				replacePattern = Pattern.compile("(\\s+)((?<=(\\w+\\.))|)\\b"+ toReplace + "\\b");
+				//replacePattern = Pattern.compile("((?!R\\.\\w+\\.)|)\\b"+ toReplace + "\\b");
+			}
 			Matcher matcher = replacePattern.matcher(found);
 			if (matcher.find()) {
 				// buff = new
 				// StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff,
 				// replaceTo);
-				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))
-						+ "\n");
+				//				String[] x = matcher.group().split("\\.");
+				//				if(x.length > 1 && x[0].equals("R")){
+				//					newBuff.append(matcher.group());
+				//					continue;
+				//				}
+//Matcher mR = Pattern.compile("(?<!R\\.)(?<!\\w)(?<!\\.)\\b" + toReplace +"\\b").matcher(matcher.group());
+//while(mR.find()){
+
+					newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))
+					+ "\n");
+				
+
 			} else {
 				newBuff.append(found + "\n");
 			}
 		}
-
-		// String[] lines = buff.toString().split("\\n");
-		// for (String line: lines){
-		// if(!line.contains(toReplace)){
-		// continue;
-		// }
-		// if(line.contains("import") | line.contains("package")){
-		// continue;
-		// }
-		// else{
-		// // not an import statement, so replace in line, then replace in
-		// buffer
-		// String newLine = line.replaceAll("\\b"+toReplace+"\\b", replaceTo);
-		//
-		// String pattern = line.replace("{", "\\{");
-		// pattern = pattern.replace("(", "\\(");
-		// pattern = pattern.replace(")", "\\)");
-		//
-		// Pattern replacePattern = Pattern.compile(pattern);
-		// Matcher matcher = replacePattern.matcher(buff);
-		// while(matcher.find()){
-		// buff = new
-		// StringBuffer(matcher.replaceAll(newLine));//.appendReplacement(buff,
-		// replaceTo);
-		// }
-		// }
-		// }
 
 		return newBuff;
 	}
