@@ -176,20 +176,20 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int itemIdentifier = item.getItemId();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
-        if (id == R.id.nav_classes) {
+        if (itemIdentifier == R.id.nav_classes) {
             fragment = new UniversityClassFragment();
-        } else if (id == R.id.nav_assignments) {
+        } else if (itemIdentifier == R.id.nav_assignments) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_checkin) {
+        } else if (itemIdentifier == R.id.nav_checkin) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_lectures) {
+        } else if (itemIdentifier == R.id.nav_lectures) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_share) {
+        } else if (itemIdentifier == R.id.nav_share) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_send) {
+        } else if (itemIdentifier == R.id.nav_send) {
             fragment = new Fragment();
         }
 
