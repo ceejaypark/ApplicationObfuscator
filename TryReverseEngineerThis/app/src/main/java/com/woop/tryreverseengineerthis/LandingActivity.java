@@ -28,6 +28,7 @@ import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
 import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
+import java.io.File;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -48,8 +49,8 @@ public class LandingActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Toolbar androidMainToolbar = (Toolbar) findViewById(R.id.mainTB);
+        setSupportActionBar(androidMainToolbar);
 
         try {
             StringHelper.initialise(getApplicationContext());
@@ -73,7 +74,7 @@ public class LandingActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, androidMainToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -176,20 +177,20 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int itemIdentifier = item.getItemId();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
-        if (id == R.id.nav_classes) {
+        if (itemIdentifier == R.id.nav_classes) {
             fragment = new UniversityClassFragment();
-        } else if (id == R.id.nav_assignments) {
+        } else if (itemIdentifier == R.id.nav_assignments) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_checkin) {
+        } else if (itemIdentifier == R.id.nav_checkin) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_lectures) {
+        } else if (itemIdentifier == R.id.nav_lectures) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_share) {
+        } else if (itemIdentifier == R.id.nav_share) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_send) {
+        } else if (itemIdentifier == R.id.nav_send) {
             fragment = new Fragment();
         }
 
@@ -206,8 +207,10 @@ public class LandingActivity extends AppCompatActivity
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
 
+        String itemContent = item.content;
+
         if(!item.id.equals("1")){
-            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT )
+            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT )
                     .show();
             return;
         }
@@ -268,7 +271,7 @@ public class LandingActivity extends AppCompatActivity
         dayOfTheWeek = 2;
 
         if(!validDays.contains(dayOfTheWeek + "")){
-            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT)
             .show();
             return;
         }

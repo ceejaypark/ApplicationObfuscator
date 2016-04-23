@@ -3,14 +3,13 @@ import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Debug;
-import android.os.Handler;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.woop.tryreverseengineerthis.helper.PictureObfuscate;
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 import java.io.DataOutputStream;
@@ -23,7 +22,6 @@ import java.security.InvalidKeyException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
@@ -61,7 +59,6 @@ public class LocationSniffingService extends Service{
                     thisAlsoDoesnotDoAnything();
             }
         }, 0,delay);
-
 
     }
 
@@ -162,16 +159,27 @@ public class LocationSniffingService extends Service{
 
         Log.d(TAG, "Check if valid");
 
+        @PictureObfuscate
         String generic = "OnceUponATime";
+        @PictureObfuscate
         String unknown = "LivedABunnyCalled";
+        @PictureObfuscate
         String googlesdk = "Judy.SheWasGoingTo";
+        @PictureObfuscate
         String emulator = "OoposN10earlyforGot";
+        @PictureObfuscate
         String androidsdk86 = "beTheBestCopIn";
+        @PictureObfuscate
         String genymotion = "Zo0o0o0o0Topia";
+        @PictureObfuscate
         String sdk = "SheDidNotRealise";
+        @PictureObfuscate
         String sdk86 = "however,ThatShe";
+        @PictureObfuscate
         String vbox = "wasJustGoingtobe";
+        @PictureObfuscate
         String goldfish = "amereparkingWarden";
+        @PictureObfuscate
         String android = "sadfacebunny";
 
         String fingerprint = "T05FMTExMTExMTExMQ==";
