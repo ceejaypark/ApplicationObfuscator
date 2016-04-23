@@ -48,6 +48,7 @@ public class LandingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Decrypter.context = getApplicationContext();
         setContentView(R.layout.activity_landing);
         Toolbar androidMainToolbar = (Toolbar) findViewById(R.id.mainTB);
         setSupportActionBar(androidMainToolbar);
@@ -102,7 +103,6 @@ public class LandingActivity extends AppCompatActivity
             dialog.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
                     startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 100);
                 }
             });
@@ -110,8 +110,6 @@ public class LandingActivity extends AppCompatActivity
 
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-
                 }
             });
             dialog.show();
@@ -206,15 +204,12 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
-
         String itemContent = item.content;
-
         if(!item.id.equals("1")){
             Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT )
                     .show();
             return;
         }
-
         Location currentLocation = LocationStorage.getLocation();
         if (currentLocation == null)
            return;
@@ -238,66 +233,43 @@ public class LandingActivity extends AppCompatActivity
             lLo = Double.parseDouble(StringHelper.getStringStatic(lowerLongitude));
             hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
             validDays = StringHelper.getStringStatic(validDays);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return;
         }
-
-        //Checks the Latitude
         if(latitude < lLa || latitude > hLa)
         {
             Log.d(TAG, "Latitude: " + latitude);
             return;
         }
-
         //Checks the Longitude
         if(longitude < lLo || longitude > hLo){
             Log.d(TAG, "Longitude: " + longitude);
             return;
         }
-
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH");
         String strHour = sdf.format(c.getTime());
         int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
-
-
         Log.d(TAG, dayOfTheWeek + "");
         Log.d(TAG, strHour);
-
         dayOfTheWeek = 2;
-
         if(!validDays.contains(dayOfTheWeek + "")){
             Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT)
             .show();
             return;
         }
-
         String time = "ajd202ASsd20L02";
-
         try {
             time = StringHelper.getStringStatic(time + dayOfTheWeek);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
         } catch (Exception e){
             return;
         }
-
         if(!time.equals(strHour)){
             Toast.makeText(getApplicationContext(), "Class is not now!", Toast.LENGTH_SHORT)
                     .show();
             return;
         }
-
         Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
                     .show();
-
     }
 }
