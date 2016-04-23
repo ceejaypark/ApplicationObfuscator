@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,6 +45,8 @@ public class NameObfuscater implements Obfuscater {
 
 			// set up the character set for writing back to the file
 			Charset charset = StandardCharsets.UTF_8;
+
+			//TODO R gets replaced in here
 			content = replaceFields(file, content);
 			content = replaceDeclaredMethods(content);
 
@@ -65,6 +68,7 @@ public class NameObfuscater implements Obfuscater {
 
 			content = checkMethodCalls(content);
 			content = methodVariableRename(content);
+			//TODO imports getting replaced here
 			content = checkFieldCalls(file, content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
@@ -297,7 +301,9 @@ public class NameObfuscater implements Obfuscater {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-
+				if(line.contains("import") | line.contains("package")){
+					continue;
+				}
 				// variable use check
 				Pattern p = Pattern
 						.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
@@ -313,6 +319,22 @@ public class NameObfuscater implements Obfuscater {
 								+ publicFieldsMap.get(strArr[1]));
 					}
 				}
+				
+				Matcher publicVariableCall = Pattern.compile("get\\(\\w+\\)\\.\\w+(?:\\)\\;)").matcher(content);
+				while(publicVariableCall.find()){
+					
+					String[] sepArray =publicVariableCall.group().split("\\.");
+					sepArray[sepArray.length-1] = sepArray[sepArray.length-1].replaceAll("[^a-zA-Z ]","");
+
+					String toReplace = publicVariableCall.group().replaceAll(sepArray[sepArray.length-1], publicFieldsMap.get(sepArray[sepArray.length-1]));
+					String patternMethodDec = publicVariableCall.group().replace(";", "\\;");
+					patternMethodDec = patternMethodDec.replace("(", "\\(");
+					patternMethodDec = patternMethodDec.replace(")", "\\)");
+					patternMethodDec = patternMethodDec.replace(".", "\\.");
+
+					content = content.replaceAll(patternMethodDec, toReplace);
+				}
+				
 
 			}
 		}
@@ -367,27 +389,16 @@ public class NameObfuscater implements Obfuscater {
 				replacePattern = Pattern.compile(toReplace);
 
 			} else {
-				// replacePattern =
-				// ((?<=(\w+\.))|)\bmItem\b
-				replacePattern = Pattern.compile("(\\s+)((?<=(\\w+\\.))|)\\b"+ toReplace + "\\b");
-				//replacePattern = Pattern.compile("((?!R\\.\\w+\\.)|)\\b"+ toReplace + "\\b");
+				replacePattern = Pattern.compile("((?!R\\.\\w+\\.)|)\\b" + toReplace + "\\b");
 			}
+
+
 			Matcher matcher = replacePattern.matcher(found);
 			if (matcher.find()) {
-				// buff = new
-				// StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff,
-				// replaceTo);
-				//				String[] x = matcher.group().split("\\.");
-				//				if(x.length > 1 && x[0].equals("R")){
-				//					newBuff.append(matcher.group());
-				//					continue;
-				//				}
-//Matcher mR = Pattern.compile("(?<!R\\.)(?<!\\w)(?<!\\.)\\b" + toReplace +"\\b").matcher(matcher.group());
-//while(mR.find()){
+				String i = matcher.group();
+				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))
+				+ "\n");
 
-					newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))
-					+ "\n");
-				
 
 			} else {
 				newBuff.append(found + "\n");
