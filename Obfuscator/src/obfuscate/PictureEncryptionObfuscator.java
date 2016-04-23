@@ -10,13 +10,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,8 +67,8 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 															
 					crypter.encrypt(value, resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png");
 					picture.save(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png");
-					System.out.println(value.equals(Decrypter.decrypt(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png",
-							resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png")));
+					//System.out.println(value.equals(Decrypter.decrypt(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png",
+					//		resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png")));
 					
 					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +")"; 
 					while(whiteSpaceCount > 0)
@@ -127,7 +132,25 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 	}
 
 	private void writeDecryptClass() throws IOException {
-		Files.copy(DECRYPTER, dst, StandardCopyOption.REPLACE_EXISTING);
+		
+		File decrypterTarget = new File(MainObfuscater.sourceFolder.getCanonicalPath() + "\\Decrypter.java");
+		
+		System.out.println(new File(DECRYPTER).getCanonicalFile().toPath().toString());
+		System.out.println(decrypterTarget.toPath().toString());
+		
+		Files.copy(new File(DECRYPTER).getCanonicalFile().toPath(), 
+					decrypterTarget.toPath(),
+				    StandardCopyOption.REPLACE_EXISTING);
+		
+		
+		Scanner sc = new Scanner(decrypterTarget);
+		String content =sc.useDelimiter("\\Z").next();
+		sc.close();
+
+		Charset charset = StandardCharsets.UTF_8;
+		content = content.replaceAll("package PACKAGENAMETOBEREPLACED;", "package " + MainObfuscater.srcPackage + ";");		
+		//Write the result back to the file
+		Files.write(decrypterTarget.toPath(), content.getBytes(charset));
 	}
 }
 
