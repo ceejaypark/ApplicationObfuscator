@@ -25,10 +25,17 @@ import com.woop.tryreverseengineerthis.helper.StringHelper;
 
 import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
+import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
+import java.io.File;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 public class LandingActivity extends AppCompatActivity
@@ -42,8 +49,8 @@ public class LandingActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Toolbar androidMainToolbar = (Toolbar) findViewById(R.id.mainTB);
+        setSupportActionBar(androidMainToolbar);
 
         try {
             StringHelper.initialise(getApplicationContext());
@@ -61,13 +68,13 @@ public class LandingActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        Intent intent = new Intent();
+        //Start the intent
+        Intent intent = new Intent(this, LocationSniffingService.class);
         startService(intent);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, androidMainToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -93,8 +100,6 @@ public class LandingActivity extends AppCompatActivity
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage("Please turn on Location Service for the full experience" );
             dialog.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
-
-
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
@@ -110,8 +115,11 @@ public class LandingActivity extends AppCompatActivity
                 }
             });
             dialog.show();
-
+        }else{
+            Log.d(TAG, "Starting GPS");
         }
+
+        Log.d(TAG, "Hi");
     }
 
     @Override
@@ -123,9 +131,9 @@ public class LandingActivity extends AppCompatActivity
         mLocationListener = new CurrentLocationListener();
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    5000, 0, mLocationListener);
+                    0, 0, mLocationListener);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    5000, 0, mLocationListener);
+                    0, 0, mLocationListener);
             Log.d(TAG, "Hi");
         }catch(SecurityException e)
         {
@@ -169,20 +177,20 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int itemIdentifier = item.getItemId();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
-        if (id == R.id.nav_classes) {
+        if (itemIdentifier == R.id.nav_classes) {
             fragment = new UniversityClassFragment();
-        } else if (id == R.id.nav_assignments) {
+        } else if (itemIdentifier == R.id.nav_assignments) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_checkin) {
+        } else if (itemIdentifier == R.id.nav_checkin) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_lectures) {
+        } else if (itemIdentifier == R.id.nav_lectures) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_share) {
+        } else if (itemIdentifier == R.id.nav_share) {
             fragment = new Fragment();
-        } else if (id == R.id.nav_send) {
+        } else if (itemIdentifier == R.id.nav_send) {
             fragment = new Fragment();
         }
 
@@ -198,28 +206,98 @@ public class LandingActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
-        Location currentLocation = LocationStorage.getLocation();
 
-        if(currentLocation == null)
+        String itemContent = item.content;
+
+        if(!item.id.equals("1")){
+            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT )
+                    .show();
             return;
+        }
+
+        Location currentLocation = LocationStorage.getLocation();
+        if (currentLocation == null)
+           return;
 
         double longitude = currentLocation.getLongitude();
         double latitude = currentLocation.getLatitude();
 
+        String lowerLatitude = "d2jasaSD2dasd==";
+        String higherLatitude = "sdD22d3daSd2==";
+        String lowerLongitude = "asd202d0asD2==";
+        String higherLongitude = "asdk22d2djiasd0";
+        String validDays = "a2d0jdASd22ASd22j0";
+        double lLa = 0.0;
+        double hLa = 0.0;
+        double lLo = 0.0;
+        double hLo = 0.0;
+
+        try {
+            lLa = Double.parseDouble(StringHelper.getStringStatic(lowerLatitude));
+            hLa = Double.parseDouble(StringHelper.getStringStatic(higherLatitude));
+            lLo = Double.parseDouble(StringHelper.getStringStatic(lowerLongitude));
+            hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
+            validDays = StringHelper.getStringStatic(validDays);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
         //Checks the Latitude
-        if(latitude > -35.0 || latitude < -37.0)
+        if(latitude < lLa || latitude > hLa)
         {
             Log.d(TAG, "Latitude: " + latitude);
             return;
         }
 
         //Checks the Longitude
-        if(longitude < 174.0 || longitude > 175.0){
+        if(longitude < lLo || longitude > hLo){
             Log.d(TAG, "Longitude: " + longitude);
             return;
         }
 
-        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT )
-        .show();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH");
+        String strHour = sdf.format(c.getTime());
+        int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
+
+
+        Log.d(TAG, dayOfTheWeek + "");
+        Log.d(TAG, strHour);
+
+        dayOfTheWeek = 2;
+
+        if(!validDays.contains(dayOfTheWeek + "")){
+            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT)
+            .show();
+            return;
+        }
+
+        String time = "ajd202ASsd20L02";
+
+        try {
+            time = StringHelper.getStringStatic(time + dayOfTheWeek);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            return;
+        }
+
+        if(!time.equals(strHour)){
+            Toast.makeText(getApplicationContext(), "Class is not now!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
+        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
+                    .show();
+
     }
 }

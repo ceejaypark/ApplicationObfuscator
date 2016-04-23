@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.Map;
 
 public class LogDeleteObfuscator implements Obfuscater {
 
+	private SecureRandom random = new SecureRandom();
+	
 	@Override
 	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
@@ -38,8 +42,16 @@ public class LogDeleteObfuscator implements Obfuscater {
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
 				
-				if (original.contains("Log.") || original.contains("System.out.println"))
-					continue;
+				if (original.contains("Log.")){
+					original = "Log.d(\"NothingToSeeHere\", \"Downloading ram...\")";
+				}
+				else if (original.contains("System.out.println")){
+					original.replace("\\((.*?)\\)", "pikabu");
+				}
+				else if (original.contains(".printStackTrace")){
+					original = "int " + generateRandomString() + " = 1;";
+				}				
+
 				
 				linesOfCode.add(original);
 			}
@@ -60,4 +72,8 @@ public class LogDeleteObfuscator implements Obfuscater {
 		return files;
 	}
 
+	public String generateRandomString() {
+		return new BigInteger(130, random).toString(32);
+	}
+	
 }
