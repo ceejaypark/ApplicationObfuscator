@@ -5,11 +5,13 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,8 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			e.printStackTrace();
 		}
 		
+		File resFolder = getResDirectory(MainObfuscater.OUTPUT);
+		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			int count = 0;
 			List<String> linesOfCode = new ArrayList<String>();
@@ -40,6 +44,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			FileReader fileReader = new FileReader(file);
 			BufferedReader fileInput = new BufferedReader(fileReader);
 
+						
 			String lineInFile;
 			boolean encryptNextLine = false;
 			
@@ -54,10 +59,10 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 					System.out.println(value);
 					System.out.println(variableName);
 					
-					new Crypter(PICTURE).encrypt(value, "H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\pe" + count+".png");
-					new Picture(PICTURE).save("H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\o" + count+".png");
-					System.out.println(value.equals(Decrypter.decrypt("H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\o" + count+".png",
-							"H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\pe" + count+".png")));
+					new Crypter(PICTURE).encrypt(value, resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png");
+					new Picture(PICTURE).save(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png");
+					System.out.println(value.equals(Decrypter.decrypt(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png",
+							resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png")));
 					
 					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +")"; 
 					while(whiteSpaceCount > 0)
@@ -93,6 +98,31 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			fileInput.close();
 		}
 		return files;
+	}
+
+	private File getResDirectory(String path){
+		for(File directory : getAllDirectory(new File(path))){
+			if(directory.getName().equals("res")){
+				return directory;
+			}
+		}
+		return null;
+	}
+	
+	private List<File> getAllDirectory(File file) {
+	    List<File> subdirs = Arrays.asList(file.listFiles(new FileFilter() {
+	        public boolean accept(File f) {
+	            return f.isDirectory();
+	        }
+	    }));
+	    subdirs = new ArrayList<File>(subdirs);
+
+	    List<File> deepSubdirs = new ArrayList<File>();
+	    for(File subdir : subdirs) {
+	        deepSubdirs.addAll(getAllDirectory(subdir)); 
+	    }
+	    subdirs.addAll(deepSubdirs);
+	    return subdirs;
 	}
 
 	private void writeDecryptClass() throws IOException {
