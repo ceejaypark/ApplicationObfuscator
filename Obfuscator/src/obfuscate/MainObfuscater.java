@@ -23,7 +23,9 @@ public class MainObfuscater {
 	public static HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
 	public static File manifest;
 	public static String OUTPUT = "";
+	public static String INPUT = "";
 	public static File sourceFolder;
+	public static String srcPackage = "";
 	
 	public static void main(String[] args) throws IOException {
 
@@ -38,6 +40,7 @@ public class MainObfuscater {
 		// retrieve the input directory from the configuration file
 		File inputDir = new File(configProperties.getProperty("input"));
 		String inputDirectoryName = new File(configProperties.getProperty("input")).getName();
+		INPUT = inputDir.getCanonicalPath();
 		
 		// retrieve the output directory from the configuration file
 		// further add in the directory, "-obfuscated" added to the input directory name
@@ -50,7 +53,7 @@ public class MainObfuscater {
 		}
 		
 		sourceFolder = new File(configProperties.getProperty("projectSourceFolder"));
-		
+		setSourcePackage();
 		//copy all files from input directory to the output directory
 		copyFolder(inputDir,outputDir);
 
@@ -233,5 +236,44 @@ public class MainObfuscater {
 		}
 		
 		return nameSplit[nameSplit.length-1];
+	}
+	
+	/**
+	 * Find and set the compulsory package required for putting it in source folder
+	 * @throws IOException 
+	 */
+	private static void setSourcePackage() throws IOException{
+		int posTracker = -1;
+		String[] projPathSplit = INPUT.split("\\\\");
+		String[] srcPathSplit = sourceFolder.getCanonicalPath().split("\\\\");
+		if(projPathSplit.length > srcPathSplit.length){
+			return;
+		}
+		
+		while(posTracker + 1 < projPathSplit.length && posTracker < srcPathSplit.length && projPathSplit[posTracker + 1].equals(srcPathSplit[posTracker + 1])){
+			posTracker++;
+		}
+		
+		if(posTracker < 0){
+			return;
+		}
+		
+		StringBuilder packageTemp = new StringBuilder();
+		
+		for (int i = (posTracker + 1); i < srcPathSplit.length; i++){
+			if(srcPathSplit[i].equals("app") && srcPathSplit[i+1].equals("java")){
+				i++;
+				continue;
+			}
+			
+			packageTemp.append(srcPathSplit[i]);
+			
+			
+			if (i != srcPathSplit.length -1){
+				packageTemp.append(".");
+			}
+		}
+		
+		System.out.println(packageTemp.toString());
 	}
 }
