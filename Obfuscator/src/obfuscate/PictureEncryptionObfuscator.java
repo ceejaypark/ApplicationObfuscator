@@ -45,12 +45,14 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
-				String cutDown = original.trim();
 				if(encryptNextLine){
-					String variableName = cutDown.split("String ")[0];
+					String cutDown = original.trim();
+					int whiteSpaceCount = original.indexOf(original.trim());
+					String variableName = cutDown.split("String ")[1].split("=")[0].trim();
 					String value = cutDown.split("\"")[1].split("\"")[0];
-					
+										
 					System.out.println(value);
+					System.out.println(variableName);
 					
 					new Crypter(PICTURE).encrypt(value, "H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\pe" + count+".png");
 					new Picture(PICTURE).save("H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\o" + count+".png");
@@ -58,11 +60,16 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 							"H:\\702\\output\\TryReverseEngineerThis-obfuscated\\app\\src\\main\\res\\drawable-mdpi\\pe" + count+".png")));
 					
 					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +")"; 
+					while(whiteSpaceCount > 0)
+					{
+						lineToAdd = ' ' + lineToAdd;
+						whiteSpaceCount--;
+					}
 					
 					count++;
 					encryptNextLine = false;
 					linesOfCode.add(lineToAdd);
-					break;
+					continue;
 				}
 				
 				if (original.contains("@PictureObfuscate")){
@@ -614,10 +621,7 @@ class Decrypter {
         int allowed = deCalcAllowed(1, 1);
         int count=0;
         String text = "";
-        
-        System.out.println(key.width()+ "");
-        System.out.println(key.height()+ "");
-        
+
         for(int i = 0; i<key.width(); i++)
             for(int j = 0; j<key.height(); j++){
                 if(!(i == 1 && j == 1)){
@@ -643,9 +647,7 @@ class Decrypter {
 	        return (d.getRed() * 127 + d.getGreen() * 127) + d.getBlue();
 	 }
 	    
-	 private static Color difference(int x, int y){
-		 	System.out.println(x + " " + y);
-		 	
+	 private static Color difference(int x, int y){		 	
 	        Color pix = key.get(x,y);
 	        int blue = pix.getBlue();
 	        int red = pix.getRed();
