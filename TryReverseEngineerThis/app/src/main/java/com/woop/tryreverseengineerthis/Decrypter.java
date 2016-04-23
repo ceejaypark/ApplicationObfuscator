@@ -10,21 +10,15 @@ public class Decrypter {
     public static Context context;
     private final static String TAG = "Decrypter";
 
-    public synchronized String decrypt(int number) {
+    public static synchronized String decrypt(int number) {
         int oId = context.getResources().getIdentifier("o" + number, "drawable", context.getPackageName());
         int eId = context.getResources().getIdentifier("pe" + number, "drawable", context.getPackageName());
-
-        Log.d(TAG, "" + number);
-        Log.d(TAG, oId + "");
-        Log.d(TAG, eId + "");
-
+        Log.d(TAG, "" + number); Log.d(TAG, oId + ""); Log.d(TAG, eId + "");
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-
         String message = decrypt(
                 new Picture(BitmapFactory.decodeResource(context.getResources(), eId, options)),
                 new Picture(BitmapFactory.decodeResource(context.getResources(), oId, options)));
-
         Log.d(TAG, message);
         return message;
     }
@@ -33,7 +27,6 @@ public class Decrypter {
         int allowed = deCalcAllowed(copy, key, 1, 1);
         int count=0;
         String text = "";
-
         for(int i = 0; i<key.width(); i++)
             for(int j = 0; j<key.height(); j++){
                 if(!(i == 1 && j == 1)){
@@ -59,8 +52,14 @@ public class Decrypter {
 	 }
 	    
 	 private static ColorOverHead difference(Picture copy, Picture key, int x, int y){
-	        int pix = key.get(x, y), blue = Color.blue(pix), red = Color.red(pix), green = Color.green(pix);
-            int c = copy.get(x, y), Cblue = Color.blue(c), Cred = Color.red(c), Cgreen = Color.green(c);
+	        int pix = key.get(x, y);
+            int blue = Color.blue(pix);
+            int red = Color.red(pix);
+            int green = Color.green(pix);
+            int c = copy.get(x, y);
+            int Cblue = Color.blue(c);
+            int Cred = Color.red(c);
+            int Cgreen = Color.green(c);
 	        return new ColorOverHead(Math.abs(red-Cred), Math.abs(green-Cgreen), Math.abs(blue-Cblue));
 	 }
 }
