@@ -260,6 +260,7 @@ public class MainObfuscater {
 		for (int i = (posTracker + 1); i < srcPathSplit.length; i++){
 			if(srcPathSplit[i].equals("app") && srcPathSplit[i+1].equals("src") && srcPathSplit[i+2].equals("main") && srcPathSplit[i+3].equals("java")){
 				i = i+3;
+				packageTemp = new StringBuilder();
 				continue;
 			}
 			
