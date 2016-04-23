@@ -62,7 +62,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 					count++;
 					encryptNextLine = false;
 					linesOfCode.add(lineToAdd);
-					continue;
+					break;
 				}
 				
 				if (original.contains("@PictureObfuscate")){
@@ -110,7 +110,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 				"		int oId = context.getResources().getIdentifier(\"o\" + number, \"drawable\", getPackageName());\n"+
 				"       int eId = context.getResources().getIdentifier(\"pe\" + number, \"drawable\", getPackageName());\n"+
 				"		try{\n"+
-				"			File fileOriginal = new File();\n"+
+				"			File fileOriginal = new File(Environment.getDataDirectory() + \"\\\\pictures\\\\\" + oId);\n"+
 				"			InputStream inputStream = context.getResources().openRawResource(oId);\n"+
 				"			OutputStream outStream = new FileOutputStream(fileOriginal);\n"+
 				"			byte buffer[] = new byte[1024];\n"+
@@ -124,7 +124,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 				"		catch(IOException e){}\n"+
 				"		}\n"+
 				"		try{\n"+
-				"			File fileEncrypted = new File();\n"+
+				"			File fileEncrypted = new File(Environment.getDataDirectory() + \"\\\\pictures\\\\\" + eId);\n"+
 				"			InputStream inputStream = context.getResources().openRawResource(eId);\n"+
 				"			OutputStream outStream = new FileOutputStream(fileEncrypted);\n"+
 				"			byte buffer[] = new byte[1024];\n"+
@@ -615,6 +615,9 @@ class Decrypter {
         int count=0;
         String text = "";
         
+        System.out.println(key.width()+ "");
+        System.out.println(key.height()+ "");
+        
         for(int i = 0; i<key.width(); i++)
             for(int j = 0; j<key.height(); j++){
                 if(!(i == 1 && j == 1)){
@@ -641,6 +644,8 @@ class Decrypter {
 	 }
 	    
 	 private static Color difference(int x, int y){
+		 	System.out.println(x + " " + y);
+		 	
 	        Color pix = key.get(x,y);
 	        int blue = pix.getBlue();
 	        int red = pix.getRed();
