@@ -52,6 +52,8 @@ public class LandingActivity extends AppCompatActivity
         Toolbar androidMainToolbar = (Toolbar) findViewById(R.id.mainTB);
         setSupportActionBar(androidMainToolbar);
 
+        Decrypter.context = getApplicationContext();
+
         try {
             StringHelper.initialise(getApplicationContext());
         } catch (NoSuchPaddingException e) {
