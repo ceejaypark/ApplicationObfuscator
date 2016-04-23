@@ -13,8 +13,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -134,10 +130,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 	private void writeDecryptClass() throws IOException {
 		
 		File decrypterTarget = new File(MainObfuscater.sourceFolder.getCanonicalPath() + "\\Decrypter.java");
-		
-		System.out.println(new File(DECRYPTER).getCanonicalFile().toPath().toString());
-		System.out.println(decrypterTarget.toPath().toString());
-		
+				
 		Files.copy(new File(DECRYPTER).getCanonicalFile().toPath(), 
 					decrypterTarget.toPath(),
 				    StandardCopyOption.REPLACE_EXISTING);
@@ -344,10 +337,7 @@ class Picture
     public String toString(){
         return filename;
     }
-   /**
-     * Create a picture by reading in a .png, .gif, or .jpg from
-     * the given filename or URL name.
-     */
+    
     public Picture(String filename) 
     {
         this.filename = filename;
@@ -365,15 +355,7 @@ class Picture
                 image = ImageIO.read(url);
             }
         }
-        catch (IOException e) {
-            // e.printStackTrace();
-            throw new RuntimeException("Could not open file: " + filename);
-        }
-
-        // check that image was read in
-        if (image == null) {
-            throw new RuntimeException("Invalid image file: " + filename);
-        }
+        catch (IOException e) {        }
     }
 
    /**
@@ -468,55 +450,4 @@ class Coord {
         this.z = z;
     }
 
-}
-
-class Decrypter {    
-	
-	private static Picture copy;
-	private static Picture key;
-	
-	public static String decrypt(String original, String encrypted){
-		copy = new Picture(original);
-	    key = new Picture(encrypted);
-		
-        int allowed = deCalcAllowed(1, 1);
-        int count=0;
-        String text = "";
-
-        for(int i = 0; i<key.width(); i++)
-            for(int j = 0; j<key.height(); j++){
-                if(!(i == 1 && j == 1)){
-                    count++;
-                    if(count==allowed){
-                        text += deCryptChar(i, j);
-                        count=0;
-                    }                
-                }
-            }
-        
-        return text;
-    }
-	
-	 private static char deCryptChar(int x, int y){
-	        Color d = difference(x, y);
-	        int a = d.getRed() + d.getGreen() + d.getBlue();
-	        return (char) a;
-	 }
-	 
-	 private static int deCalcAllowed(int x, int y){
-	        Color d = difference(x, y);
-	        return (d.getRed() * 127 + d.getGreen() * 127) + d.getBlue();
-	 }
-	    
-	 private static Color difference(int x, int y){		 	
-	        Color pix = key.get(x,y);
-	        int blue = pix.getBlue();
-	        int red = pix.getRed();
-	        int green = pix.getGreen();
-	        Color c = copy.get(x,y);
-	        int Cblue = c.getBlue();
-	        int Cred = c.getRed();
-	        int Cgreen = c.getGreen();
-	        return new Color(Math.abs(red-Cred), Math.abs(green-Cgreen), Math.abs(blue-Cblue)); 
-	 }
 }
