@@ -271,6 +271,6 @@ public class MainObfuscater {
 			}
 		}
 		
-		System.out.println(packageTemp.toString());
+		srcPackage = packageTemp.toString();
 	}
 }
