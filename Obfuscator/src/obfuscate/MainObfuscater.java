@@ -258,8 +258,8 @@ public class MainObfuscater {
 		StringBuilder packageTemp = new StringBuilder();
 		
 		for (int i = (posTracker + 1); i < srcPathSplit.length; i++){
-			if(srcPathSplit[i].equals("app") && srcPathSplit[i+1].equals("java")){
-				i++;
+			if(srcPathSplit[i].equals("app") && srcPathSplit[i+1].equals("src") && srcPathSplit[i+2].equals("main") && srcPathSplit[i+3].equals("java")){
+				i = i+3;
 				continue;
 			}
 			
@@ -271,6 +271,6 @@ public class MainObfuscater {
 			}
 		}
 		
-		System.out.println(packageTemp.toString());
+		srcPackage = packageTemp.toString();
 	}
 }
