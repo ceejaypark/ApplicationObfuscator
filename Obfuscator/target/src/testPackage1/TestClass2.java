@@ -14,7 +14,6 @@ public class TestClass2 {
 	//private ArrayList
 	private ArrayList<String> temp = new ArrayList<String>();	
 	protected int currentPos;
-    public String hello ;
 	public TestClass2(){
 		temp.add("Placeholder");
 		temp.add("TestClass2.temp");

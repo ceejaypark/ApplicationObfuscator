@@ -6,16 +6,27 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Removes lines with Log (for android) and System.out.println (for Java).
+ * WILL REMOVE ANY CODE IN SAME LINE LOG AND SYSTEM.OUT.PRINTLN IS IN!!!
+ * 
+ * @author jkim506
+ *
+ */
+
 public class LogDeleteObfuscator implements Obfuscater {
 
+	private SecureRandom random = new SecureRandom();
+	
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files)
-			throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
 		//Delete logs
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
@@ -31,8 +42,16 @@ public class LogDeleteObfuscator implements Obfuscater {
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
 				
-				if (original.contains("Log."))
-					continue;
+				if (original.contains("Log.")){
+					original = "Log.d(\"NothingToSeeHere\", \"Downloading ram...\");";
+				}
+				else if (original.contains("System.out.println")){
+					original.replace("\\((.*?)\\)", "pikabu");
+				}
+				else if (original.contains(".printStackTrace")){
+					original = "int " + generateRandomString() + " = 1;";
+				}				
+
 				
 				linesOfCode.add(original);
 			}
@@ -53,4 +72,8 @@ public class LogDeleteObfuscator implements Obfuscater {
 		return files;
 	}
 
+	public String generateRandomString() {
+		return "a" + new BigInteger(130, random).toString(32);
+	}
+	
 }

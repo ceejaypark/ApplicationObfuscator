@@ -3,6 +3,7 @@ package obfuscate;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,26 +16,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DirectoryFlatenorObfuscator implements Obfuscater{
-
+	
+	private HashMap<String, Boolean> importsToDelete = new HashMap<String, Boolean>();
+	private File manifest;
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
+		
+		this.manifest = manifest;
 		
 		HashMap<String, File> newFiles = new HashMap<String, File>();
-		HashMap<String, Boolean> importsToDelete = new HashMap<String, Boolean>();
 		
-		String[] directories = MainObfuscater.OUTPUT.split("\\\\");
-		String output = directories[directories.length-1] + "\\\\";
+		String output = MainObfuscater.sourceFolder.getCanonicalPath();
+		int folderCount = output.split("\\\\").length;
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			String path = fileEntry.getKey();
 			File file = fileEntry.getValue();
 			
+			int folderCountForThisFile = path.split("\\\\").length;
+			
 			//if there exists a subdirectory under the target folder
-			if(path.split(output)[1].contains("\\")){
+			if(folderCountForThisFile - folderCount > 1){
 				String fileNameOnly = file.getName();				
-				path = path.split(output)[0] + output + fileNameOnly;				
+				path = output + "\\\\" + fileNameOnly;				
 				//make a new file
 				File newFile = new File(path);
 				//copy the original file to the new file
@@ -45,10 +52,10 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 				file = newFile;
 			}
 			
-			newFiles.put(path, file);			
+			newFiles.put(path, file);
 		}
 		//Get the output directory
-		File outputFileDirectory = new File(MainObfuscater.OUTPUT);
+		File outputFileDirectory = new File(MainObfuscater.sourceFolder.getCanonicalPath());
 		
 		//Delete all subdirectories and add it to packages hashmap
 		for(Path p : Files.walk(outputFileDirectory.toPath()).
@@ -59,7 +66,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 				String[] tempDirectories = p.toString().split("\\\\");
 				String key = tempDirectories[tempDirectories.length-1];
 				importsToDelete.put(key, new Boolean(true));
-				Files.delete(p);
+				Files.delete(p); 
 			}
 		}
 		
@@ -78,7 +85,6 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 						
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
-				boolean deleteImport = false;
 				if(original.contains("import")){
 					String packageName = original.split("import")[1].trim();					
 					for(String subPackages : packageName.split("\\.")){						
@@ -86,17 +92,26 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 							continue;
 						
 						if(importsToDelete.containsKey(subPackages)){
-							deleteImport = true;
+							original = original.replaceAll("\\." + subPackages, "");
 							break;
 						}
 					}
 				}
 				
-				if(original.contains("package"))
-					continue;
+				if(original.contains("package")){
+					String packageName = original.split("package")[1].trim();		
+					for(String subPackages : packageName.split("\\.")){		
+						if(subPackages.contains(";")){
+							subPackages = subPackages.split(";")[0];
+						}
+						if(importsToDelete.containsKey(subPackages)){
+							original = original.replaceAll("\\." + subPackages, "");
+							break;
+						}
+					}
+				}
 				
-				if(!deleteImport)
-					linesOfCode.add(original);
+				linesOfCode.add(original);
 			}
 			
 			FileWriter fileWriter = new FileWriter(file);
@@ -109,9 +124,44 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 			
 			fileOutput.flush();
 			fileOutput.close();
-			fileInput.close();		
+			fileInput.close();
+			fileReader.close();
 		}
 		
+		changeManifest();
+		
 		return files;
+	}
+	
+	private void changeManifest() throws IOException{
+		Set<String> keys = importsToDelete.keySet();
+		FileReader fr = new FileReader(this.manifest);
+		BufferedReader br = new BufferedReader(fr);
+		
+		List<String> outputString = new ArrayList<String>(); 
+		String line;
+		
+		while ((line = br.readLine()) != null){
+			for (String x:keys){
+				if (line.contains(x) && line.contains("android:name")){
+					line = line.replaceAll("." + x, "");
+					break;
+				}
+			}
+			outputString.add(line);
+		}
+		
+		FileWriter fw = new FileWriter(this.manifest);
+		BufferedWriter bw = new BufferedWriter(fw);
+		
+		for(String s : outputString){
+			s = s + "\n";
+			bw.write(s);
+		}
+		
+		br.close();
+		fr.close();
+		bw.close();
+		fw.close();
 	}
 }

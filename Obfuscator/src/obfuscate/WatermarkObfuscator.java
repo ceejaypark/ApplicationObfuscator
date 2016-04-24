@@ -16,8 +16,7 @@ import java.security.NoSuchAlgorithmException;
 public class WatermarkObfuscator implements Obfuscater{
 
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files)
-			throws IOException {
+	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 
 		//Produce watermark
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
@@ -77,8 +76,6 @@ public class WatermarkObfuscator implements Obfuscater{
 					if(lineInFile.contains("{")){
 						linesOfCode.add("");
 						linesOfCode.add("String a=\"" + currentJavadocString.hashCode() + "\";");
-						System.out.println("Hash added:" + currentJavadocString.hashCode());		
-						System.out.println("Hashed from:" + currentJavadocString);
 						addJavadoc = false;
 					}					
 				}
