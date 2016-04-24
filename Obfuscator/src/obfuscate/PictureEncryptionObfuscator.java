@@ -66,7 +66,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 					//System.out.println(value.equals(Decrypter.decrypt(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png",
 					//		resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png")));
 					
-					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +";)"; 
+					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +");"; 
 					while(whiteSpaceCount > 0)
 					{
 						lineToAdd = ' ' + lineToAdd;

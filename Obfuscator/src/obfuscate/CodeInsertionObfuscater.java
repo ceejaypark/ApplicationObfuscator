@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -263,11 +264,11 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	// ====================================================================================
 	// Dead code generation methods
 	private String generateDeadMethod() {
-		String stringMethod = "private boolean getClassStatus(String input){\n"
+		String stringMethod = "private static boolean getClassStatus(String input){\n"
 				+ "\tif (input.length() == 16){\n" + "\t\treturn true;\n"
 				+ "\t}\n" + "\treturn false;\n" + "}";
 
-		String intMethod = "private boolean getClassStatus(int input){\n"
+		String intMethod = "private static boolean getClassStatus(int input){\n"
 				+ "\tif ((((double)input)/2) % 2 != 1){\n"
 				+ "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
 
@@ -326,14 +327,14 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	private String generateDeadIf(String original) {
 		String output;
 		if (original.startsWith("if")) {
-			output = "if(getClassStatus(" + getDeadInput() + ")){\n"
-					+ "Mislead.getInstance().addStatus()"
-					+ "}\n"
-					+ "else ";
+			output =  "  if(getClassStatus(" + getDeadInput() + ")){\n"
+					+ "      Mislead.getInstance().addStatus();\n"
+					+ "  }\n"
+					+ "  else ";
 		} else {
-			output = "else if(getClassStatus(" + getDeadInput() + ")){\n"
-					+ "Mislead.getInstance().addStatus()"
-					+ "}\n";
+			output = "  else if(getClassStatus(" + getDeadInput() + ")){\n"
+					+ "      Mislead.getInstance().addStatus();\n"
+					+ "  }\n";
 		}
 		return output;
 	}
@@ -353,8 +354,9 @@ public class CodeInsertionObfuscater implements Obfuscater {
 
 		content = content.replaceAll("TOBEREPLACED", MainObfuscater.srcPackage);
 
-		Files.write(misleadTarget.getCanonicalFile().toPath(),
+		Files.write(misleadTarget.toPath(),
 				content.getBytes(StandardCharsets.UTF_8));
+		
 		files.put(misleadTarget.getCanonicalPath(), misleadTarget);
 	}
 }
