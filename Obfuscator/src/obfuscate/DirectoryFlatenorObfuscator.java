@@ -29,8 +29,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		
 		HashMap<String, File> newFiles = new HashMap<String, File>();
 		
-		String[] directories = MainObfuscater.OUTPUT.split("\\\\");
-		String output = directories[directories.length-1] + "\\\\";
+		String output = MainObfuscater.sourceFolder.getCanonicalPath();
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			String path = fileEntry.getKey();
