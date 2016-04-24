@@ -210,6 +210,7 @@ public class NameObfuscater implements Obfuscater {
 			if (isOverriden) {
 				continue;
 			}
+			
 			// check if declaration is in in hashmap already, if yes, then
 			// rename to new name
 			// otherwise parse the name, assign a new one, add it to hashmap,
@@ -343,19 +344,37 @@ public class NameObfuscater implements Obfuscater {
 		boolean isSkip = false;
 		while (m.find()) {
 			String found = m.group();
-			if (isSkip) {
+			if (isSkip) {				
 				isSkip = false;
 
 				String[] temp = found.split("\\(");
-				newBuff.append(temp[0] + "(");
-
+				
+				String[] check = temp[0].split("\\s+");
+				if(check.length > 3 && methodMap.containsKey(check[3])){
+					StringBuilder sb = new StringBuilder();
+					for(int k = 0; k <check.length; k ++){
+						if(k != check.length -1){
+							sb.append(check[k] + " ");
+						}else{
+							sb.append(methodMap.get(check[k]));
+						}
+					}
+					
+					newBuff.append(sb.toString()+"(");
+				}
+				else{
+					newBuff.append(temp[0] + "(");
+				}
+				
 				StringBuilder sb = new StringBuilder();
-
+				
+				
 				for (int i = 1; i < temp.length; i++) {
 					sb.append(temp[i]);
 				}
 
 				found = sb.toString();
+
 			}
 
 			if (found.contains("import") | found.contains("package")) {

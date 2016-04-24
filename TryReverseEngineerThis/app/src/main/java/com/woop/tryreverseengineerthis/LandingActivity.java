@@ -60,8 +60,8 @@ public class LandingActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatActButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatActButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Hello", Snackbar.LENGTH_LONG)
@@ -152,9 +152,9 @@ public class LandingActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu lols) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.landing, menu);
+        getMenuInflater().inflate(R.menu.landing, lols);
         return true;
     }
 
