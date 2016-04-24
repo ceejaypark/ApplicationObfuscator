@@ -151,7 +151,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 							.matches("((public|private|protected|static|final|native|synchronized|abstract|transient)+\\s)+[\\$_\\w\\<\\>\\[\\]]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?")) {
 						if (inClass
 								&& !linesOfCode.get(linesOfCode.size() - 1)
-										.contains("@")) {
+										.contains("@Override")) {
 							if (!deadMethodGenerated) {
 								if (getRandomNumber(4, 0) <= 2) {
 									linesOfCode.add(generateDeadMethod());
@@ -326,10 +326,13 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	private String generateDeadIf(String original) {
 		String output;
 		if (original.startsWith("if")) {
-			output = "if(getClassStatus(" + getDeadInput() + ")){\n" + "}\n"
+			output = "if(getClassStatus(" + getDeadInput() + ")){\n"
+					+ "Mislead.getInstance().addStatus()"
+					+ "}\n"
 					+ "else ";
 		} else {
 			output = "else if(getClassStatus(" + getDeadInput() + ")){\n"
+					+ "Mislead.getInstance().addStatus()"
 					+ "}\n";
 		}
 		return output;
