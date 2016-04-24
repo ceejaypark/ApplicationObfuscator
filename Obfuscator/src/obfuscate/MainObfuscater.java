@@ -113,6 +113,7 @@ public class MainObfuscater {
 		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
+			System.out.println("Processing: " + obfuscaterProcess.getClass().toString());
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
 		}
 

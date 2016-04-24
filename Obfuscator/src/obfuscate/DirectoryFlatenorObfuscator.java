@@ -128,7 +128,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 			fileReader.close();
 		}
 		
-		this.changeManifest();
+		changeManifest();
 		
 		return files;
 	}
@@ -144,7 +144,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		while ((line = br.readLine()) != null){
 			for (String x:keys){
 				if (line.contains(x) && line.contains("android:name")){
-					line.replaceAll(x + ".", "");
+					line = line.replaceAll("." + x, "");
 					break;
 				}
 			}

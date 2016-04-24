@@ -73,7 +73,7 @@ public class LogDeleteObfuscator implements Obfuscater {
 	}
 
 	public String generateRandomString() {
-		return new BigInteger(130, random).toString(32);
+		return "a" + new BigInteger(130, random).toString(32);
 	}
 	
 }
