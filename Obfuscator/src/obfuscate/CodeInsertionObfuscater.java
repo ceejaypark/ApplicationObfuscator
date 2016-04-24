@@ -6,24 +6,33 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 
 public class CodeInsertionObfuscater implements Obfuscater {
 	int deadCodeStatus = 0;
 	boolean deadMethodGenerated = false;
 	boolean misleadCreated = false;
+	HashMap<String, File> files = new HashMap<String, File>();
 
 	@Override
-	public HashMap<String, File> execute(HashMap<String, File> files,
+	public HashMap<String, File> execute(HashMap<String, File> filesInput,
 			HashMap<String, File> blacklist, File manifest) throws IOException {
-		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
-			
 
-			
+		this.files = filesInput;
+
+		createMislead();
+
+		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+
 			setDeadCodeStatus();
 			deadMethodGenerated = false;
 
@@ -32,7 +41,6 @@ public class CodeInsertionObfuscater implements Obfuscater {
 			List<Integer> classBraces = new ArrayList<Integer>();
 
 			File file = fileEntry.getValue();
-			createMislead();
 
 			FileReader fileReader = new FileReader(file);
 			BufferedReader fileInput = new BufferedReader(fileReader);
@@ -124,11 +132,11 @@ public class CodeInsertionObfuscater implements Obfuscater {
 				} else {
 					// copy lines of code that aren't in class to its exact
 					// format
-					
-					//Testing for annotations
+
+					// Testing for annotations
 					String x = lineInFile.replaceAll("\\s", "");
-					
-					if(x.startsWith("@") && !inMethod && inClass){
+
+					if (x.startsWith("@") && !inMethod && inClass) {
 						if (!deadMethodGenerated) {
 							if (getRandomNumber(4, 0) <= 2) {
 								linesOfCode.add(generateDeadMethod());
@@ -136,12 +144,14 @@ public class CodeInsertionObfuscater implements Obfuscater {
 							}
 						}
 					}
-					
+
 					// regex indicates method declaration, so code insertion is
 					// enabled
 					if (lineInFile
 							.matches("((public|private|protected|static|final|native|synchronized|abstract|transient)+\\s)+[\\$_\\w\\<\\>\\[\\]]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?")) {
-						if (inClass && !linesOfCode.get(linesOfCode.size() -1 ).contains("@")) {
+						if (inClass
+								&& !linesOfCode.get(linesOfCode.size() - 1)
+										.contains("@")) {
 							if (!deadMethodGenerated) {
 								if (getRandomNumber(4, 0) <= 2) {
 									linesOfCode.add(generateDeadMethod());
@@ -215,7 +225,9 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		int forOrIf = getRandomNumber(2, 1);
 		if (forOrIf == 1) {
 			// add for loop
-			randomCode = randomCode + whitespace + "for (int fjhdafcjvklzxjcklzx = 0; fjhdafcjvklzxjcklzx < "
+			randomCode = randomCode
+					+ whitespace
+					+ "for (int fjhdafcjvklzxjcklzx = 0; fjhdafcjvklzxjcklzx < "
 					+ variables.get(getRandomNumber(variables.size(), 1) - 1)
 					+ "; fjhdafcjvklzxjcklzx++) {\n";
 		} else {
@@ -252,16 +264,12 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	// Dead code generation methods
 	private String generateDeadMethod() {
 		String stringMethod = "private boolean getClassStatus(String input){\n"
-				+ "\tif (input.length() == 16){\n"
-				+ "\t\treturn true;\n"
-				+ "\t}\n"
-				+ "\treturn false;\n" + "}";
+				+ "\tif (input.length() == 16){\n" + "\t\treturn true;\n"
+				+ "\t}\n" + "\treturn false;\n" + "}";
 
 		String intMethod = "private boolean getClassStatus(int input){\n"
 				+ "\tif ((((double)input)/2) % 2 != 1){\n"
-				+ "\t\treturn true;\n"
-				+ "\t}\n"
-				+ "\treturn false;\n" + "}";
+				+ "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
 
 		if (deadCodeStatus == 0) {
 			return intMethod;
@@ -326,8 +334,24 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		}
 		return output;
 	}
-	
-	private void createMislead(){
-		
+
+	private void createMislead() throws IOException {
+		File misleadTarget = new File(
+				MainObfuscater.sourceFolder.getCanonicalPath()
+						+ "\\Mislead.java");
+		File localVersion = new File(".\\resources\\Mislead.java");
+
+		Files.copy(localVersion.getCanonicalFile().toPath(),
+				misleadTarget.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+		Scanner sc = new Scanner(misleadTarget);
+		String content = sc.useDelimiter("\\Z").next();
+		sc.close();
+
+		content = content.replaceAll("TOBEREPLACED", MainObfuscater.srcPackage);
+
+		Files.write(misleadTarget.getCanonicalFile().toPath(),
+				content.getBytes(StandardCharsets.UTF_8));
+		files.put(misleadTarget.getCanonicalPath(), misleadTarget);
 	}
 }
