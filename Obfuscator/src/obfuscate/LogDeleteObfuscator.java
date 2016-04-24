@@ -43,7 +43,7 @@ public class LogDeleteObfuscator implements Obfuscater {
 				String original = lineInFile;
 				
 				if (original.contains("Log.")){
-					original = "Log.d(\"NothingToSeeHere\", \"Downloading ram...\")";
+					original = "Log.d(\"NothingToSeeHere\", \"Downloading ram...\");";
 				}
 				else if (original.contains("System.out.println")){
 					original.replace("\\((.*?)\\)", "pikabu");
@@ -73,7 +73,7 @@ public class LogDeleteObfuscator implements Obfuscater {
 	}
 
 	public String generateRandomString() {
-		return new BigInteger(130, random).toString(32);
+		return "a" + new BigInteger(130, random).toString(32);
 	}
 	
 }

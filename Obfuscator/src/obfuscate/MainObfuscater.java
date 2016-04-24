@@ -113,6 +113,7 @@ public class MainObfuscater {
 		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
+			System.out.println("Processing: " + obfuscaterProcess.getClass().toString());
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
 		}
 
@@ -284,14 +285,8 @@ public class MainObfuscater {
 	
 	public static File getSourceFolder(File root)
 	{		
-	    File[] files = root.listFiles(); 
+	    File[] files = root.listFiles(); 	    
 	    for (File file : files) {
-	        try {
-				if(file.getCanonicalPath().contains("Test"))
-					continue;
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 	    	if (file.isFile()) {
 	            try{
 	            	String[] split = file.getName().split("\\.");
@@ -301,7 +296,17 @@ public class MainObfuscater {
 	            }catch(Exception e){
 	            	continue;
 	            }
-	        } else if (file.isDirectory()) {
+	    	}
+	    }
+	    
+	    for (File file : files) {
+	        try {
+				if(file.getCanonicalPath().contains("Test"))
+					continue;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+	    	if (file.isDirectory()) {
 	            File folder = getSourceFolder(file);
 	            if(folder != null) return folder;
 	        }

@@ -99,6 +99,7 @@ public class ClassNameObfuscator implements Obfuscater{
 					fileOutput.write(s);
 				}
 				fileOutput.flush();
+				fileReader.close();
 				fileOutput.close();
 				fileInput.close();
 				
@@ -114,7 +115,7 @@ public class ClassNameObfuscator implements Obfuscater{
 			File file = fileEntry.getValue();
 			replaceClass(file,classNames);
 		}
-		replaceClass(manifest,classNames);
+		updateManifest(manifest,classNames);
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			File file = fileEntry.getValue();
@@ -123,7 +124,42 @@ public class ClassNameObfuscator implements Obfuscater{
 		
 		return classNameHM;
 	}
+	/*
+	 *  Update manifest
+	 */
+	private void updateManifest(File file, HashMap<String,String> classNames) {
+		List<String> linesOfCode = new ArrayList<String>();
+		try {
+			FileReader fileReader = new FileReader(file);
+			BufferedReader fileInput = new BufferedReader(fileReader);
 
+			String lineInFile;
+
+			while ((lineInFile = fileInput.readLine()) != null) {
+				for(String s: classNames.keySet()) {
+					lineInFile = lineInFile.replaceAll(s, classNames.get(s));
+				}
+				linesOfCode.add(lineInFile);
+			}
+
+			FileWriter fileWriter = new FileWriter(file);
+			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
+
+			for (String s: linesOfCode) {
+				s = s + "\n";
+				fileOutput.write(s);
+			}
+
+			fileOutput.flush();
+			fileOutput.close();
+			fileInput.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/*
 	 * Takes a file and replaces all the class names with hashmap values
 	 */
@@ -174,9 +210,8 @@ public class ClassNameObfuscator implements Obfuscater{
 			result = result.replaceAll("\\("+oldName, "\\("+newName);
 			
 			if(result.contains("." + oldName)){
-				
-				System.out.println("Old Name: " + oldName);
-				System.out.println("New Name: " + newName);
+				//System.out.println("Old Name: " + oldName);
+				//System.out.println("New Name: " + newName);
 				
 				if(result.contains("import")){
 					result = result.replaceAll(oldName, newName);
@@ -193,9 +228,6 @@ public class ClassNameObfuscator implements Obfuscater{
 							break;
 						}
 					}
-									
-					System.out.println("Previous Class Name: " + previousClassName);
-					
 					if(className.containsValue(previousClassName)){
 						result = codeLine.replaceAll("."+oldName, "."+newName);
 					}
