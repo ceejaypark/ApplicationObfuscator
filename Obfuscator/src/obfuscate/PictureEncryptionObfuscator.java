@@ -49,7 +49,6 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			FileReader fileReader = new FileReader(file);
 			BufferedReader fileInput = new BufferedReader(fileReader);
 
-						
 			String lineInFile;
 			boolean encryptNextLine = false;
 			

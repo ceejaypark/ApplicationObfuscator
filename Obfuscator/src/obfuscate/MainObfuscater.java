@@ -52,11 +52,11 @@ public class MainObfuscater {
 			outputDir.mkdir();
 		}
 		
-		sourceFolder = new File(configProperties.getProperty("projectSourceFolder"));
-		setSourcePackage();
 		//copy all files from input directory to the output directory
 		copyFolder(inputDir,outputDir);
-
+		sourceFolder = getSourceFolder();
+		setSourcePackage();
+		
 		// ------------------------------------FILE HASHMAP ADDITION---------------------------------//
 		// get the black list of files to ignore for obfuscation
 		String singleStringBlackList = configProperties.getProperty("blacklist");
@@ -276,5 +276,36 @@ public class MainObfuscater {
 		}
 		
 		srcPackage = packageTemp.toString();
+	}
+	
+	private static File getSourceFolder() {
+		return getSourceFolder(new File(OUTPUT));
+	}
+	
+	public static File getSourceFolder(File root)
+	{		
+	    File[] files = root.listFiles(); 
+	    for (File file : files) {
+	        try {
+				if(file.getCanonicalPath().contains("Test"))
+					continue;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+	    	if (file.isFile()) {
+	            try{
+	            	String[] split = file.getName().split("\\.");
+	                String ext = split[split.length - 1];
+	            	if(ext.contains("java"))
+	            		return root;
+	            }catch(Exception e){
+	            	continue;
+	            }
+	        } else if (file.isDirectory()) {
+	            File folder = getSourceFolder(file);
+	            if(folder != null) return folder;
+	        }
+	    }
+	    return null;
 	}
 }
