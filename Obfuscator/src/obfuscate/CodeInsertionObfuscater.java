@@ -151,4 +151,21 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		
 		return number;
 	}
+	
+	private class MethodDeclaration {
+		private int startLine, endLine;
+		
+		public MethodDeclaration(int start, int end) {
+			this.startLine = start;
+			this.endLine = end;
+		}
+		
+		public int getStartLine() {
+			return startLine;
+		}
+		
+		public int getEndLine() {
+			return endLine;
+		}
+	}
 }
