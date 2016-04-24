@@ -3,6 +3,7 @@ package obfuscate;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,11 +13,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
 public class CodeInsertionObfuscater implements Obfuscater {
+	
+	List<MethodDeclarationLines> methodsDeclarations = new ArrayList<MethodDeclarationLines>();
 
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files) throws IOException {
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			
+			FileInputStream in = new FileInputStream(fileEntry.getValue().getAbsolutePath());
+
+			CompilationUnit cu;
+			try {
+				// parse the file
+				cu = JavaParser.parse(in);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				in.close();
+			}
 			
 			List<String> linesOfCode = new ArrayList<String>();
 			List<Integer> braces = new ArrayList<Integer>();
@@ -152,10 +174,19 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		return number;
 	}
 	
-	private class MethodDeclaration {
+	private class MethodVisitor extends VoidVisitorAdapter {
+		
+		@Override
+        public void visit(MethodDeclaration md, Object arg) {
+            MethodDeclarationLines mdl = new MethodDeclarationLines(md.getBeginLine(),md.getEndLine());
+            methodsDeclarations.add(mdl);
+        }
+	}
+	
+	private class MethodDeclarationLines {
 		private int startLine, endLine;
 		
-		public MethodDeclaration(int start, int end) {
+		public MethodDeclarationLines(int start, int end) {
 			this.startLine = start;
 			this.endLine = end;
 		}
