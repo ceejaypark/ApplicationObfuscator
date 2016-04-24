@@ -99,6 +99,7 @@ public class ClassNameObfuscator implements Obfuscater{
 					fileOutput.write(s);
 				}
 				fileOutput.flush();
+				fileReader.close();
 				fileOutput.close();
 				fileInput.close();
 				
@@ -174,9 +175,8 @@ public class ClassNameObfuscator implements Obfuscater{
 			result = result.replaceAll("\\("+oldName, "\\("+newName);
 			
 			if(result.contains("." + oldName)){
-				
-				System.out.println("Old Name: " + oldName);
-				System.out.println("New Name: " + newName);
+				//System.out.println("Old Name: " + oldName);
+				//System.out.println("New Name: " + newName);
 				
 				if(result.contains("import")){
 					result = result.replaceAll(oldName, newName);
@@ -193,9 +193,6 @@ public class ClassNameObfuscator implements Obfuscater{
 							break;
 						}
 					}
-									
-					System.out.println("Previous Class Name: " + previousClassName);
-					
 					if(className.containsValue(previousClassName)){
 						result = codeLine.replaceAll("."+oldName, "."+newName);
 					}

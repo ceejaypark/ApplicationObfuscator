@@ -76,8 +76,6 @@ public class WatermarkObfuscator implements Obfuscater{
 					if(lineInFile.contains("{")){
 						linesOfCode.add("");
 						linesOfCode.add("String a=\"" + currentJavadocString.hashCode() + "\";");
-						System.out.println("Hash added:" + currentJavadocString.hashCode());		
-						System.out.println("Hashed from:" + currentJavadocString);
 						addJavadoc = false;
 					}					
 				}

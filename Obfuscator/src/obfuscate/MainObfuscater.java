@@ -284,14 +284,8 @@ public class MainObfuscater {
 	
 	public static File getSourceFolder(File root)
 	{		
-	    File[] files = root.listFiles(); 
+	    File[] files = root.listFiles(); 	    
 	    for (File file : files) {
-	        try {
-				if(file.getCanonicalPath().contains("Test"))
-					continue;
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 	    	if (file.isFile()) {
 	            try{
 	            	String[] split = file.getName().split("\\.");
@@ -301,7 +295,17 @@ public class MainObfuscater {
 	            }catch(Exception e){
 	            	continue;
 	            }
-	        } else if (file.isDirectory()) {
+	    	}
+	    }
+	    
+	    for (File file : files) {
+	        try {
+				if(file.getCanonicalPath().contains("Test"))
+					continue;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+	    	if (file.isDirectory()) {
 	            File folder = getSourceFolder(file);
 	            if(folder != null) return folder;
 	        }

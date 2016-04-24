@@ -30,15 +30,18 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		HashMap<String, File> newFiles = new HashMap<String, File>();
 		
 		String output = MainObfuscater.sourceFolder.getCanonicalPath();
+		int folderCount = output.split("\\\\").length;
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			String path = fileEntry.getKey();
 			File file = fileEntry.getValue();
 			
+			int folderCountForThisFile = path.split("\\\\").length;
+			
 			//if there exists a subdirectory under the target folder
-			if(path.split(output)[1].contains("\\")){
+			if(folderCountForThisFile - folderCount > 1){
 				String fileNameOnly = file.getName();				
-				path = path.split(output)[0] + output + fileNameOnly;				
+				path = output + "\\\\" + fileNameOnly;				
 				//make a new file
 				File newFile = new File(path);
 				//copy the original file to the new file
@@ -52,7 +55,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 			newFiles.put(path, file);
 		}
 		//Get the output directory
-		File outputFileDirectory = new File(MainObfuscater.OUTPUT);
+		File outputFileDirectory = new File(MainObfuscater.sourceFolder.getCanonicalPath());
 		
 		//Delete all subdirectories and add it to packages hashmap
 		for(Path p : Files.walk(outputFileDirectory.toPath()).
@@ -82,7 +85,6 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 						
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
-				boolean deleteImport = false;
 				if(original.contains("import")){
 					String packageName = original.split("import")[1].trim();					
 					for(String subPackages : packageName.split("\\.")){						
@@ -90,17 +92,26 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 							continue;
 						
 						if(importsToDelete.containsKey(subPackages)){
-							deleteImport = true;
+							original = original.replaceAll("\\." + subPackages, "");
 							break;
 						}
 					}
 				}
 				
-				if(original.contains("package"))
-					continue;
+				if(original.contains("package")){
+					String packageName = original.split("package")[1].trim();		
+					for(String subPackages : packageName.split("\\.")){		
+						if(subPackages.contains(";")){
+							subPackages = subPackages.split(";")[0];
+						}
+						if(importsToDelete.containsKey(subPackages)){
+							original = original.replaceAll("\\." + subPackages, "");
+							break;
+						}
+					}
+				}
 				
-				if(!deleteImport)
-					linesOfCode.add(original);
+				linesOfCode.add(original);
 			}
 			
 			FileWriter fileWriter = new FileWriter(file);
@@ -150,7 +161,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		
 		br.close();
 		fr.close();
-		fw.close();
 		bw.close();
+		fw.close();
 	}
 }

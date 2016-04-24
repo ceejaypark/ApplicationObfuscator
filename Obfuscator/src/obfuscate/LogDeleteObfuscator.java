@@ -43,7 +43,7 @@ public class LogDeleteObfuscator implements Obfuscater {
 				String original = lineInFile;
 				
 				if (original.contains("Log.")){
-					original = "Log.d(\"NothingToSeeHere\", \"Downloading ram...\")";
+					original = "Log.d(\"NothingToSeeHere\", \"Downloading ram...\");";
 				}
 				else if (original.contains("System.out.println")){
 					original.replace("\\((.*?)\\)", "pikabu");
