@@ -96,7 +96,9 @@ public class NameObfuscater implements Obfuscater {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-
+				if(line.trim().startsWith("import")){
+					continue;
+				}
 				// process the line
 				// variable declaration check (only checks if it has a = sign
 				Pattern p = Pattern
@@ -116,7 +118,6 @@ public class NameObfuscater implements Obfuscater {
 						}
 					}
 					if (publicFieldsMap.containsKey(m.group(1))) {
-
 						contentsb = replaceSB(contentsb, m.group(1),
 								publicFieldsMap.get(m.group(1)));
 
@@ -127,23 +128,24 @@ public class NameObfuscater implements Obfuscater {
 
 				// second pattern to check for variables declared without an
 				// equals sign
+				
 				Pattern p2 = Pattern
-						.compile("\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
+						.compile("(public|protected|private)\\s+((final\\s+)|(static\\s+))?\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
 				Matcher m2 = p2.matcher(line);
 				while (m2.find()) {
 					if (!(m2.group().contains("public"))) {
 						String[] varDec = m2.group().split("\\s+");
-						varDec[2] = varDec[2].replaceAll("[^a-zA-Z ]", "");
-						contentsb = replaceSB(contentsb, varDec[2],
+						varDec[varDec.length -1] = varDec[varDec.length -1].replaceAll("[^a-zA-Z ]", "");
+						contentsb = replaceSB(contentsb, varDec[varDec.length -1],
 								getNewName());
 					} else {
 						// matcher group index 1 is the name of the variable
 						// get variables new name
 						String newName = getNewName();
 						String[] strArr = m2.group().split("\\s+");
-						strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
-						publicFieldsMap.put(strArr[2], newName);
-						contentsb = replaceSB(contentsb, strArr[2], newName);
+						strArr[strArr.length -1] = strArr[strArr.length -1].replaceAll("[^a-zA-Z ]", "");
+						publicFieldsMap.put(strArr[strArr.length -1], newName);
+						contentsb = replaceSB(contentsb, strArr[strArr.length -1], newName);
 					}
 				}
 			}
@@ -288,31 +290,39 @@ public class NameObfuscater implements Obfuscater {
 	 * @throws IOException
 	 */
 	private String checkFieldCalls(File file, String content)
-			throws FileNotFoundException, IOException {
-		// Extract the file line by line
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-
+	{
+		String[] lineByLine = content.split("\n");
+			for(String line : lineByLine) {
+				line = line + "\n";
+				if(line.trim().startsWith("import")){
+					continue;
+				}
 				// variable use check
 				Pattern p = Pattern
-						.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
+						.compile("\\b\\w+((\\(.*\\))?)\\.\\w+((\\(.*\\))?)\\b");
 				Matcher m = p.matcher(line);
 				while (m.find()) {
 					String i = m.group();
 					String[] strArr = i.split("\\.");
+					if(strArr[0].replaceAll("[^a-zA-Z ]","").equals("R")){
+						continue;
+					}
 					// if it contains the field name, then it is decleared
 					// elsewhere, so rename to that
-					if (publicFieldsMap.containsKey(strArr[1])) {
+					strArr[strArr.length -1] = strArr[strArr.length -1].replaceAll("[^a-zA-Z ]","");
+					
+					if (publicFieldsMap.containsKey(strArr[strArr.length -1])) {
 						// rename in file
-						content = content.replaceAll(m.group(), strArr[0] + "."
-								+ publicFieldsMap.get(strArr[1]));
+						String find =i;
+						find = find.replace(strArr[strArr.length -1], publicFieldsMap.get(strArr[strArr.length -1]));
+						
+						
+						String newCont = content.replaceAll(Pattern.quote(i), find);
+						
+						content = newCont;
 					}
 				}
-
 			}
-		}
-
 		return content;
 	}
 
@@ -358,8 +368,10 @@ public class NameObfuscater implements Obfuscater {
 				continue;
 			}
 
-
 			Pattern replacePattern = Pattern.compile("\\b" + toReplace + "\\b");
+			if(toReplace.startsWith("\\b")){
+				replacePattern = Pattern.compile(toReplace);
+			}
 			Matcher matcher = replacePattern.matcher(found);
 			if (matcher.find()) {
 				// buff = new
