@@ -17,8 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Name Obfuscater works to rename both methods and variables within
- * the supplied files
+ * Name Obfuscater works to rename both methods and variables within the
+ * supplied files
+ * 
  * @author Elizabeth
  *
  */
@@ -26,50 +27,52 @@ public class NameObfuscater implements Obfuscater {
 
 	static int count = 1;
 	static boolean overflow = false;
-	static HashMap<String,String> methodMap = new HashMap<String,String>();
-	static HashMap<String,String> publicFieldsMap = new HashMap<String,String>();
+	static HashMap<String, String> methodMap = new HashMap<String, String>();
+	static HashMap<String, String> publicFieldsMap = new HashMap<String, String>();
 
 	@Override
-	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
+	public HashMap<String, File> execute(HashMap<String, File> files,
+			HashMap<String, File> blacklist, File manifest) throws IOException {
 
-		//iterate through each file
+		// iterate through each file
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			File file = fileEntry.getValue();
-			//get the entire files contents in a string
+			// get the entire files contents in a string
 			Scanner sc = new Scanner(file);
-			String content =sc.useDelimiter("\\Z").next();
+			String content = sc.useDelimiter("\\Z").next();
 			sc.close();
 
-			//set up the character set for writing back to the file
+			// set up the character set for writing back to the file
 			Charset charset = StandardCharsets.UTF_8;
-			content = replaceFields(file,content);
+			content = replaceFields(file, content);
 			content = replaceDeclaredMethods(content);
 
-			//Write the result back to the file
+			// Write the result back to the file
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
 		}
-		//iterate through files again to rename method calls as well
-		//TODO add blacklist files as well
+		// iterate through files again to rename method calls as well
+		// TODO add blacklist files as well
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
 			File file = fileEntry.getValue();
-			//get the entire files contents in a string
+			// get the entire files contents in a string
 			Scanner sc = new Scanner(file);
-			String content =sc.useDelimiter("\\Z").next();
+			String content = sc.useDelimiter("\\Z").next();
 			sc.close();
 
-			//set up the character set for writing back to the file
+			// set up the character set for writing back to the file
 			Charset charset = StandardCharsets.UTF_8;
 
 			content = checkMethodCalls(content);
 			content = methodVariableRename(content);
-			content = checkFieldCalls(file,content);
+			content = checkFieldCalls(file, content);
 			Files.write((Paths.get(file.toURI())), content.getBytes(charset));
 
 		}
 
-		//need to iterate through the blacklisted files to rename public variables and method calls in them too
-		for(Map.Entry<String, File> blacklistFile : blacklist.entrySet()){
+		// need to iterate through the blacklisted files to rename public
+		// variables and method calls in them too
+		for (Map.Entry<String, File> blacklistFile : blacklist.entrySet()) {
 
 		}
 
@@ -77,98 +80,115 @@ public class NameObfuscater implements Obfuscater {
 	}
 
 	/**
-	 * Method used to rename fields within a file, and add declared public variables to the hashmap
+	 * Method used to rename fields within a file, and add declared public
+	 * variables to the hashmap
+	 * 
 	 * @param file
 	 * @param content
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private String replaceFields(File file,String content) throws FileNotFoundException, IOException{
+	private String replaceFields(File file, String content)
+			throws FileNotFoundException, IOException {
 		StringBuffer contentsb = new StringBuffer(content);
-		boolean inClass = false;
-		//Extract the file line by line
+		// Extract the file line by line
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-
-				if (line.matches(".*class\\s+(\\w+)(\\s+extends\\s+(\\w+))?(\\s+implements\\s+([\\w,\\s]+))?\\s*\\{.*$")) {
-					inClass = true;
+				if(line.trim().startsWith("import")){
+					continue;
 				}
-				if(inClass){
-					// process the line
-					//variable declaration check (only checks if it has a = sign
-					Pattern p = Pattern.compile("[([^\\.]]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
-					Matcher m = p.matcher(line);
-					while(m.find()){
-						//matcher group index 1 is the name of the variable
-						//get variables new name
-						String newName = getNewName();
-						//check if variable is public, and if so add to the global hashmap
-						Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
-						if(m1.find()){
-							if(!publicFieldsMap.containsKey(m.group(1))){
-								publicFieldsMap.put(m.group(1), newName);
+				// process the line
+				// variable declaration check (only checks if it has a = sign
+				Pattern p = Pattern
+						.compile("[([^\\.]]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
+				Matcher m = p.matcher(line);
+				while (m.find()) {
+					// matcher group index 1 is the name of the variable
+					// get variables new name
+					String newName = getNewName();
+					// check if variable is public, and if so add to the global
+					// hashmap
+					Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
+					if (m1.find()) {
+						if (!publicFieldsMap.containsKey(m.group(1))) {
+							publicFieldsMap.put(m.group(1), newName);
 
-							}
-						}
-						if(publicFieldsMap.containsKey(m.group(1))){
-
-							contentsb = replaceSB(contentsb,m.group(1),publicFieldsMap.get(m.group(1)));
-
-						}else{
-							contentsb = replaceSB(contentsb,m.group(1),newName);
 						}
 					}
+					if (publicFieldsMap.containsKey(m.group(1))) {
+						contentsb = replaceSB(contentsb, m.group(1),
+								publicFieldsMap.get(m.group(1)));
 
-					//second pattern to check for variables declared without an equals sign
-					Pattern p2 = Pattern.compile("\\w+\\s+\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
-					Matcher m2 = p2.matcher(line);
-					while(m2.find()){
-						if(!(m2.group().contains("public"))){
-							String[] varDec = m2.group().split("\\s+");
-							varDec[2] = varDec[2].replaceAll("[^a-zA-Z ]", "");
-							contentsb = replaceSB(contentsb,varDec[2],getNewName());
-						}else{
-							//matcher group index 1 is the name of the variable
-							//get variables new name
-							String newName = getNewName();
-							String[] strArr = m2.group().split("\\s+");
-							strArr[2] = strArr[2].replaceAll("[^a-zA-Z ]", "");
-							publicFieldsMap.put(strArr[2], newName);
-							contentsb = replaceSB(contentsb,strArr[2],newName);
-						}
+					} else {
+						contentsb = replaceSB(contentsb, m.group(1), newName);
+					}
+				}
+
+				// second pattern to check for variables declared without an
+				// equals sign
+				
+				Pattern p2 = Pattern
+						.compile("(public|protected|private)\\s+((final\\s+)|(static\\s+))?\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
+				Matcher m2 = p2.matcher(line);
+				while (m2.find()) {
+					if (!(m2.group().contains("public"))) {
+						String[] varDec = m2.group().split("\\s+");
+						varDec[varDec.length -1] = varDec[varDec.length -1].replaceAll("[^a-zA-Z ]", "");
+						contentsb = replaceSB(contentsb, varDec[varDec.length -1],
+								getNewName());
+					} else {
+						// matcher group index 1 is the name of the variable
+						// get variables new name
+						String newName = getNewName();
+						String[] strArr = m2.group().split("\\s+");
+						strArr[strArr.length -1] = strArr[strArr.length -1].replaceAll("[^a-zA-Z ]", "");
+						publicFieldsMap.put(strArr[strArr.length -1], newName);
+						contentsb = replaceSB(contentsb, strArr[strArr.length -1], newName);
 					}
 				}
 			}
 		}
+
 		return contentsb.toString();
 	}
 
-
 	/**
-	 * Method used to rename method signatures andn their refereneces within a file
+	 * Method used to rename method signatures andn their refereneces within a
+	 * file
+	 * 
 	 * @param content
 	 * @return
 	 */
-	private String replaceDeclaredMethods(String content){
-		//use regex pattern matching to find method declarations
-		Pattern pattern = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
+	private String replaceDeclaredMethods(String content) {
+		// use regex pattern matching to find method declarations
+		Pattern pattern = Pattern
+				.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
 		Matcher matcher = pattern.matcher(content);
-
+		int count = 0;
 		while (matcher.find()) {
 			String methodDec = matcher.group();
-			//parse the name from the declaration
+
+			Pattern pConstructor = Pattern
+					.compile("(public|private|protected)+\\s+\\w+\\(");
+			Matcher matchConstructor = pConstructor.matcher(methodDec);
+
+			if (matchConstructor.find()) {
+				continue;
+			}
+
+			// parse the name from the declaration
 			Pattern nameMatch = Pattern.compile("\\w+(\\s+|\\b)(\\()");
 			Matcher matcher2 = nameMatch.matcher(methodDec);
 			String methodName = "";
 			if (matcher2.find()) {
 				methodName = matcher2.group();
 			}
-			methodName= methodName.replace("(", "");
-			//check if is main method, and ignore if so
-			if(methodName.equals("main")){
+			methodName = methodName.replace("(", "");
+			// check if is main method, and ignore if so
+			if (methodName.equals("main")) {
 				continue;
 			}
 
@@ -176,28 +196,34 @@ public class NameObfuscater implements Obfuscater {
 			patternMethodDec = patternMethodDec.replace("(", "\\(");
 			patternMethodDec = patternMethodDec.replace(")", "\\)");
 
-			Matcher match = Pattern.compile("\\n(.*)\\n\\s+(\\w+|)\\s+" + patternMethodDec).matcher(content);
+			Matcher match = Pattern.compile(
+					"[\r?\n](.*)[\r?\n]\\s+(\\w+|)\\s+" + patternMethodDec)
+					.matcher(content);
 			boolean isOverriden = false;
-			while(match.find()){
+			while (match.find()) {
 				String a = new String(match.group());
-				//System.out.println(a);
-				if(a.contains("@Override")){
+				if (a.trim().startsWith("@Override")) {
+					count++;
 					isOverriden = true;
 				}
 			}
-			if(isOverriden){
+			if (isOverriden) {
 				continue;
 			}
-			//check if declaration is in in hashmap already, if yes, then rename to new name
-			//otherwise parse the name, assign a new one, add it to hashmap, then rename all instances in the file
-			if(!methodMap.containsKey(methodName)){
+			
+			// check if declaration is in in hashmap already, if yes, then
+			// rename to new name
+			// otherwise parse the name, assign a new one, add it to hashmap,
+			// then rename all instances in the file
+			if (!methodMap.containsKey(methodName)) {
 
-				//String renamed = methodDec.replace(methodName, getNewName() + "(");
-				//add to hashmap
+				// String renamed = methodDec.replace(methodName, getNewName() +
+				// "(");
+				// add to hashmap
 				methodMap.put(methodName, getNewName());
 			}
 
-			//rename in file
+			// rename in file
 			content = content.replace(methodName, methodMap.get(methodName));
 		}
 		return content;
@@ -206,9 +232,14 @@ public class NameObfuscater implements Obfuscater {
 	/**
 	 * Iterates through files again to rename method calls
 	 */
-	private String checkMethodCalls(String content){
-		for (Entry<String, String> entry : methodMap.entrySet()){
-			content = content.replaceAll("\\b"+entry.getKey()+"(\\()", methodMap.get(entry.getKey()) + "(");
+	private String checkMethodCalls(String content) {
+
+		for (Entry<String, String> entry : methodMap.entrySet()) {
+
+			content = replaceSB(new StringBuffer(content),
+					"\\b" + entry.getKey() + "(\\()",
+					methodMap.get(entry.getKey()) + "(").toString();
+
 		}
 
 		return content;
@@ -216,161 +247,218 @@ public class NameObfuscater implements Obfuscater {
 
 	/**
 	 * Method used to rename the variables declared inside mehtod signatures
+	 * 
 	 * @param content
 	 * @return
 	 */
-	private String methodVariableRename(String content){
-		Pattern p = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+(|\\s+(\\w+) *)\\([^\\)]*\\) *(\\{?|[^;])");
+	private String methodVariableRename(String content) {
+		Pattern p = Pattern
+				.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 		Matcher m = p.matcher(content);
-		while(m.find()){			
-			Matcher matchBrackets = Pattern.compile("\\(([^)]+)\\)").matcher(m.group());
-			while(matchBrackets.find()) {
+		while (m.find()) {
+			Matcher matchBrackets = Pattern.compile("\\(([^)]+)\\)").matcher(
+					m.group());
+			while (matchBrackets.find()) {
 				String[] indVariables = matchBrackets.group().split("\\,");
-				for(int i =0; i< indVariables.length;i++){
-					//remove any brackets etc
-					indVariables[i] = indVariables[i].replaceAll("[^a-zA-Z ]", "");
-					//split into sub array with element two being the variable name
+				for (int i = 0; i < indVariables.length; i++) {
+					// remove any brackets etc
+					indVariables[i] = indVariables[i].replaceAll("[^a-zA-Z ]",
+							"");
+					// split into sub array with element two being the variable
+					// name
 					indVariables[i] = indVariables[i].trim();
 					String[] separateWords = indVariables[i].split("\\s+");
-					if(separateWords.length > 1){
-						content = replaceSB(new StringBuffer(content), separateWords[1],getNewName()).toString();
-						//content = content.replaceAll(,);
+
+					if (separateWords.length > 1) {
+						content = replaceSB(new StringBuffer(content),
+								separateWords[separateWords.length - 1],
+								getNewName()).toString();
 					}
 				}
 			}
 		}
-
 		return content;
 	}
 
 	/**
-	 * Method to check that all fields have been renamed, and to search for public variable use
+	 * Method to check that all fields have been renamed, and to search for
+	 * public variable use
+	 * 
 	 * @param file
 	 * @param content
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private String checkFieldCalls(File file,String content) throws FileNotFoundException, IOException{
-		boolean inClass = false;
-		//Extract the file line by line
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-
-				if (line.matches(".*class\\s+(\\w+)(\\s+extends\\s+(\\w+))?(\\s+implements\\s+([\\w,\\s]+))?\\s*\\{.*$")) {
-					inClass = true;
+	private String checkFieldCalls(File file, String content)
+	{
+		String[] lineByLine = content.split("\n");
+			for(String line : lineByLine) {
+				line = line + "\n";
+				if(line.trim().startsWith("import")){
+					continue;
 				}
-				if(inClass){
-					//variable use check
-					Pattern p = Pattern.compile("\\b[^\\W\\d]\\w*(?:\\s*\\.\\s*[^\\W\\d]\\w*\\b)+(?!\\s*\\()");
-					Matcher m = p.matcher(line);
-					while(m.find()){
-						String i = m.group();
-						String[] strArr = i.split("\\.");
-						//if it contains the field name, then it is decleared elsewhere, so rename to that
-						if(publicFieldsMap.containsKey(strArr[1])){
-							//rename in file
-							content = content.replaceAll(m.group(),strArr[0] + "." + publicFieldsMap.get(strArr[1]));
-						}
+				// variable use check
+				Pattern p = Pattern
+						.compile("\\b\\w+((\\(.*\\))?)\\.\\w+((\\(.*\\))?)\\b");
+				Matcher m = p.matcher(line);
+				while (m.find()) {
+					String i = m.group();
+					String[] strArr = i.split("\\.");
+					if(strArr[0].replaceAll("[^a-zA-Z ]","").equals("R")){
+						continue;
 					}
-
+					// if it contains the field name, then it is decleared
+					// elsewhere, so rename to that
+					strArr[strArr.length -1] = strArr[strArr.length -1].replaceAll("[^a-zA-Z ]","");
+					
+					if (publicFieldsMap.containsKey(strArr[strArr.length -1])) {
+						// rename in file
+						String find =i;
+						find = find.replace(strArr[strArr.length -1], publicFieldsMap.get(strArr[strArr.length -1]));
+						
+						
+						String newCont = content.replaceAll(Pattern.quote(i), find);
+						
+						content = newCont;
+					}
 				}
 			}
-		}
 		return content;
-	}	
+	}
+
 	/**
 	 * Method to rename variables using stringbuffer
+	 * 
 	 * @param buff
 	 * @param toReplace
 	 * @param replaceTo
 	 * @return
 	 */
-	private StringBuffer replaceSB(StringBuffer buff,String toReplace,String replaceTo){
+	private StringBuffer replaceSB(StringBuffer buff, String toReplace,
+			String replaceTo) {
 
 		StringBuffer newBuff = new StringBuffer();
 
 		Matcher m = Pattern.compile("(?m)^.*$").matcher(buff);
-
+		boolean isSkip = false;
 		while (m.find()) {
-			if(m.group().contains("import") | m.group().contains("package")){
-				newBuff.append(m.group() + "\n");
+			String found = m.group();
+			if (isSkip) {				
+				isSkip = false;
 
+				String[] temp = found.split("\\(");
+				
+				String[] check = temp[0].split("\\s+");
+				if(check.length > 3 && methodMap.containsKey(check[3])){
+					StringBuilder sb = new StringBuilder();
+					for(int k = 0; k <check.length; k ++){
+						if(k != check.length -1){
+							sb.append(check[k] + " ");
+						}else{
+							sb.append(methodMap.get(check[k]));
+						}
+					}
+					
+					newBuff.append(sb.toString()+"(");
+				}
+				else{
+					newBuff.append(temp[0] + "(");
+				}
+				
+				StringBuilder sb = new StringBuilder();
+				
+				
+				for (int i = 1; i < temp.length; i++) {
+					sb.append(temp[i]);
+				}
+
+				found = sb.toString();
+
+			}
+
+			if (found.contains("import") | found.contains("package")) {
+				newBuff.append(found + "\n");
+				continue;
+			}
+			if (found.contains("@Override")) {
+				newBuff.append(found + "\n");
+				isSkip = true;
 				continue;
 			}
 
-			Pattern replacePattern = Pattern.compile("\\b"+toReplace+"\\b");
-			Matcher matcher = replacePattern.matcher(m.group());
-			if(matcher.find()){
-				//buff = new StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff, replaceTo);
-				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))+ "\n");
-			}else{
-				newBuff.append(m.group()+ "\n");
+			Pattern replacePattern = Pattern.compile("\\b" + toReplace + "\\b");
+			if(toReplace.startsWith("\\b")){
+				replacePattern = Pattern.compile(toReplace);
 			}
-
-
+			Matcher matcher = replacePattern.matcher(found);
+			if (matcher.find()) {
+				// buff = new
+				// StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff,
+				// replaceTo);
+				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))
+						+ "\n");
+			} else {
+				newBuff.append(found + "\n");
+			}
 		}
 
-
-		//		String[] lines = buff.toString().split("\\n");
-		//		for (String line: lines){
-		//			if(!line.contains(toReplace)){
-		//				continue;
-		//			}
-		//			if(line.contains("import") | line.contains("package")){
-		//				continue;
-		//			}
-		//			else{
-		//				// not an import statement, so replace in line, then replace in buffer
-		//				String newLine = line.replaceAll("\\b"+toReplace+"\\b", replaceTo);
+		// String[] lines = buff.toString().split("\\n");
+		// for (String line: lines){
+		// if(!line.contains(toReplace)){
+		// continue;
+		// }
+		// if(line.contains("import") | line.contains("package")){
+		// continue;
+		// }
+		// else{
+		// // not an import statement, so replace in line, then replace in
+		// buffer
+		// String newLine = line.replaceAll("\\b"+toReplace+"\\b", replaceTo);
 		//
-		//				String pattern = line.replace("{", "\\{");
-		//				pattern = pattern.replace("(", "\\(");
-		//				pattern = pattern.replace(")", "\\)");
+		// String pattern = line.replace("{", "\\{");
+		// pattern = pattern.replace("(", "\\(");
+		// pattern = pattern.replace(")", "\\)");
 		//
-		//				Pattern replacePattern = Pattern.compile(pattern);
-		//				Matcher matcher = replacePattern.matcher(buff);
-		//				while(matcher.find()){				
-		//					buff = new StringBuffer(matcher.replaceAll(newLine));//.appendReplacement(buff, replaceTo);
-		//				}
-		//			}
-		//		}
-
-
-
+		// Pattern replacePattern = Pattern.compile(pattern);
+		// Matcher matcher = replacePattern.matcher(buff);
+		// while(matcher.find()){
+		// buff = new
+		// StringBuffer(matcher.replaceAll(newLine));//.appendReplacement(buff,
+		// replaceTo);
+		// }
+		// }
+		// }
 
 		return newBuff;
 	}
 
 	/**
-	 * Method that retrieves the new name for the field 
-	 * Returns some variation of the letter a 108 (l) and 49 (1)
+	 * Method that retrieves the new name for the field Returns some variation
+	 * of the letter a 108 (l) and 49 (1)
 	 * */
-	private String getNewName(){
+	private String getNewName() {
 		int asciiCode = 76;
 		StringBuffer sb = new StringBuffer();
-		if(count >= 70){
+		if (count >= 70) {
 			count = 1;
 			overflow = true;
 		}
-		for (int i = 0; i < count; i++){
+		for (int i = 0; i < count; i++) {
 			// if i is even, then the next letter should be L/l, otherwise 1/one
-			if ( (i % 2) == 0){
-				if(overflow){
+			if ((i % 2) == 0) {
+				if (overflow) {
 					asciiCode = 76;
-				}else{
+				} else {
 					asciiCode = 108;
 				}
-			} else{
+			} else {
 				asciiCode = 49;
 			}
-			sb.append(Character.toString((char)asciiCode)) ;
+			sb.append(Character.toString((char) asciiCode));
 		}
 		count++;
-
 
 		return sb.toString();
 	}
 }
-
