@@ -105,7 +105,7 @@ public class NameObfuscater implements Obfuscater {
 			// process the line
 			// variable declaration check (only checks if it has a = sign
 				Pattern p = Pattern
-						.compile("([^((\\.)|\"|=)])+\\b(\\w+)\\s*=\\s*(?:((\"([^\"])\")|([^(\\s|,)]*)))((\\s+)*;)");
+						.compile("([^((\\.)|\"|=)])+\\b(\\w+)\\s*=[^=]\\s*(.*)\\s*;");
 				Matcher m = p.matcher(line);
 				while (m.find()) {
 					// matcher group index 1 is the name of the variable
@@ -116,7 +116,9 @@ public class NameObfuscater implements Obfuscater {
 					Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
 					if (m1.find()) {
 						if (!publicFieldsMap.containsKey(m.group(2))) {
+
 							publicFieldsMap.put(m.group(2), getNewName());
+
 						}
 					}
 					if (publicFieldsMap.containsKey(m.group(2))) {
@@ -132,7 +134,7 @@ public class NameObfuscater implements Obfuscater {
 				// equals sign
 
 				Pattern p2 = Pattern
-						.compile("(public|protected|private)\\s+((final\\s+)|(static\\s+))?\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
+						.compile("(public|protected|private)\\s+((final\\s+)|(static\\s+))?(\\w+((<(.*)>)?))\\s+\\w+\\b(\\s+[;]|[;])");
 				Matcher m2 = p2.matcher(line);
 				while (m2.find()) {
 					if (!(m2.group().contains("public"))) {
@@ -176,7 +178,7 @@ public class NameObfuscater implements Obfuscater {
 	private String replaceDeclaredMethods(String content) {
 		// use regex pattern matching to find method declarations
 		Pattern pattern = Pattern
-				.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
+				.compile("[^@Override]\n((public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;]))");
 
 		Matcher matcher = pattern.matcher(content);
 		int count = 0;
@@ -214,8 +216,9 @@ public class NameObfuscater implements Obfuscater {
 			boolean isOverriden = false;
 			while (match.find()) {
 				String a = new String(match.group());
-				if (a.trim().startsWith("@Override")) {
+				if (a.replaceAll("\\s","").startsWith("@Override")) {
 					count++;
+					System.out.println(match.group());
 					isOverriden = true;
 				}
 			}
@@ -356,7 +359,7 @@ public class NameObfuscater implements Obfuscater {
 		boolean isSkip = false;
 		while (m.find()) {
 			String found = m.group();
-			if (isSkip) {				
+			if (isSkip) {
 				isSkip = false;
 
 				String[] temp = found.split("\\(");
@@ -380,7 +383,6 @@ public class NameObfuscater implements Obfuscater {
 				
 				StringBuilder sb = new StringBuilder();
 				
-				
 				for (int i = 1; i < temp.length; i++) {
 					sb.append(temp[i]);
 				}
@@ -394,9 +396,7 @@ public class NameObfuscater implements Obfuscater {
 				continue;
 			}
 			if (found.contains("@Override")) {
-				newBuff.append(found + "\n");
 				isSkip = true;
-				continue;
 			}
 
 			Pattern replacePattern = Pattern.compile("\\b" + toReplace + "\\b");

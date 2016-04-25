@@ -23,11 +23,13 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class CodeInsertionObfuscater implements Obfuscater {
 
 	List<MethodDeclarationLines> methodsDeclarations;
+	List<Integer> returnStatements;
 
 	int deadCodeStatus = 0;
 	boolean deadMethodGenerated = false;
@@ -46,12 +48,14 @@ public class CodeInsertionObfuscater implements Obfuscater {
 
 			FileInputStream in = new FileInputStream(fileEntry.getValue().getAbsolutePath());
 			methodsDeclarations = new ArrayList<MethodDeclarationLines>();
+			returnStatements = new ArrayList<Integer>();
 
 			CompilationUnit cu;
 			try {
 				// parse the file
 				cu = JavaParser.parse(in);
 				new MethodVisitor().visit(cu, null);
+				new ReturnVisitor().visit(cu, null);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -120,16 +124,17 @@ public class CodeInsertionObfuscater implements Obfuscater {
 					// select a random number between 1~100, if below 10, insert
 					// code
 					int randomNum = getRandomNumber(100, 1);
-					if (randomNum < 10) {
-						linesOfCode.add(generateRandomCode(getStartWhitespace(original)));
-					}
 					if (randomNum <= 100) {
 						// WRITE RANDOM IF STATEMENT DEAD CODE LOGIC HERE
 						if (deadMethodGenerated) {
 
 							String noWhiteSpace = original.replaceAll("\\s+", "");
-							if (noWhiteSpace.startsWith("if") || noWhiteSpace.startsWith("else if")) {
-								linesOfCode.add(generateDeadIf(noWhiteSpace));
+							if (noWhiteSpace.startsWith("if") || noWhiteSpace.startsWith("for")) {
+								if (randomNum < 100) {
+									linesOfCode.add(generateDeadIf(noWhiteSpace));
+								} else if (randomNum < 100) {
+									linesOfCode.add(generateRandomCode(getStartWhitespace(original)));
+								}
 							}
 						}
 					}
@@ -257,10 +262,10 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	// Dead code generation methods
 	private String generateDeadMethod() {
 		String stringMethod = "private static boolean getClassStatus(String input){\n"
-				+ "\tif (input.length() == 16){\n" + "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
+				+ "\t if(input.length() == 16){\n" + "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
 
 		String intMethod = "private static boolean getClassStatus(int input){\n"
-				+ "\tif ((((double)input)/2) % 2 != 1){\n" + "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
+				+ "\t if((((double)input)/2) % 2 != 1){\n" + "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
 
 		if (deadCodeStatus == 0) {
 			return intMethod;
@@ -317,11 +322,11 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	private String generateDeadIf(String original) {
 		String output;
 		if (original.startsWith("if")) {
-			output = "  if(getClassStatus(" + getDeadInput() + ")){\n" + "      Mislead.getInstance().addStatus();\n"
-					+ "  }\n" + "  else ";
+			output = " if(getClassStatus(" + getDeadInput() + ")){\n" + "   Mislead.getMisleadInstance().addStatus();\n"
+					+ "  }" + "else ";
 		} else {
-			output = "  else if(getClassStatus(" + getDeadInput() + ")){\n"
-					+ "      Mislead.getInstance().addStatus();\n" + "  }\n";
+			output = " if(getClassStatus(" + getDeadInput() + ")){\n"
+					+ "   Mislead.getMisleadInstance().addStatus();\n" + "  }\n";
 		}
 		return output;
 	}
@@ -344,14 +349,42 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		files.put(misleadTarget.getCanonicalPath(), misleadTarget);
 	}
 	
+	private int getLastReturnLine(int start, int end) {
+		List<Integer> methodReturnLines = new ArrayList<Integer>();
+		
+		for (int i = 0; i < returnStatements.size(); i++) {
+			if (returnStatements.get(i) > start && returnStatements.get(i) < end) {
+				methodReturnLines.add(returnStatements.get(i));
+			}
+		}
+		
+		if (!methodReturnLines.isEmpty()) {
+			return methodReturnLines.get(methodReturnLines.size()-1);
+		}
+		
+		return -1;
+	}
+	
 	private boolean isInsideMethod(int lineNumber) {
 		for (int i = 0; i < methodsDeclarations.size(); i++) {
 			MethodDeclarationLines mdl = methodsDeclarations.get(i);
-			if (lineNumber > mdl.getStartLine()+1 && lineNumber < mdl.getEndLine()) {
+			int beforeLine = getLastReturnLine(mdl.getStartLine(),mdl.getEndLine());
+			if (beforeLine == -1) {
+				beforeLine = mdl.getEndLine();
+			}
+			if (lineNumber > mdl.getStartLine()+1 && lineNumber < beforeLine) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	private class ReturnVisitor extends VoidVisitorAdapter {
+		
+		@Override
+		public void visit(ReturnStmt rs, Object arg) {
+			returnStatements.add(rs.getBeginLine());
+		}
 	}
 
 	private class MethodVisitor extends VoidVisitorAdapter {

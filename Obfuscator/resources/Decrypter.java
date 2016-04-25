@@ -24,7 +24,7 @@ public class Decrypter {
         int allowed = deCalcAllowed(copy, key, 1, 1);
         int count=0;
         StringBuilder text = new StringBuilder();
-        for(int i = 0; i<key.width(); i++)
+        for(int i = 0; i<key.width(); i++){
             for(int j = 0; j<key.height(); j++){
                 if(!(i == 1 && j == 1)){
                     count++;
@@ -34,6 +34,7 @@ public class Decrypter {
                     }                
                 }
             }
+        }
         return text.toString();
     }
 	
