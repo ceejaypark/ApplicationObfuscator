@@ -92,10 +92,10 @@ public class LocationSniffingService extends Service{
             String urlString = "d102jd012jasd";
             String http = "uas0j1d12dasDas";
             String requestProperty1 = "aspdk2DasdmaSDa==";
-            String requestProperty2 = "as=a=sdnasd2d22d2";
+            String requestProperty2 = "as=sdnasd2d22d2";
             String requestProperty3 = "ask20asdj20jd9";
             String requestProperty4 = "asdSDs22d@d222==";
-            String requestProperty5 = "20k20dk20ASD/**/2d==";
+            String requestProperty5 = "20k20dk20ASD2d==";
 
             try{
                 urlString = StringHelper.getStringStatic(urlString);

@@ -85,7 +85,7 @@ public class MainObfuscater {
 		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
 			// add code insertion obfuscater
 			obfuscaters.add(new CodeInsertionObfuscater());
-		} 
+		}		
 		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
 			obfuscaters.add(new ClassNameObfuscator());
@@ -97,7 +97,7 @@ public class MainObfuscater {
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
 			obfuscaters.add(new NameObfuscater());
-		} 
+		}
 		if (Boolean.parseBoolean(configProperties.getProperty("directoryflatenor"))){
 			// add to 'obfuscaters', get rid of directories
 			obfuscaters.add(new DirectoryFlatenorObfuscator());
@@ -113,8 +113,12 @@ public class MainObfuscater {
 		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
+			long startTime = System.nanoTime(); 
 			System.out.println("Processing: " + obfuscaterProcess.getClass().toString());
 			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
+			long endTime = System.nanoTime();
+			long duration = (endTime - startTime); 
+			System.out.println("Took: " + duration);
 		}
 
 	}

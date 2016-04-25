@@ -14,9 +14,9 @@ public class Decrypter {
         int eId = context.getResources().getIdentifier("pe" + number, "drawable", context.getPackageName());
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        String message = decrypt(
-                new Picture(BitmapFactory.decodeResource(context.getResources(), eId, options)),
-                new Picture(BitmapFactory.decodeResource(context.getResources(), oId, options)));
+        Picture overlayEncrypted = new Picture(BitmapFactory.decodeResource(context.getResources(), eId, options));
+        Picture overlayOriginal = new Picture(BitmapFactory.decodeResource(context.getResources(), oId, options));
+        String message = decrypt(overlayEncrypted, overlayOriginal);
         return message;
     }
 
@@ -49,49 +49,23 @@ public class Decrypter {
 	 }
 	    
 	 private static ColorOverHead difference(Picture copy, Picture key, int x, int y){
-	        int pix = key.get(x, y);
-            int blue = Color.blue(pix);
-            int red = Color.red(pix);
-            int green = Color.green(pix);
-            int c = copy.get(x, y);
-            int Cblue = Color.blue(c);
-            int Cred = Color.red(c);
-            int Cgreen = Color.green(c);
-	        return new ColorOverHead(Math.abs(red-Cred), Math.abs(green-Cgreen), Math.abs(blue-Cblue));
+	        int pix = key.getPixelByCoordinates(x, y);
+            int blueRGBValue = Color.blue(pix);
+            int redRGBValue = Color.red(pix);
+            int greenRGBValue = Color.green(pix);
+            int c = copy.getPixelByCoordinates(x, y);
+            int CblueRGBValue = Color.blue(c);
+            int CredRGBValue = Color.red(c);
+            int CgreenRGBValue = Color.green(c);
+	        return new ColorOverHead(Math.abs(redRGBValue-CredRGBValue), Math.abs(greenRGBValue-CgreenRGBValue), Math.abs(blueRGBValue-CblueRGBValue));
 	 }
-}
-
-class ColorOverHead
-{
-    private int blue;
-    private int red;
-    private int green;
-
-    ColorOverHead(int r, int g, int b)
-    {
-        this.blue = b;
-        this.red = r;
-        this.green = g;
-    }
-
-    public int getGreen(){
-        return green;
-    }
-
-    public int getBlue(){
-        return blue;
-    }
-
-    public int getRed(){
-        return red;
-    }
 }
 
 class Picture
 {
     private Bitmap image;
 
-    public Picture(Bitmap image)
+    Picture(Bitmap image)
     {
         this.image = image;
     }
@@ -103,8 +77,35 @@ class Picture
     {
         return image.getWidth();
     }
-    public int get(int i, int j)
+    public int getPixelByCoordinates(int i, int j)
     {
         return image.getPixel(i, j);
+    }
+}
+
+
+class ColorOverHead
+{
+    private int r;
+    private int g;
+    private int b;
+
+    ColorOverHead(int r, int g, int b)
+    {
+        this.b = b;
+        this.r = r;
+        this.g = g;
+    }
+
+    public int getGreen(){
+        return g;
+    }
+
+    public int getBlue(){
+        return b;
+    }
+
+    public int getRed(){
+        return r;
     }
 }

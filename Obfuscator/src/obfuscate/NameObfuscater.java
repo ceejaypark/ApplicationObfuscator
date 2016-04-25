@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,9 +27,10 @@ import java.util.regex.Pattern;
 public class NameObfuscater implements Obfuscater {
 
 	static int count = 1;
-	static boolean overflow = false;
+	static int overflow = 0;
 	static HashMap<String, String> methodMap = new HashMap<String, String>();
 	static HashMap<String, String> publicFieldsMap = new HashMap<String, String>();
+	ArrayList<String> uniqueNameCheck = new ArrayList<String>();
 
 	@Override
 	public HashMap<String, File> execute(HashMap<String, File> files,
@@ -93,59 +95,69 @@ public class NameObfuscater implements Obfuscater {
 			throws FileNotFoundException, IOException {
 		StringBuffer contentsb = new StringBuffer(content);
 		// Extract the file line by line
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(file))){
 			String line;
-			while ((line = br.readLine()) != null) {
-				if(line.trim().startsWith("import")){
-					continue;
-				}
-				// process the line
-				// variable declaration check (only checks if it has a = sign
+		while((line = br.readLine())!=null) {
+			if (line.trim().startsWith("import")) {
+				continue;
+			}
+			// process the line
+			// variable declaration check (only checks if it has a = sign
 				Pattern p = Pattern
-						.compile("[([^\\.]]\\b(\\w+)\\s*=\\s*(?:\"([^\"]*)\"|([^ ]*)\\b)");
+						.compile("([^((\\.)|\"|=)])+\\b(\\w+)\\s*=\\s*(?:((\"([^\"])\")|([^(\\s|,)]*)))((\\s+)*;)");
 				Matcher m = p.matcher(line);
 				while (m.find()) {
 					// matcher group index 1 is the name of the variable
 					// get variables new name
-					String newName = getNewName();
+					
 					// check if variable is public, and if so add to the global
 					// hashmap
 					Matcher m1 = Pattern.compile("\\bpublic\\b").matcher(line);
 					if (m1.find()) {
-						if (!publicFieldsMap.containsKey(m.group(1))) {
-							publicFieldsMap.put(m.group(1), newName);
-
+						if (!publicFieldsMap.containsKey(m.group(2))) {
+							publicFieldsMap.put(m.group(2), getNewName());
 						}
 					}
-					if (publicFieldsMap.containsKey(m.group(1))) {
-						contentsb = replaceSB(contentsb, m.group(1),
-								publicFieldsMap.get(m.group(1)));
-
+					if (publicFieldsMap.containsKey(m.group(2))) {
+						contentsb = replaceSB(contentsb, m.group(2),
+								publicFieldsMap.get(m.group(2)));
 					} else {
-						contentsb = replaceSB(contentsb, m.group(1), newName);
+						String newName = getNewName();
+						contentsb = replaceSB(contentsb, m.group(2), newName);
 					}
 				}
 
 				// second pattern to check for variables declared without an
 				// equals sign
-				
+
 				Pattern p2 = Pattern
 						.compile("(public|protected|private)\\s+((final\\s+)|(static\\s+))?\\w+\\b\\s+\\w+\\b(\\s+[;]|[;])");
 				Matcher m2 = p2.matcher(line);
 				while (m2.find()) {
 					if (!(m2.group().contains("public"))) {
 						String[] varDec = m2.group().split("\\s+");
-						varDec[varDec.length -1] = varDec[varDec.length -1].replaceAll("[^a-zA-Z ]", "");
-						contentsb = replaceSB(contentsb, varDec[varDec.length -1],
-								getNewName());
+						varDec[varDec.length - 1] = varDec[varDec.length - 1]
+								.replaceAll("[^a-zA-Z ]", "");
+						contentsb = replaceSB(contentsb,
+								varDec[varDec.length - 1], getNewName());
 					} else {
 						// matcher group index 1 is the name of the variable
 						// get variables new name
-						String newName = getNewName();
+						
+						
 						String[] strArr = m2.group().split("\\s+");
-						strArr[strArr.length -1] = strArr[strArr.length -1].replaceAll("[^a-zA-Z ]", "");
-						publicFieldsMap.put(strArr[strArr.length -1], newName);
-						contentsb = replaceSB(contentsb, strArr[strArr.length -1], newName);
+						strArr[strArr.length - 1] = strArr[strArr.length - 1]
+								.replaceAll("[^a-zA-Z ]", "");
+						if(publicFieldsMap.containsKey(strArr[strArr.length -1])){
+							contentsb = replaceSB(contentsb,strArr[strArr.length - 1], publicFieldsMap.get(strArr[strArr.length -1]));
+						}
+						else{
+							String newName = getNewName();
+							publicFieldsMap.put(strArr[strArr.length - 1], newName);
+							contentsb = replaceSB(contentsb,
+									strArr[strArr.length - 1], newName);
+						}
 					}
 				}
 			}
@@ -440,17 +452,25 @@ public class NameObfuscater implements Obfuscater {
 	private String getNewName() {
 		int asciiCode = 76;
 		StringBuffer sb = new StringBuffer();
-		if (count >= 70) {
+		if (count >= 100) {
 			count = 1;
-			overflow = true;
+			overflow++;
 		}
 		for (int i = 0; i < count; i++) {
 			// if i is even, then the next letter should be L/l, otherwise 1/one
 			if ((i % 2) == 0) {
-				if (overflow) {
+				if (overflow == 0) {
 					asciiCode = 76;
-				} else {
+				} else if(overflow == 1){
 					asciiCode = 108;
+				} else if(overflow == 2){
+					asciiCode = 79;
+				} else if(overflow == 3){
+					asciiCode = 111;
+				} else if(overflow == 4){
+					asciiCode = 105;
+				} else{
+					asciiCode = 73;
 				}
 			} else {
 				asciiCode = 49;
@@ -458,7 +478,14 @@ public class NameObfuscater implements Obfuscater {
 			sb.append(Character.toString((char) asciiCode));
 		}
 		count++;
+		String returnVal = sb.toString();
+		
+		if(uniqueNameCheck.contains(returnVal)){
+			returnVal = getNewName();
+		}else{
+			uniqueNameCheck.add(returnVal);
+		}
 
-		return sb.toString();
+		return returnVal;
 	}
 }
