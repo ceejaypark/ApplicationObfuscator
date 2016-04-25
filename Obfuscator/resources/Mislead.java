@@ -11,7 +11,7 @@ public class Mislead implements Runnable{
 	private static Mislead Instance;
 	private boolean isWaiting = true;
 	
-	public static Mislead getInstance(){
+	public static Mislead getMisleadInstance(){
 		if (Instance == null){
 			Instance = new Mislead();
 		}
@@ -26,20 +26,10 @@ public class Mislead implements Runnable{
 		thread.start();
 	}
 	
-	public void addStatus(){
-		counter.getAndAdd(1);
-		Timestamp ts = new Timestamp(System.currentTimeMillis());
-		clq.add(ts.toString() + "\t\t" + "Class Status Satisfied.");
-		if(this.isWaiting){
-			isWaiting = false;
-			this.notify();
-		}
-	}
-
 	@Override
-	public void run() {
+	public void run(){
 		while(true){
-			if(clq.size() == 0 || clq.peek() == null){
+			if (clq.size() == 0 || clq.peek() == null){
 				try {
 					this.wait();
 					isWaiting = true;
@@ -53,6 +43,17 @@ public class Mislead implements Runnable{
 			
 			String status = clq.poll();
 			System.out.println(status);
+		}
+	}
+	
+	
+	public void addStatus(){
+		counter.getAndAdd(1);
+		Timestamp ts = new Timestamp(System.currentTimeMillis());
+		clq.add(ts.toString() + "\t\t" + "Class Status Satisfied.");
+		if (this.isWaiting){
+			isWaiting = false;
+			this.notify();
 		}
 	}
 }

@@ -214,7 +214,7 @@ public class ClassNameObfuscator implements Obfuscater{
 				//System.out.println("New Name: " + newName);
 				
 				if(result.contains("import")){
-					result = result.replaceAll(oldName, newName);
+					result = result.replaceAll("\\b" + oldName + "\\b", newName);
 				}else{
 					String toExamine = result.split(("." + oldName))[0];
 					String previousClassName = "";

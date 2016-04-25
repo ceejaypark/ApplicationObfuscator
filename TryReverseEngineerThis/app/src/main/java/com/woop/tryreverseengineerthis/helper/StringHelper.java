@@ -49,7 +49,7 @@ public class StringHelper {
         String h = HARDWARE;
         String t = applicationContext.TELEPHONY_SERVICE;
         String c = applicationContext.CONNECTIVITY_SERVICE;
-        String l = applicationContext.LOCATION_SERVICE;
+        String locServ = applicationContext.LOCATION_SERVICE;
         String g = GPS_PROVIDER;
         String n = NETWORK_PROVIDER;
         String tl = ((TelephonyManager)applicationContext.getSystemService(t)).getNetworkOperator();
@@ -69,7 +69,7 @@ public class StringHelper {
         //connectivityservice
         dynamicHashMap.put("SEVEN77777777", c);
         //locationservice
-        dynamicHashMap.put("EIGHT88888888", l);
+        dynamicHashMap.put("EIGHT88888888", locServ);
         //gpsprovider
         dynamicHashMap.put("NINE999999999", g);
         //networkprovider
@@ -107,13 +107,13 @@ public class StringHelper {
         //requestProperty1
         staticHashMap.put("aspdk2DasdmaSDa==","Q29udGVudC1UeXBl");
         //requestProperty2
-        staticHashMap.put("as=a=sdnasd2d22d2","YXBwbGljYXRpb24veC13d3ctZm9ybS11cmxlbmNvZGVk");
+        staticHashMap.put("as=sdnasd2d22d2","YXBwbGljYXRpb24veC13d3ctZm9ybS11cmxlbmNvZGVk");
         //requestProperty3
         staticHashMap.put("ask20asdj20jd9","Y2hhcnNldA==");
         //requestProperty4
         staticHashMap.put("asdSDs22d@d222==","dXRmLTg=");
         //requestProperty5
-        staticHashMap.put("20k20dk20ASD/**/2d==","Q29udGVudC1MZW5ndGg=");
+        staticHashMap.put("20k20dk20ASD2d==","Q29udGVudC1MZW5ndGg=");
         //lowerLatitude
         staticHashMap.put("d2jasaSD2dasd==","LTM2Ljg2");
         //higherLatitude

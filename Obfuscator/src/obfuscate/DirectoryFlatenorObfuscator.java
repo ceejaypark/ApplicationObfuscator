@@ -72,7 +72,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		
 		files = newFiles;
 		
-		//Walk through all files to get rid of directory references
+		//Walk through all files to get rid of directory references.
 		for(Map.Entry<String, File> fileEntry : files.entrySet()){
 			
 			List<String> linesOfCode = new ArrayList<String>();
