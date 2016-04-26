@@ -33,7 +33,8 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			HashMap<String, File> blacklist, File manifest) throws IOException {
 		
 		try{
-			writeDecryptClass();
+			File decryptFile = writeDecryptClass();
+			files.put(decryptFile.getCanonicalPath(), decryptFile);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -65,7 +66,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 					//System.out.println(value.equals(Decrypter.decrypt(resFolder.getCanonicalPath() + "\\drawable-mdpi\\o" + count+".png",
 					//		resFolder.getCanonicalPath() + "\\drawable-mdpi\\pe" + count+".png")));
 					
-					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +")"; 
+					String lineToAdd = "String " + variableName + " = Decrypter.decrypt(" + count +");"; 
 					while(whiteSpaceCount > 0)
 					{
 						lineToAdd = ' ' + lineToAdd;
@@ -126,7 +127,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 	    return subdirs;
 	}
 
-	private void writeDecryptClass() throws IOException {
+	private File writeDecryptClass() throws IOException {
 		
 		File decrypterTarget = new File(MainObfuscater.sourceFolder.getCanonicalPath() + "\\Decrypter.java");
 				
@@ -143,6 +144,8 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 		content = content.replaceAll("package PACKAGENAMETOBEREPLACED;", "package " + MainObfuscater.srcPackage + ";");		
 		//Write the result back to the file
 		Files.write(decrypterTarget.toPath(), content.getBytes(charset));
+		
+		return decrypterTarget;
 	}
 }
 
