@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import supportClasses.ExecuteObf;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +27,6 @@ public class MainWindow {
 	private JFrame frame;
 	private FileChoose inputFolder;
 	private FileChoose outputFolder;
-	private FileChoose sourceFolder;
 	private ObfCheckList checklist;
 	private JButton exeButton;
 	private MyTree tree = new MyTree();
@@ -66,38 +67,44 @@ public class MainWindow {
 	private void initialize() throws IOException {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 759, 410);
+		frame.setBounds(100, 100, 670, 408);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		addComponents();
 		addListeners();
 	}
 
+	
+	/**
+	 * This method initialises any GUI elements required
+	 * to be displayed by the main window
+	 * 
+	 * @param
+	 * @return
+	 * @throws IOException
+	 */
 	private void addComponents() throws IOException {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 16, 508, 194, 5, 0 };
-		gridBagLayout.rowHeights = new int[] { 20, 55, 257, 19, 0, 0 };
+		gridBagLayout.columnWidths = new int[] { 16, 389, 194, 5, 0 };
+		gridBagLayout.rowHeights = new int[] { 20, 55, 121, 19, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0,
 				Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0,
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 1.0, 1.0, 0.0,
 				Double.MIN_VALUE };
 		frame.getContentPane().setLayout(gridBagLayout);
 		this.inputFolder = new FileChoose("Input Folder:",
 				"Select input folder...");
 		this.outputFolder = new FileChoose("Output Folder:",
 				"Select output folder...");
-		this.sourceFolder = new FileChoose("Source Folder:", 
-				"Required for directory flattenor and code insertion...");
-		this.sourceFolder.getButton().setEnabled(false);
+		
 		this.checklist = new ObfCheckList();
 
 		JPanel wrapper = new JPanel();
 		wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
 		wrapper.add(inputFolder);
 		wrapper.add(outputFolder);
-		wrapper.add(sourceFolder);
 		JLabel label = new JLabel(
-				"Select the obfuscation techiniques to be used:");
+				"Select the level of obfuscation desired:");
 		label.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		wrapper.add(label);
 		wrapper.add(checklist);
@@ -135,24 +142,22 @@ public class MainWindow {
 		frame.getContentPane().add(exeButton, gbc_exeButton);
 	}
 
+	/**
+	 * This method adds the appropriate listeners to the swing elements
+	 * present in the GUI
+	 * 
+	 * @param
+	 * @return
+	 */
 	private void addListeners() {
+		//This listener causes changes in input folder to cause changes in the black list selector
 		inputFolder.getTextField().getDocument()
 				.addDocumentListener(new DocumentListener() {
 
 					private void Process(){
 						File f = new File(inputFolder.getFolderLoc());
 						if (f.isDirectory()) {
-							sourceFolder.getButton().setEnabled(true);
-							sourceFolder.getTextField().setEditable(true);
-							sourceFolder.restrict(inputFolder.getFolderLoc());
 							tree.update(f);
-						}
-						else{
-							sourceFolder.getButton().setEnabled(false);
-							sourceFolder.getTextField().setEditable(false);
-							sourceFolder.setDefaultText();
-							sourceFolder.restrict(inputFolder.getFolderLoc());
-							checklist.disableDFAndCR();
 						}
 					}
 					
@@ -172,38 +177,7 @@ public class MainWindow {
 					}
 				});
 		
-		sourceFolder.getTextField().getDocument()
-			.addDocumentListener(new DocumentListener(){
-
-				private void Process(){
-					File f = new File(sourceFolder.getFolderLoc());
-					if(f.isDirectory()){
-						checklist.enableDFAndCR();
-						sourceFolderPath = f;
-					}
-					else{
-						checklist.disableDFAndCR();
-						f = null;
-					}
-				};
-				
-				@Override
-				public void changedUpdate(DocumentEvent arg0) {
-					Process();
-				}
-
-				@Override
-				public void insertUpdate(DocumentEvent arg0) {
-					Process();
-				}
-
-				@Override
-				public void removeUpdate(DocumentEvent arg0) {
-					Process();
-				}
-				
-			});
-		
+		//This listener is added to the execution button to begin the obfuscation process
 		exeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

@@ -1,4 +1,4 @@
-package mainGUI;
+package supportClasses;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import supportClasses.MainObfRefactored;
+import mainGUI.MyProgBar;
+import mainGUI.ObfCheckList;
 
 public class ExecuteObf {
 	
@@ -43,9 +44,8 @@ public class ExecuteObf {
 			return;
 		};
 		
-		
-		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), this.blacklist, checklist.getCheckListMap(), this.mpb);
-		
+		MainObfRefactored mor = new MainObfRefactored(new File(inputFolder), new File(outputFolder), this.blacklist, checklist.getActiveMethods(), this.mpb);
+		mor.execute();
 		
 	}
 	
@@ -56,6 +56,6 @@ public class ExecuteObf {
 	public void setRunning (boolean running){
 		this.running = running;
 		exeButton.setEnabled(!running);
-		
+		this.mpb.restart();
 	}
 }
