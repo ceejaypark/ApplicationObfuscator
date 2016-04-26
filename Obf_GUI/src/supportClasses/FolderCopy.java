@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class FolderCopy {
@@ -19,6 +20,8 @@ public class FolderCopy {
 		String inputFolderName = inputDir.getName();
 		String outputFolderName = "\\" + inputFolderName + "-obfuscated";
 		outputDir = new File(outputDir.getCanonicalPath() + outputFolderName);
+		
+		Files.deleteIfExists(outputDir.getCanonicalFile().toPath());
 		
 		copyFolder(inputDir,outputDir);
 	}
