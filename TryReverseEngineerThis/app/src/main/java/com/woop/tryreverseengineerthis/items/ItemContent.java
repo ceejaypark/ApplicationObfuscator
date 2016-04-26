@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Simple item
+ * Simple item content for recycler view
  */
 public class ItemContent {
 

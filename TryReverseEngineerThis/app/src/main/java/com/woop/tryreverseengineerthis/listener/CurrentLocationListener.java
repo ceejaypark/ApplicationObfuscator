@@ -8,13 +8,15 @@ import android.util.Log;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 
 /**
+ * Called to update the current GPS Coordinates
+ *
  * Created by Jay on 3/19/2016.
  */
 public class CurrentLocationListener implements LocationListener {
-    private static final String TAG = "CurrentLocationListener";
+
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Longitude: " + location.getLongitude() + "Latitude: " + location.getLatitude());
+        Log.d("CurrentLocationListener", "Longitude: " + location.getLongitude() + "Latitude: " + location.getLatitude());
         LocationStorage.setLocation(location);
     }
     @Override
