@@ -23,7 +23,17 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-public class PictureEncryptionObfuscator implements Obfuscater {
+import supportClasses.MainObfRefactored;
+
+/**
+ * Obfuscation technique to encrypt strings in the source code in images. 
+ * Images are required when building the project for the strings to make
+ * sense.
+ * 
+ * @author jkim506
+ *
+ */
+public class PictureEncryptionObfuscator implements Obfuscator {
 
 	private static final String PICTURE = ".\\resources\\puppies.png";
 	private static final String DECRYPTER = ".\\resources\\Decrypter.java";
@@ -39,7 +49,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 			e.printStackTrace();
 		}
 		
-		File resFolder = getResDirectory(MainObfuscator.OUTPUT);
+		File resFolder = getResDirectory(MainObfRefactored.outputFolder.getCanonicalPath());
 		Crypter crypter = new Crypter(PICTURE);
 		Picture picture = new Picture(PICTURE);
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
@@ -129,7 +139,7 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 
 	private File writeDecryptClass() throws IOException {
 		
-		File decrypterTarget = new File(MainObfuscator.sourceFolder.getCanonicalPath() + "\\Decrypter.java");
+		File decrypterTarget = new File(MainObfRefactored.sourceFolder.getCanonicalPath() + "\\Decrypter.java");
 				
 		Files.copy(new File(DECRYPTER).getCanonicalFile().toPath(), 
 					decrypterTarget.toPath(),
@@ -141,11 +151,16 @@ public class PictureEncryptionObfuscator implements Obfuscater {
 		sc.close();
 
 		Charset charset = StandardCharsets.UTF_8;
-		content = content.replaceAll("package PACKAGENAMETOBEREPLACED;", "package " + MainObfuscator.srcPackage + ";");		
+		content = content.replaceAll("package PACKAGENAMETOBEREPLACED;", "package " + MainObfRefactored.srcPackage + ";");		
 		//Write the result back to the file
 		Files.write(decrypterTarget.toPath(), content.getBytes(charset));
 		
 		return decrypterTarget;
+	}
+	
+	@Override
+	public String getName() {
+		return "Picture Encryption Obfuscation";
 	}
 }
 

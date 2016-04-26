@@ -18,7 +18,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DirectoryFlatenorObfuscator implements Obfuscater{
+import supportClasses.MainObfRefactored;
+
+/**
+ * This obfuscation method removes packages inside the project to be obfuscated
+ * 
+ * @author jkim506
+ *
+ */
+public class DirectoryFlattenerObfuscator implements Obfuscator{
 	
 	private HashMap<String, Boolean> importsToDelete = new HashMap<String, Boolean>();
 	private File manifest;
@@ -29,7 +37,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		
 		HashMap<String, File> newFiles = new HashMap<String, File>();
 		
-		String output = MainObfuscator.sourceFolder.getCanonicalPath();
+		String output = MainObfRefactored.sourceFolder.getCanonicalPath();
 		int folderCount = output.split("\\\\").length;
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
@@ -55,7 +63,7 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 			newFiles.put(path, file);
 		}
 		//Get the output directory
-		File outputFileDirectory = new File(MainObfuscator.sourceFolder.getCanonicalPath());
+		File outputFileDirectory = new File(MainObfRefactored.sourceFolder.getCanonicalPath());
 		
 		//Delete all subdirectories and add it to packages hashmap
 		for(Path p : Files.walk(outputFileDirectory.toPath()).
@@ -163,5 +171,9 @@ public class DirectoryFlatenorObfuscator implements Obfuscater{
 		fr.close();
 		bw.close();
 		fw.close();
+	}
+	@Override
+	public String getName() {
+		return "Directory Flattening Obfuscation";
 	}
 }

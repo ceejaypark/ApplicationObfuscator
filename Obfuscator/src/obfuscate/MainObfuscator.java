@@ -13,15 +13,19 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-public class MainObfuscater {
+public class MainObfuscator {
 	private static final String CONFIG = ".\\resources\\config.properties";
 
 	// lists and sets of files and obfuscater
 	public static ArrayList<Obfuscater> obfuscaters = new ArrayList<Obfuscater>();
 	public static HashMap<String, File> filesForObfuscation = new HashMap<String, File>();
 	public static List<String> blackList = new ArrayList<String>();
-
+	public static HashMap<String, File> mappedBlacklist = new HashMap<String, File>();
+	public static File manifest;
 	public static String OUTPUT = "";
+	public static String INPUT = "";
+	public static File sourceFolder;
+	public static String srcPackage = "";
 	
 	public static void main(String[] args) throws IOException {
 
@@ -36,6 +40,7 @@ public class MainObfuscater {
 		// retrieve the input directory from the configuration file
 		File inputDir = new File(configProperties.getProperty("input"));
 		String inputDirectoryName = new File(configProperties.getProperty("input")).getName();
+		INPUT = inputDir.getCanonicalPath();
 		
 		// retrieve the output directory from the configuration file
 		// further add in the directory, "-obfuscated" added to the input directory name
@@ -43,42 +48,79 @@ public class MainObfuscater {
 		File outputDir = new File(configProperties.getProperty("output") + outputDirectoryName);
 		OUTPUT = outputDir.getCanonicalPath();
 		
+		if(!outputDir.exists()){
+			outputDir.mkdir();
+		}
+		
 		//copy all files from input directory to the output directory
 		copyFolder(inputDir,outputDir);
-
+		sourceFolder = getSourceFolder();
+		setSourcePackage();
+		
 		// ------------------------------------FILE HASHMAP ADDITION---------------------------------//
 		// get the black list of files to ignore for obfuscation
 		String singleStringBlackList = configProperties.getProperty("blacklist");
 		String[] blackListAsArray = singleStringBlackList.split(",");
 		blackList = addBlackListToList(blackListAsArray);
+		for (String x : blackList){
+			mappedBlacklist.put(x,  new File(x));
+		}
+		
 		// add non black listed files to hash map
 		addFilesToHashMap(outputDir);
 
 		// ------------------------------------OBFUSCATER ADDITION------------------------------------//
 		// add appropriate classes to the list of obfuscater
+		if (Boolean.parseBoolean(configProperties.getProperty("pictureencrypt"))){
+			obfuscaters.add(new PictureEncryptionObfuscator());
+		}
+		if (Boolean.parseBoolean(configProperties.getProperty("watermark"))){
+			//obfuscaters.add(new WatermarkObfuscator());
+			obfuscaters.add(new WatermarkObfuscator());
+		}
 		if (Boolean.parseBoolean(configProperties.getProperty("commentremoval"))) {
 			// add comment removing obfuscater
 			obfuscaters.add(new CommentRemover());
-		}  else if (Boolean.parseBoolean(configProperties.getProperty("renamefields"))) {
-			// add to 'obfuscaters', rename field obfuscater class
-		} else if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
+		} 
+		if (Boolean.parseBoolean(configProperties.getProperty("insertcode"))) {
+			// add code insertion obfuscater
+			obfuscaters.add(new CodeInsertionObfuscater());
+		}		
+		if (Boolean.parseBoolean(configProperties.getProperty("renameclass"))) {
 			// add to 'obfuscaters', rename class obfuscater class
-		} else if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
+			obfuscaters.add(new ClassNameObfuscator());
+		} 
+		if (Boolean.parseBoolean(configProperties.getProperty("minification"))) {
 			// add to 'obfuscaters', minification obfuscater class
+			
 		}
 		if (Boolean.parseBoolean(configProperties.getProperty("renamelocalvariables"))) {
 			// add to 'obfuscaters', rename local variable obfuscater class
 			obfuscaters.add(new NameObfuscater());
-		} 
+		}
+		if (Boolean.parseBoolean(configProperties.getProperty("directoryflatenor"))){
+			// add to 'obfuscaters', get rid of directories
+			obfuscaters.add(new DirectoryFlatenorObfuscator());
+		}
+		if (Boolean.parseBoolean(configProperties.getProperty("logdelete"))){
+			// add to 'obfuscaters', get rid of logs
+			obfuscaters.add(new LogDeleteObfuscator());
+		}
+		if (Boolean.parseBoolean(configProperties.getProperty("bloating"))) {
+			obfuscaters.add(new Bloating());
+		}
+		
+		
 		// execute every obfuscation process in order
 		for (Obfuscater obfuscaterProcess : obfuscaters) {
-			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation);
+			long startTime = System.nanoTime(); 
+			System.out.println("Processing: " + obfuscaterProcess.getClass().toString());
+			filesForObfuscation = obfuscaterProcess.execute(filesForObfuscation, mappedBlacklist, manifest);
+			long endTime = System.nanoTime();
+			long duration = (endTime - startTime); 
+			System.out.println("Took: " + duration);
 		}
 
-		// --------------RANDOM TEST----------------//
-		for (Entry<String, File> entry : filesForObfuscation.entrySet()) {
-			System.out.println("KEY: " + entry.getKey() + " +++ " + "FILE: " + entry.getValue().getName());
-		}
 	}
 
 	/**
@@ -116,7 +158,13 @@ public class MainObfuscater {
 			if (blackList.contains(listOfFiles[i].getCanonicalPath())) {
 				// do not add file to hash map and continue
 				continue;
-			} else {
+			}
+			
+			else if(listOfFiles[i].getCanonicalPath().contains("AndroidManifest.xml")){
+				manifest = listOfFiles[i];
+			}
+			
+			else {
 				if (listOfFiles[i].isDirectory()) {
 					//recursive call to any directory
 					addFilesToHashMap(listOfFiles[i]);
@@ -143,7 +191,7 @@ public class MainObfuscater {
 
 			// if directory not exists, create it
 			if (!dest.exists()) {
-				dest.mkdir();
+				dest.mkdirs();
 				//System.out.println("Directory copied from " + src + "  to " + dest);
 			}
 
@@ -193,5 +241,80 @@ public class MainObfuscater {
 		}
 		
 		return nameSplit[nameSplit.length-1];
+	}
+	
+	/**
+	 * Find and set the compulsory package required for putting it in source folder
+	 * @throws IOException 
+	 */
+	private static void setSourcePackage() throws IOException{
+		int posTracker = -1;
+		String[] projPathSplit = INPUT.split("\\\\");
+		String[] srcPathSplit = sourceFolder.getCanonicalPath().split("\\\\");
+		if(projPathSplit.length > srcPathSplit.length){
+			return;
+		}
+		
+		while(posTracker + 1 < projPathSplit.length && posTracker < srcPathSplit.length && projPathSplit[posTracker + 1].equals(srcPathSplit[posTracker + 1])){
+			posTracker++;
+		}
+		
+		if(posTracker < 0){
+			return;
+		}
+		
+		StringBuilder packageTemp = new StringBuilder();
+		
+		for (int i = (posTracker + 1); i < srcPathSplit.length; i++){
+			if(srcPathSplit[i].equals("app") && srcPathSplit[i+1].equals("src") && srcPathSplit[i+2].equals("main") && srcPathSplit[i+3].equals("java")){
+				i = i+3;
+				packageTemp = new StringBuilder();
+				continue;
+			}
+			
+			packageTemp.append(srcPathSplit[i]);
+			
+			
+			if (i != srcPathSplit.length -1){
+				packageTemp.append(".");
+			}
+		}
+		
+		srcPackage = packageTemp.toString();
+	}
+	
+	private static File getSourceFolder() {
+		return getSourceFolder(new File(OUTPUT));
+	}
+	
+	public static File getSourceFolder(File root)
+	{		
+	    File[] files = root.listFiles(); 	    
+	    for (File file : files) {
+	    	if (file.isFile()) {
+	            try{
+	            	String[] split = file.getName().split("\\.");
+	                String ext = split[split.length - 1];
+	            	if(ext.contains("java"))
+	            		return root;
+	            }catch(Exception e){
+	            	continue;
+	            }
+	    	}
+	    }
+	    
+	    for (File file : files) {
+	        try {
+				if(file.getCanonicalPath().contains("Test"))
+					continue;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+	    	if (file.isDirectory()) {
+	            File folder = getSourceFolder(file);
+	            if(folder != null) return folder;
+	        }
+	    }
+	    return null;
 	}
 }

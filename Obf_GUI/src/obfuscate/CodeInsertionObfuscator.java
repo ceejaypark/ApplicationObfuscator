@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
+import supportClasses.MainObfRefactored;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -26,7 +28,14 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class CodeInsertionObfuscater implements Obfuscater {
+/**
+ * Obfuscation technique used to create dummy classes and insert 
+ * random valid code in the source code of the project to be obfuscated
+ * 
+ * @author cwu323, mcho588
+ *
+ */
+public class CodeInsertionObfuscator implements Obfuscator {
 
 	List<MethodDeclarationLines> methodsDeclarations;
 	List<Integer> returnStatements;
@@ -332,7 +341,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 	}
 
 	private void createMislead() throws IOException {
-		File misleadTarget = new File(MainObfuscator.sourceFolder.getCanonicalPath() + "\\Mislead.java");
+		File misleadTarget = new File(MainObfRefactored.sourceFolder.getCanonicalPath() + "\\Mislead.java");
 		File localVersion = new File(".\\resources\\Mislead.java");
 
 		Files.copy(localVersion.getCanonicalFile().toPath(), misleadTarget.toPath(),
@@ -342,7 +351,7 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		String content = sc.useDelimiter("\\Z").next();
 		sc.close();
 
-		content = content.replaceAll("TOBEREPLACED", MainObfuscator.srcPackage);
+		content = content.replaceAll("TOBEREPLACED", MainObfRefactored.srcPackage);
 
 		Files.write(misleadTarget.toPath(), content.getBytes(StandardCharsets.UTF_8));
 
@@ -411,5 +420,10 @@ public class CodeInsertionObfuscater implements Obfuscater {
 		public int getEndLine() {
 			return endLine;
 		}
+	}
+	
+	@Override
+	public String getName() {
+		return "Code Insertion Obfuscation";
 	}
 }
