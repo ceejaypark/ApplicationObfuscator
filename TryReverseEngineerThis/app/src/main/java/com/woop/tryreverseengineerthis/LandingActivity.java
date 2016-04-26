@@ -179,11 +179,11 @@ public class LandingActivity extends AppCompatActivity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
         if (itemIdentifier == R.id.nav_classes) {
-            fragment = new UniversityClassFragment();
+            fragment = new Fragment();
         } else if (itemIdentifier == R.id.nav_assignments) {
             fragment = new Fragment();
         } else if (itemIdentifier == R.id.nav_checkin) {
-            fragment = new Fragment();
+            fragment = new UniversityClassFragment();
         } else if (itemIdentifier == R.id.nav_lectures) {
             fragment = new Fragment();
         } else if (itemIdentifier == R.id.nav_share) {
@@ -205,18 +205,40 @@ public class LandingActivity extends AppCompatActivity
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
         Log.d(TAG, item.id);
         String itemContent = item.content;
+
+        String noClassesTodayFor = "apsojdojaspdjaspo";
+        String cannotDetectLocation = "dj20jd02j0d2j0d2jd0";
+        String youAreNotInTheRightLocation = "apsodjpo2jdopj1oassd";
+        String classIsNotNow = "dasodj02jd02jd02d2";
+        String checkedIn = "aspodjaopdjasodjasso";
+        String only702 = "sojodsojdsjodsojsdjo11";
+        try{
+            noClassesTodayFor = StringHelper.getStringStatic(noClassesTodayFor);
+            cannotDetectLocation = StringHelper.getStringStatic(cannotDetectLocation);
+            youAreNotInTheRightLocation = StringHelper.getStringStatic(youAreNotInTheRightLocation);
+            classIsNotNow = StringHelper.getStringStatic(classIsNotNow);
+            checkedIn = StringHelper.getStringStatic(checkedIn);
+            only702 = StringHelper.getStringStatic(only702);
+        }catch(Exception e){
+            Log.d(TAG, "An error occured");
+            return;
+        }
+
         if(!item.id.equals("1")){
-            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT )
+            Toast.makeText(getApplicationContext(), only702, Toast.LENGTH_SHORT )
                     .show();
             return;
         }
         Location currentLocation = LocationStorage.getLocation();
-        if (currentLocation == null)
-           return;
+        if (currentLocation == null){
+            Toast.makeText(getApplicationContext(), cannotDetectLocation, Toast.LENGTH_SHORT)
+                    .show();
+            return;
+
+        }
 
         double longitude = currentLocation.getLongitude();
         double latitude = currentLocation.getLatitude();
-
         String lowerLatitude = "d2jasaSD2dasd==";
         String higherLatitude = "sdD22d3daSd2==";
         String lowerLongitude = "asd202d0asD2==";
@@ -226,7 +248,6 @@ public class LandingActivity extends AppCompatActivity
         double hLa = 0.0;
         double lLo = 0.0;
         double hLo = 0.0;
-
         try {
             lLa = Double.parseDouble(StringHelper.getStringStatic(lowerLatitude));
             hLa = Double.parseDouble(StringHelper.getStringStatic(higherLatitude));
@@ -234,15 +255,20 @@ public class LandingActivity extends AppCompatActivity
             hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
             validDays = StringHelper.getStringStatic(validDays);
         } catch (Exception e) {
+            Log.d(TAG, "An error occured");
             return;
         }
         if(latitude < lLa || latitude > hLa)
         {
+            Toast.makeText(getApplicationContext(), youAreNotInTheRightLocation, Toast.LENGTH_SHORT)
+                    .show();
             Log.d(TAG, "Latitude: " + latitude);
             return;
         }
         //Checks the Longitude
         if(longitude < lLo || longitude > hLo){
+            Toast.makeText(getApplicationContext(), youAreNotInTheRightLocation, Toast.LENGTH_SHORT)
+                    .show();
             Log.d(TAG, "Longitude: " + longitude);
             return;
         }
@@ -252,9 +278,8 @@ public class LandingActivity extends AppCompatActivity
         int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
         Log.d(TAG, dayOfTheWeek + "");
         Log.d(TAG, strHour);
-        dayOfTheWeek = 2;
         if(!validDays.contains(dayOfTheWeek + "")){
-            Toast.makeText(getApplicationContext(), "No classes today for " + itemContent, Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), noClassesTodayFor + itemContent, Toast.LENGTH_SHORT)
             .show();
             return;
         }
@@ -265,11 +290,11 @@ public class LandingActivity extends AppCompatActivity
             return;
         }
         if(!time.equals(strHour)){
-            Toast.makeText(getApplicationContext(), "Class is not now!", Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), classIsNotNow, Toast.LENGTH_SHORT)
                     .show();
             return;
         }
-        Toast.makeText(getApplicationContext(), "Checked in", Toast.LENGTH_SHORT)
+        Toast.makeText(getApplicationContext(), checkedIn, Toast.LENGTH_SHORT)
                     .show();
     }
 }

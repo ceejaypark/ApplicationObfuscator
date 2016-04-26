@@ -130,6 +130,18 @@ public class StringHelper {
         staticHashMap.put("ajd202ASsd20L025","MTc=");
         //hour friday
         staticHashMap.put("ajd202ASsd20L026","MTY=");
+        //noClassesTodayFor
+        staticHashMap.put("apsojdojaspdjaspo","Tm8gY2xhc3NlcyB0b2RheSBmb3Ig");
+        //cannotDetectLocation
+        staticHashMap.put("dj20jd02j0d2j0d2jd0","Q2Fubm90IGRldGVjdCBsb2NhdGlvbg==");
+        //youAreNotInTheRightLocation
+        staticHashMap.put("apsodjpo2jdopj1oassd","WW91IGFyZSBub3QgaW4gdGhlIHJpZ2h0IGxvY2F0aW9u");
+        //classIsNotNow
+        staticHashMap.put("dasodj02jd02jd02d2","Q2xhc3MgaXMgbm90IG5vdw==");
+        //checkedIn
+        staticHashMap.put("aspodjaopdjasodjasso","Q2hlY2tlZCBpbg==");
+        //only702
+        staticHashMap.put("sojodsojdsjodsojsdjo11","T25seSA3MDIgaXMgc3VwcG9ydGVk");
     }
 
     public static String getStringDynamic(String encryptedKey) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {

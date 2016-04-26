@@ -13,15 +13,11 @@ import java.util.concurrent.locks.Lock;
  * Created by Jay on 3/19/2016.
  */
 public class LocationStorage {
-
     private static final String TAG = "LocationStorage";
-
     private static List<Location> history = new ArrayList<>();
     private static Location last = new Location("");
     private static boolean locationEnabled = true;
-
     private static Object lock = new Object();
-
     public static Location getLocation(){
         return last;
     }

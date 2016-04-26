@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.woop.tryreverseengineerthis.helper.PictureObfuscate;
 import com.woop.tryreverseengineerthis.helper.StringHelper;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
 import java.io.DataOutputStream;
