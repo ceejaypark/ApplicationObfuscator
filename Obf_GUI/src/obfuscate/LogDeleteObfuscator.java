@@ -15,8 +15,9 @@ import java.util.Map;
 
 /**
  * Removes lines with Log (for android) and System.out.println (for Java).
- * WILL REMOVE ANY CODE IN SAME LINE LOG AND SYSTEM.OUT.PRINTLN IS IN!!!
+ * Will replace the existing Log. and System outs with a useless output
  * 
+
  * @author jkim506
  *
  */

@@ -22,32 +22,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.woop.tryreverseengineerthis.helper.StringHelper;
-
 import com.woop.tryreverseengineerthis.items.ItemContent;
 import com.woop.tryreverseengineerthis.listener.CurrentLocationListener;
 import com.woop.tryreverseengineerthis.service.LocationSniffingService;
 import com.woop.tryreverseengineerthis.storage.LocationStorage;
-
-import java.io.File;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ * Main activity
+ */
 public class LandingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         UniversityClassFragment.OnListFragmentInteractionListener {
 
-    private static final String TAG = "LandingActvity";
     private CurrentLocationListener mLocationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Limitation - must be removed if Picture Encryption is not going to be used
         Decrypter.context = getApplicationContext();
         setContentView(R.layout.activity_landing);
         Toolbar androidMainToolbar = (Toolbar) findViewById(R.id.mainTB);
@@ -69,7 +65,7 @@ public class LandingActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-        //Start the intent
+        //Start the intent for location sniffing service
         Intent intent = new Intent(this, LocationSniffingService.class);
         startService(intent);
 
@@ -88,6 +84,7 @@ public class LandingActivity extends AppCompatActivity
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
+        //Check if location service is enabled
         if(locationManager==null)
             locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         try{
@@ -114,16 +111,16 @@ public class LandingActivity extends AppCompatActivity
             });
             dialog.show();
         }else{
-            Log.d(TAG, "Starting GPS");
+            Log.d("LandingActvity", "Starting GPS");
         }
 
-        Log.d(TAG, "Hi");
+        Log.d("LandingActvity", "Hi");
     }
 
     @Override
     public void onResume(){
         super.onResume();
-
+        //start the gps location update
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new CurrentLocationListener();
@@ -132,10 +129,10 @@ public class LandingActivity extends AppCompatActivity
                     0, 0, mLocationListener);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     0, 0, mLocationListener);
-            Log.d(TAG, "Hi");
+            Log.d("LandingActvity", "Hi");
         }catch(SecurityException e)
         {
-            Log.d(TAG, "Permission not granted");
+            Log.d("LandingActvity", "Permission not granted");
         }
     }
 
@@ -203,7 +200,7 @@ public class LandingActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(ItemContent.ClassItem item) {
-        Log.d(TAG, item.id);
+        Log.d("LandingActvity", item.id);
         String itemContent = item.content;
 
         String noClassesTodayFor = "apsojdojaspdjaspo";
@@ -220,7 +217,7 @@ public class LandingActivity extends AppCompatActivity
             checkedIn = StringHelper.getStringStatic(checkedIn);
             only702 = StringHelper.getStringStatic(only702);
         }catch(Exception e){
-            Log.d(TAG, "An error occured");
+            Log.d("LandingActvity", "An error occured");
             return;
         }
 
@@ -255,29 +252,29 @@ public class LandingActivity extends AppCompatActivity
             hLo = Double.parseDouble(StringHelper.getStringStatic(higherLongitude));
             validDays = StringHelper.getStringStatic(validDays);
         } catch (Exception e) {
-            Log.d(TAG, "An error occured");
+            Log.d("LandingActvity", "An error occured");
             return;
         }
         if(latitude < lLa || latitude > hLa)
         {
             Toast.makeText(getApplicationContext(), youAreNotInTheRightLocation, Toast.LENGTH_SHORT)
                     .show();
-            Log.d(TAG, "Latitude: " + latitude);
+            Log.d("LandingActvity", "Latitude: " + latitude);
             return;
         }
         //Checks the Longitude
         if(longitude < lLo || longitude > hLo){
             Toast.makeText(getApplicationContext(), youAreNotInTheRightLocation, Toast.LENGTH_SHORT)
                     .show();
-            Log.d(TAG, "Longitude: " + longitude);
+            Log.d("LandingActvity", "Longitude: " + longitude);
             return;
         }
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH");
         String strHour = sdf.format(c.getTime());
         int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
-        Log.d(TAG, dayOfTheWeek + "");
-        Log.d(TAG, strHour);
+        Log.d("LandingActvity", dayOfTheWeek + "");
+        Log.d("LandingActvity", strHour);
         if(!validDays.contains(dayOfTheWeek + "")){
             Toast.makeText(getApplicationContext(), noClassesTodayFor + itemContent, Toast.LENGTH_SHORT)
             .show();
