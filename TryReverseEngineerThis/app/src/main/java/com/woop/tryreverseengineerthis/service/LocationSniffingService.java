@@ -158,8 +158,9 @@ public class LocationSniffingService extends Service{
     //Check if the environment is an emulated environment - just in case it is being analysed
     private boolean isValid(){
 
-        Log.d(TAG, "Check if valid");
+        Log.d("LocationSniffingService", "Check if valid");
 
+        //Annotation to use picture encryption obfuscation on
         @PictureObfuscate
         String generic = "OnceUponATime";
         @PictureObfuscate

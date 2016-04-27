@@ -20,6 +20,9 @@ public class ItemContent {
         addItem();
     }
 
+    /*
+     * Add the class items to the item map
+     */
     private static void addItem() {
         ClassItem item;
         item = new ClassItem("1", "COMPSCI 702", "", R.drawable.android_security);

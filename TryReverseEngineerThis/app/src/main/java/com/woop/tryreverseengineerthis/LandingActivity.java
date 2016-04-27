@@ -43,6 +43,7 @@ public class LandingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Limitation - must be removed if Picture Encryption is not going to be used
         Decrypter.context = getApplicationContext();
         setContentView(R.layout.activity_landing);
         Toolbar androidMainToolbar = (Toolbar) findViewById(R.id.mainTB);
