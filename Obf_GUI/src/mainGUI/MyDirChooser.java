@@ -5,9 +5,15 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 @SuppressWarnings("serial")
+/**
+ * Implementation of JFileChooser
+ * @author cwu323
+ *
+ */
 public class MyDirChooser extends JFileChooser{
 
 	public MyDirChooser(){
+		//Only allow selections from directories.
 		this.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		this.setDialogTitle("Select A Folder");
 		this.setApproveButtonText("Select Folder");
@@ -21,6 +27,11 @@ public class MyDirChooser extends JFileChooser{
 		else
 			return "";
 	}
+	
+	/**
+	 * Restricting the fileChooser to a directory only
+	 * @param loc
+	 */
 	
 	public void setRestriction(String loc){
 		File location = new File(loc);

@@ -275,13 +275,22 @@ public class CodeInsertionObfuscator implements Obfuscator {
 
 	// ====================================================================================
 	// Dead code generation methods
+	
+	/**
+	 * Method to generate a String representing a method call to the dummy class written 
+	 * for the code insertion technique.
+	 * 
+	 * @return String
+	 */
 	private String generateDeadMethod() {
+		//Two variables representing the string to return
 		String stringMethod = "private static boolean getClassStatus(String input){\n"
 				+ "\t if(input.length() == 16){\n" + "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
 
 		String intMethod = "private static boolean getClassStatus(int input){\n"
 				+ "\t if((((double)input)/2) % 2 != 1){\n" + "\t\treturn true;\n" + "\t}\n" + "\treturn false;\n" + "}";
 
+		//Selecting which one to return, this is randomly generated during runtime.
 		if (deadCodeStatus == 0) {
 			return intMethod;
 		} else if (deadCodeStatus == 1) {
@@ -291,10 +300,18 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		}
 	}
 
+	/**
+	 * Method to decide which method and if statement to use. Randomly selected per File input.
+	 */
 	private void setDeadCodeStatus() {
 		this.deadCodeStatus = getRandomNumber(2, 0);
 	}
 
+	/**
+	 * This method returns a random integer that will ensure the dead code will never be run
+	 * Helper method for getDeadInput()
+	 * @return int
+	 */
 	private int deadInt() {
 		int result = 0;
 		while ((((double) result) / 2) % 2 != 1) {
@@ -303,6 +320,11 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return result;
 	}
 
+	/**
+	 * This method returns a randomly generated string that will ensure the dead code will never be run
+	 * Helper method for getDeadInput()
+	 * @return String
+	 */
 	private String deadString() {
 		int length = getRandomNumber(20, 1);
 		while (length == 16) {
@@ -321,6 +343,12 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return output.toString();
 	}
 
+	/**
+	 * The method returns the String representation of that is placed in the if
+	 * statement of the dead code
+	 * 
+	 * @return String
+	 */
 	private String getDeadInput() {
 		if (this.deadCodeStatus == 0) {
 			return deadInt() + "";
@@ -334,6 +362,13 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		}
 	}
 
+	/**
+	 * Method to generate the randomised if statement which will be guaranteed to never execute in the
+	 * obfuscated code.
+	 * 
+	 * @param original
+	 * @return String
+	 */
 	private String generateDeadIf(String original) {
 		String output;
 		if (original.startsWith("if")) {
@@ -346,6 +381,12 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return output;
 	}
 
+	/**
+	 * Method to copy the Mislead.java file found in the resources folder into the project to be obfuscated.
+	 * Required for the dead if statements to work. 
+	 * 
+	 * @throws IOException
+	 */
 	private void createMislead() throws IOException {
 		File misleadTarget = new File(MainObfRefactored.sourceFolder.getCanonicalPath() + "\\Mislead.java");
 		File localVersion = new File(".\\resources\\Mislead.java");

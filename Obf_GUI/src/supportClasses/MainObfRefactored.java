@@ -13,6 +13,12 @@ import javax.swing.SwingWorker;
 import mainGUI.MyProgBar;
 import obfuscate.*;
 
+/**
+ * Class extending swingworker to run the obfuscation process in the background
+ * 
+ * @author cwu323
+ *
+ */
 public class MainObfRefactored extends SwingWorker<Void,Integer>{
 	private ArrayList<Obfuscator> obfuscators = new ArrayList<Obfuscator>();
 	private HashMap<String, File> filesForObf = new HashMap<String, File>();
@@ -26,6 +32,16 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 	public static String srcPackage;
 
 	
+	/**
+	 * Constructor to get required fields for obfuscation
+	 * 
+	 * @param inputFolder
+	 * @param outputFolder
+	 * @param blacklist
+	 * @param obfs
+	 * @param mpb
+	 * @throws IOException
+	 */
 	public MainObfRefactored(File inputFolder, File outputFolder,
 			ArrayList<String> blacklist,
 			ArrayList<Obfuscator> obfs, MyProgBar mpb)
@@ -52,6 +68,11 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 
 	}
 	
+	/**
+	 * Helper method responsible for ensuring that the file representation is correct
+	 * @param folder
+	 * @throws IOException
+	 */
 	private void addFilesToHashMap(File folder) throws IOException {
 		File[] listOfFiles = folder.listFiles();
 
@@ -83,6 +104,12 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 		}
 	}
 
+	/**
+	 * Helper method to retrieve file extension
+	 * Does not return MIME type
+	 * @param file
+	 * @return
+	 */
 	private String getFileExtension(File file) {
 		String fileName = file.getName();
 		String[] nameSplit = fileName.split("\\.");
@@ -94,6 +121,9 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 		return nameSplit[nameSplit.length - 1];
 	}
 	
+	/**
+	 * Method to create the hashmap of blacklisted files
+	 */
 	private void createBlackListMap(){
 		for (String x :blacklist){
 			mappedBlacklist.put(x, new File(x));
@@ -177,6 +207,8 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 	}
 	
 	//=====================================================================================================================================
+	//SwingWorker methods to allow work in background
+	//Updates MyProgBar in the GUI concurrently.
 	@Override
 	protected Void doInBackground() throws Exception {
 		int count = 0;

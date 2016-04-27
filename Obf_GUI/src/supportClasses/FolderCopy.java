@@ -11,11 +11,17 @@ import java.util.ArrayList;
 
 import mainGUI.MyProgBar;
 
+/**
+ * Class responsible for generating and preparing the output folder for obfuscation
+ * @author cwu323, mcho588
+ *
+ */
 public class FolderCopy {
 	
 	private ArrayList<String> blacklistNew;
 	private ArrayList<String> blacklistOld;
 	private MyProgBar mpb;
+	
 	
 	public FolderCopy(MyProgBar mpb){
 		this.mpb =mpb;
@@ -33,6 +39,13 @@ public class FolderCopy {
 		copyFolder(inputDir,outputDir);
 	}
 	
+	/**
+	 * Method to copy a directory into an output directory
+	 * 
+	 * @param inputDir
+	 * @param outputDir
+	 * @throws IOException
+	 */
 	private void copyFolder(File inputDir, File outputDir)throws IOException{
 		
 		
@@ -81,6 +94,11 @@ public class FolderCopy {
 		}
 	}
 	
+	/**
+	 * Method to obtain the corresponding blacklist files in the output folder.
+	 * 
+	 * @return Arraylist Blacklist
+	 */
 	public ArrayList<String> copiedBlacklist(){
 		return blacklistNew;
 	}

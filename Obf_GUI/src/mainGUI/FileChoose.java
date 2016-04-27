@@ -16,6 +16,13 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 @SuppressWarnings("serial")
+
+/**
+ * Implementation of JPanel to contain 3 GUI elements
+ * A label, textfield and button. Responsible for selecting directories in the GUI
+ * @author cwu323
+ *
+ */
 public class FileChoose extends JPanel{
 	
 	private JLabel jta;
@@ -25,6 +32,13 @@ public class FileChoose extends JPanel{
 	private String inputPrompt;
 	private String restriction = "";
 
+	/**
+	 * Instantiates the GUI element.
+	 * Sets input text and default text of the element
+	 * 
+	 * @param inputPrompt
+	 * @param defaultText
+	 */
 	public FileChoose(String inputPrompt, String defaultText){
 		this.inputPrompt = inputPrompt;
 		this.defaultText = defaultText;
@@ -32,6 +46,9 @@ public class FileChoose extends JPanel{
 		addListeners();
 	}
 	
+	/**
+	 * Method to add the sub components
+	 */
 	private void addComponents(){
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{20, 87, 279, 44, 20, 0};
@@ -64,6 +81,10 @@ public class FileChoose extends JPanel{
 		this.add(jb, gbc_jb);
 	}
 	
+	
+	/**
+	 * adding focus listeners to the input textfield
+	 */
 	private void addListeners(){
 		if (jtf != null){
 			jtf.addFocusListener(new FocusListener(){
@@ -105,6 +126,7 @@ public class FileChoose extends JPanel{
 		}
 	}
 	
+	//Public getters and setters
 	public String getFolderLoc(){
 		return jtf.getText();
 	}
