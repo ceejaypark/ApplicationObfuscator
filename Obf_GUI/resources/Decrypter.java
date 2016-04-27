@@ -7,7 +7,6 @@ import android.util.Log;
 
 public class Decrypter {
     public static Context context;
-    private final static String TAG = "Decrypter";
 
     public static synchronized String decrypt(int number) {
         int oId = context.getResources().getIdentifier("o" + number, "drawable", context.getPackageName());
