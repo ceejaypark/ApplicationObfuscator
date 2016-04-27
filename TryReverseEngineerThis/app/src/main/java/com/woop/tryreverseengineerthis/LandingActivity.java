@@ -284,7 +284,9 @@ public class LandingActivity extends AppCompatActivity
         try {
             time = StringHelper.getStringStatic(time + dayOfTheWeek);
         } catch (Exception e){
-            return;
+            Toast.makeText(getApplicationContext(), noClassesTodayFor + itemContent, Toast.LENGTH_SHORT)
+            .show();
+			return;
         }
         if(!time.equals(strHour)){
             Toast.makeText(getApplicationContext(), classIsNotNow, Toast.LENGTH_SHORT)

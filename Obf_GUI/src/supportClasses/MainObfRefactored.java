@@ -36,7 +36,7 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 		this.inputFolder = inputFolder;
 		this.outputFolder = outputFolder;
 		
-		mpb.setMaximum(obfuscators.size() + 1);
+		mpb.setMaximum(obfuscators.size() + 2);
 		
 		mpb.setValue("Copying files... %0", 0);
 		
@@ -181,7 +181,7 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 	protected Void doInBackground() throws Exception {
 		int count = 0;
 		for(Obfuscator o : obfuscators){
-			publish(count + 2);
+			publish(count);
 			filesForObf = o.execute(filesForObf, mappedBlacklist, manifest);
 			count++;
 		}
@@ -192,7 +192,7 @@ public class MainObfRefactored extends SwingWorker<Void,Integer>{
 	protected void process(List<Integer> chunks){
 		double percentDone =  Math.floor(100.0 * ((double)chunks.get(chunks.size() -1 ))/((double)mpb.getMaximum()));
 		String info = "Obfuscating using " + obfuscators.get( chunks.get(chunks.size() -1 )).getName() + " - " + percentDone + "%";
-		mpb.setValue( info, chunks.get(chunks.size() -1 ) + 2);
+		mpb.setValue( info, chunks.get(chunks.size() -1 )+1);
 	}
 	
 	@Override

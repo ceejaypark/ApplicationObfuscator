@@ -178,12 +178,16 @@ public class NameObfuscator implements Obfuscator {
 	private String replaceDeclaredMethods(String content) {
 		// use regex pattern matching to find method declarations
 		Pattern pattern = Pattern
-				.compile("[^@Override]\n((public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;]))");
+				.compile("(\n.*)(\n(\\s*)(public|protected|private)\\s+((final\\s+)|(static\\s+)|(synchronized\\s+))?((\\w+((<(.*)>)?))\\s+\\w+)\\()");
 
 		Matcher matcher = pattern.matcher(content);
 		int count = 0;
 		while (matcher.find()) {
-			String methodDec = matcher.group();
+			System.out.println(matcher.group(1));
+			if(matcher.group(1).contains("@Override")){
+				continue;
+			}
+			String methodDec = matcher.group(2);
 
 			Pattern pConstructor = Pattern
 					.compile("(public|private|protected)+\\s+\\w+\\(");

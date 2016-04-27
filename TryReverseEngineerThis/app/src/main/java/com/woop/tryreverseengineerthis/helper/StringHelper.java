@@ -105,7 +105,7 @@ public class StringHelper {
         //higherLongitude
         staticHashMap.put("asdk22d2djiasd0","MTc1Ljc4");
         //valid days
-        staticHashMap.put("a2d0jdASd22ASd22j0","MjQ2");
+        staticHashMap.put("a2d0jdASd22ASd22j0","MjU2");
         //hour monday
         staticHashMap.put("ajd202ASsd20L022", "MTc=");
         //hour thursday
