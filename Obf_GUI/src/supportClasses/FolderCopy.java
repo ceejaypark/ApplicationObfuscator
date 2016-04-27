@@ -9,10 +9,17 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
+import mainGUI.MyProgBar;
+
 public class FolderCopy {
 	
 	private ArrayList<String> blacklistNew;
 	private ArrayList<String> blacklistOld;
+	private MyProgBar mpb;
+	
+	public FolderCopy(MyProgBar mpb){
+		this.mpb =mpb;
+	}
 	
 	public void beginCopy(File inputDir, File outputDir, ArrayList<String> blacklist) throws IOException{
 		blacklistNew = new ArrayList<String>();
@@ -21,7 +28,7 @@ public class FolderCopy {
 		String outputFolderName = "\\" + inputFolderName + "-obfuscated";
 		outputDir = new File(outputDir.getCanonicalPath() + outputFolderName);
 		
-		Files.deleteIfExists(outputDir.getCanonicalFile().toPath());
+		mpb.setValue("Deleting Existing Obfuscated Project... 0%", 0);
 		
 		copyFolder(inputDir,outputDir);
 	}
@@ -66,7 +73,6 @@ public class FolderCopy {
 			in.close();
 			out.close();
 			//System.out.println("File copied from " + src + " to " + dest);
-			
 			
 		}
 		
