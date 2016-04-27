@@ -63,6 +63,10 @@ public class PictureEncryptionObfuscator implements Obfuscator {
 			String lineInFile;
 			boolean encryptNextLine = false;
 			
+            /* If annotation is found - encrypt the next line
+             * Add String x = Decrypter.decrypt(y); - > which will decrypt the string from a picture at run time
+             *
+             */
 			while ((lineInFile = fileInput.readLine()) != null) {
 				String original = lineInFile;
 				if(encryptNextLine){
@@ -112,6 +116,9 @@ public class PictureEncryptionObfuscator implements Obfuscator {
 		return files;
 	}
 
+    /*
+     * Get the resource folder
+     */
 	private File getResDirectory(String path){
 		for(File directory : getAllDirectory(new File(path))){
 			if(directory.getName().equals("res")){
@@ -121,6 +128,10 @@ public class PictureEncryptionObfuscator implements Obfuscator {
 		return null;
 	}
 	
+    /*
+     *  List all directories and add them and return the list
+     *
+     */
 	private List<File> getAllDirectory(File file) {
 	    List<File> subdirs = Arrays.asList(file.listFiles(new FileFilter() {
 	        public boolean accept(File f) {
@@ -137,6 +148,10 @@ public class PictureEncryptionObfuscator implements Obfuscator {
 	    return subdirs;
 	}
 
+    /*
+     * Copy the decrypt class in the obfusator's resource folder to the app
+     * Add the package name to the decrypt class
+     */
 	private File writeDecryptClass() throws IOException {
 		
 		File decrypterTarget = new File(MainObfRefactored.sourceFolder.getCanonicalPath() + "\\Decrypter.java");
