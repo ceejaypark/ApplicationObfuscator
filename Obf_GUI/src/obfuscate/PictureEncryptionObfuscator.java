@@ -179,6 +179,11 @@ public class PictureEncryptionObfuscator implements Obfuscator {
 	}
 }
 
+/*http://forum.codecall.net/topic/48613-java-encrypt-text-into-an-image/
+ *  Decrypter inserted into the app is slightly different to AWT not being supported on Android
+ * 
+ *  Decrypter below is only used for testing and only encrypter is used for production
+ */
 class Crypter {    
     private Picture copy;
     private Picture key;

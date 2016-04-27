@@ -12,6 +12,14 @@ import javax.swing.SwingWorker;
 import mainGUI.MyProgBar;
 import mainGUI.ObfCheckList;
 
+
+/**
+ * Singleton class to ensure that only one obfuscation process gets run.
+ * Stores state of the process and toggles GUI appropriately
+ * 
+ * @author cwu323
+ *
+ */
 public class ExecuteObf {
 	
 	private static ExecuteObf instance = null;
@@ -29,6 +37,17 @@ public class ExecuteObf {
 		return instance;
 	}
 	
+	/**
+	 * Method to begin the obfuscation process, which runs on a background thread
+	 * 
+	 * @param inputFolder
+	 * @param outputFolder
+	 * @param checklist
+	 * @param exeButton
+	 * @param blacklist
+	 * @param mpb
+	 * @throws IOException
+	 */
 	public void exe(String inputFolder, String outputFolder, ObfCheckList checklist, JButton exeButton, ArrayList<String> blacklist, MyProgBar mpb) throws IOException{
 		this.exeButton = exeButton;
 		this.blacklist = blacklist;
@@ -49,10 +68,21 @@ public class ExecuteObf {
 		
 	}
 	
+	/**
+	 * Method to check if an obfuscation process is running
+	 * 
+	 * @return bool running
+	 */
 	public boolean isRunning(){
 		return running;
 	}
 	
+	/**
+	 * Method to set the status of the background progress
+	 * Enables/Disables correspinding GUI elements
+	 * 
+	 * @param running
+	 */
 	public void setRunning (boolean running){
 		this.running = running;
 		exeButton.setEnabled(!running);

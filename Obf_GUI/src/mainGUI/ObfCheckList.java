@@ -83,6 +83,8 @@ public class ObfCheckList extends JPanel{
 	}
 	
 	/**
+	 * Method to add the right obfuscation techniques, depending on the users 
+	 * desired technique
 	 * 
 	 */
 	public ArrayList<Obfuscator> getActiveMethods(){
