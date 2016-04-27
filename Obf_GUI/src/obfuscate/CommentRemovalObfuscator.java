@@ -42,6 +42,7 @@ public class CommentRemovalObfuscator implements Obfuscator{
 				
 			}
 			
+			//replaces every comment with blank space
 			String noComment = fileString.toString().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/", " ");
 			
 			

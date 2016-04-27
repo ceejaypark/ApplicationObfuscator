@@ -59,6 +59,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 			methodsDeclarations = new ArrayList<MethodDeclarationLines>();
 			returnStatements = new ArrayList<Integer>();
 
+			//parse file and visit method declaractions and return statements
 			CompilationUnit cu;
 			try {
 				// parse the file
@@ -96,6 +97,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 				String original = lineInFile;
 				lineInFile = lineInFile.trim();
 				
+				//checks if line number is inside a method
 				inMethod = isInsideMethod(lineNumber);
 
 				if (inClass) {
@@ -204,6 +206,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return files;
 	}
 
+
 	private String getStartWhitespace(String s) {
 		String whitespace = "";
 
@@ -224,6 +227,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return whitespace;
 	}
 
+	//returns a string of randomly generated code for insertion
 	private String generateRandomCode(String whitespace) {
 		String randomCode = "";
 
@@ -245,6 +249,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 			randomCode = randomCode + whitespace + "for (int fjhdafcjvklzxjcklzx = 0; fjhdafcjvklzxjcklzx < "
 					+ variables.get(getRandomNumber(variables.size(), 1) - 1) + "; fjhdafcjvklzxjcklzx++) {\n";
 		} else {
+			// add if statement
 			randomCode = randomCode + whitespace + "if (" + variables.get(getRandomNumber(variables.size(), 1) - 1)
 					+ " < 2 || 30 == " + variables.get(getRandomNumber(variables.size(), 1) - 1) + ") {\n";
 		}
@@ -260,6 +265,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return randomCode;
 	}
 
+	//generates a random number between two numbers
 	private int getRandomNumber(int maximum, int minimum) {
 		Random rand = new Random();
 		int number = rand.nextInt((maximum - minimum) + 1) + minimum;
@@ -358,6 +364,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		files.put(misleadTarget.getCanonicalPath(), misleadTarget);
 	}
 	
+	//retrieves the line number of the last return statement inside a method declaration
 	private int getLastReturnLine(int start, int end) {
 		List<Integer> methodReturnLines = new ArrayList<Integer>();
 		
@@ -374,9 +381,11 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return -1;
 	}
 	
+	//returns true if a line number is inside a method declaration
 	private boolean isInsideMethod(int lineNumber) {
 		for (int i = 0; i < methodsDeclarations.size(); i++) {
 			MethodDeclarationLines mdl = methodsDeclarations.get(i);
+			//check for return statements
 			int beforeLine = getLastReturnLine(mdl.getStartLine(),mdl.getEndLine());
 			if (beforeLine == -1) {
 				beforeLine = mdl.getEndLine();
@@ -388,6 +397,8 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		return false;
 	}
 	
+	//visitor class that visits every return declaration
+	//adds the line numbers of every return statement
 	private class ReturnVisitor extends VoidVisitorAdapter {
 		
 		@Override
@@ -396,6 +407,8 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		}
 	}
 
+	//visitor class that visits every method declaration
+	//adds MethodDeclarationLines objects into array for referencing start and end lines of method declaration
 	private class MethodVisitor extends VoidVisitorAdapter {
 
 		@Override
@@ -405,6 +418,7 @@ public class CodeInsertionObfuscator implements Obfuscator {
 		}
 	}
 
+	//Object that holds the start and end line of method declarations
 	private class MethodDeclarationLines {
 		private int startLine, endLine;
 
