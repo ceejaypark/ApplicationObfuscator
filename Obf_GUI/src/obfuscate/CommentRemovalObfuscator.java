@@ -23,6 +23,8 @@ public class CommentRemovalObfuscator implements Obfuscator{
 	public HashMap<String,File> execute(HashMap<String,File> files, HashMap<String,File> blacklist,  File manifest ) throws IOException{
 		
 		for (Map.Entry<String, File> fileEntry : files.entrySet()) {
+			
+			//Code to read in every file
 			File file = fileEntry.getValue();
 			
 			FileReader fileReader = new FileReader(file);
@@ -42,14 +44,17 @@ public class CommentRemovalObfuscator implements Obfuscator{
 				
 			}
 			
+			//replaces every comment with blank space using a regex
 			String noComment = fileString.toString().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/", " ");
 			
 			
+			//writing code into output files
 			FileWriter fileWriter = new FileWriter(file);
 			BufferedWriter fileOutput = new BufferedWriter(fileWriter);
 			
 			fileWriter.write(noComment);
 			
+			//closing all IO items
 			fileOutput.flush();
 			fileOutput.close();
 			fileInput.close();

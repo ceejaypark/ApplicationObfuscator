@@ -214,6 +214,7 @@ public class NameObfuscator implements Obfuscator {
 			patternMethodDec = patternMethodDec.replace("(", "\\(");
 			patternMethodDec = patternMethodDec.replace(")", "\\)");
 
+			//Find and replace the calls to public methods in the map. Consider special cases of @Override methods
 			Matcher match = Pattern.compile(
 					"[\r?\n](.*)[\r?\n]\\s+(\\w+|)\\s+" + patternMethodDec)
 					.matcher(content);
@@ -363,6 +364,8 @@ public class NameObfuscator implements Obfuscator {
 		boolean isSkip = false;
 		while (m.find()) {
 			String found = m.group();
+			//isSkip to represent if line is an overridden method. Use special check to consider
+			//if overridden method is from a self written interface
 			if (isSkip) {
 				isSkip = false;
 
@@ -395,10 +398,13 @@ public class NameObfuscator implements Obfuscator {
 
 			}
 
+			//if line contains import or package, append then ignore line
 			if (found.contains("import") | found.contains("package")) {
 				newBuff.append(found + "\n");
 				continue;
 			}
+			//If line contains @Override, following line must be an overridden method.
+			//Set isSkip boolean to true to consider special case
 			if (found.contains("@Override")) {
 				isSkip = true;
 			}
@@ -409,43 +415,13 @@ public class NameObfuscator implements Obfuscator {
 			}
 			Matcher matcher = replacePattern.matcher(found);
 			if (matcher.find()) {
-				// buff = new
-				// StringBuffer(matcher.replaceAll(replaceTo));//.appendReplacement(buff,
-				// replaceTo);
+				
 				newBuff.append(new StringBuffer(matcher.replaceAll(replaceTo))
 						+ "\n");
 			} else {
 				newBuff.append(found + "\n");
 			}
 		}
-
-		// String[] lines = buff.toString().split("\\n");
-		// for (String line: lines){
-		// if(!line.contains(toReplace)){
-		// continue;
-		// }
-		// if(line.contains("import") | line.contains("package")){
-		// continue;
-		// }
-		// else{
-		// // not an import statement, so replace in line, then replace in
-		// buffer
-		// String newLine = line.replaceAll("\\b"+toReplace+"\\b", replaceTo);
-		//
-		// String pattern = line.replace("{", "\\{");
-		// pattern = pattern.replace("(", "\\(");
-		// pattern = pattern.replace(")", "\\)");
-		//
-		// Pattern replacePattern = Pattern.compile(pattern);
-		// Matcher matcher = replacePattern.matcher(buff);
-		// while(matcher.find()){
-		// buff = new
-		// StringBuffer(matcher.replaceAll(newLine));//.appendReplacement(buff,
-		// replaceTo);
-		// }
-		// }
-		// }
-
 		return newBuff;
 	}
 
@@ -456,12 +432,13 @@ public class NameObfuscator implements Obfuscator {
 	private String getNewName() {
 		int asciiCode = 76;
 		StringBuffer sb = new StringBuffer();
+		//limiting lengths of variables to 100.
 		if (count >= 100) {
 			count = 1;
 			overflow++;
 		}
 		for (int i = 0; i < count; i++) {
-			// if i is even, then the next letter should be L/l, otherwise 1/one
+			// generating a variable name using only 2 letters
 			if ((i % 2) == 0) {
 				if (overflow == 0) {
 					asciiCode = 76;
@@ -484,6 +461,7 @@ public class NameObfuscator implements Obfuscator {
 		count++;
 		String returnVal = sb.toString();
 		
+		//Ensuring generated name is unique. if not generate a new one
 		if(uniqueNameCheck.contains(returnVal)){
 			returnVal = getNewName();
 		}else{

@@ -2,6 +2,13 @@ package mainGUI;
 
 import javax.swing.JProgressBar;
 
+/**
+ * Extended JProgressBar to allow for new implementation the the
+ * setValue method.
+ * 
+ * @author cwu323
+ * @extends JProgressBar
+ */
 @SuppressWarnings("serial")
 public class MyProgBar extends JProgressBar {
 
@@ -9,15 +16,10 @@ public class MyProgBar extends JProgressBar {
 		restart();
 	}
 
-	public void changeVal(String info, int increase) {
-		this.setValue(increase);
-
-		double percent = ((double)increase /(double)this.getMaximum()) * 100;
-		
-		String newText = (int)percent + "% - " + info;
-		this.setString(newText);
-	}
-
+	/**
+	 * Method to reset the progress bar
+	 * 
+	 */
 	public void restart() {
 		this.setMaximum(1000);
 		this.setStringPainted(true);
