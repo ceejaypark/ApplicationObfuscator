@@ -52,3 +52,5 @@ TryReverseEngineerThis/captures/
 #Keystore files
 *.jks
 /bin/
+*.classpath
+ReverseEngineering/.settings/org.eclipse.jdt.core.prefs
