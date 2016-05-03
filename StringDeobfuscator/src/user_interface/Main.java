@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import fileReaders.JavaFileRetriever;
+import fileReaders.StringRetriever;
 
 public class Main {
 
@@ -81,6 +82,11 @@ public class Main {
 				
 				JavaFileRetriever dr = new JavaFileRetriever(inputDir);
 				javaFiles = dr.getJavaFiles();
+				
+				for(File f : javaFiles){
+					StringRetriever fr = new StringRetriever(f);
+					
+				}
 			}
 		});
 	}
