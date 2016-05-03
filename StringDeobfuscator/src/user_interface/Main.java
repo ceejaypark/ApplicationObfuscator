@@ -11,6 +11,9 @@ import javax.swing.JOptionPane;
 
 import fileReaders.JavaFileRetriever;
 import fileReaders.StringRetriever;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class Main {
 
@@ -57,9 +60,25 @@ public class Main {
 	}
 
 	private void addComponents(){
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{434, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 200, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		frame.getContentPane().setLayout(gridBagLayout);
 		this.inputFolder = new FileChoose("Input Directory", "Please select an input directory");
-		this.frame.add(inputFolder);
-		this.frame.add(startButton, JFrame.LEFT_ALIGNMENT);
+		GridBagConstraints gbc_inputFolder = new GridBagConstraints();
+		gbc_inputFolder.insets = new Insets(0, 0, 5, 0);
+		gbc_inputFolder.anchor = GridBagConstraints.NORTH;
+		gbc_inputFolder.fill = GridBagConstraints.HORIZONTAL;
+		gbc_inputFolder.gridx = 0;
+		gbc_inputFolder.gridy = 1;
+		this.frame.getContentPane().add(inputFolder, gbc_inputFolder);
+		GridBagConstraints gbc_startButton = new GridBagConstraints();
+		gbc_startButton.anchor = GridBagConstraints.EAST;
+		gbc_startButton.gridx = 0;
+		gbc_startButton.gridy = 2;
+		this.frame.getContentPane().add(startButton, gbc_startButton);
 		
 		
 	}
