@@ -9,6 +9,9 @@ Obf_GUI/.project
 Obfuscator/.settings/
 Obfuscator/.project
 Obfuscator/.classpath
+StringDeobfuscator/.classpath
+StringDeobfuscator/.settings/
+StringDeobfuscator/.project
 *.class
 .recommenders/
 
