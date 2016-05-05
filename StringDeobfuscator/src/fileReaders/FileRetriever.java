@@ -8,11 +8,12 @@ import java.util.ArrayList;
  * @author chuan
  *
  */
-public class JavaFileRetriever {
+public class FileRetriever {
 	private File inputFolder;
 	private ArrayList<File> javaFiles = new ArrayList<File>();
+	private ArrayList<File> propFiles = new ArrayList<File>();
 	
-	public JavaFileRetriever(File inputFolder){
+	public FileRetriever(File inputFolder){
 		this.inputFolder = inputFolder;
 		locateJavaFiles(inputFolder);
 	}
@@ -23,6 +24,10 @@ public class JavaFileRetriever {
 	
 	public File getInputFolder(){
 		return this.inputFolder;
+	}
+	
+	public ArrayList<File> getPropertyFiles(){
+		return this.propFiles;
 	}
 	
 	/**
@@ -38,6 +43,9 @@ public class JavaFileRetriever {
 				locateJavaFiles(f);
 			}else if(getFileExtension(f).equals("java")){
 				this.javaFiles.add(f);
+			}
+			else if(getFileExtension(f).equals("properties")){
+				this.propFiles.add(f);
 			}
 		}
 	}
