@@ -48,6 +48,7 @@ public class Decoder {
 		String key = "abcDDsAS";
 
 		StringBuilder stringBuilder = new StringBuilder();
+		input = Base64Decode(input);
 		for (int i = 0; i < input.length(); i++) {
 			stringBuilder.append((char) (input.charAt(i) ^ key.charAt(i
 					% key.length())));

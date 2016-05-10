@@ -79,10 +79,6 @@ public class PropertiesFileStringRetriever implements StringRetriever {
 				g3 = decoder.G3Decode(s);
 			}
 			
-			if(base64.equals("") && g3.equals("")){
-				continue;
-			}
-			
 			model.addRow(new Object[] {s, base64, g3});
 		}
 		
